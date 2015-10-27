@@ -12,8 +12,13 @@
 ####################################################################################################
 
 # Data
-itype=71   sqrts=7  year=2011 	name=Data2011                     fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2011_magDown_Job1532.root                      tname=Bs2Kst0Kst0/DecayTree
-itype=71   sqrts=7  year=2011 	name=Data2011                     fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2011_magUp_Job1531.root                        tname=Bs2Kst0Kst0/DecayTree
-itype=81   sqrts=8  year=2012 	name=Data2012                     fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2012_magDown_Job1539.root                      tname=Bs2Kst0Kst0/DecayTree
-itype=81   sqrts=8  year=2012		name=Data2012                     fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2012_magUp_Job1538.root  		                  tname=Bs2Kst0Kst0/DecayTree
+itype=71   sqrts=7  year=2011 	name=Data2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2011_magDown_Job1532.root   tname=Bs2Kst0Kst0/DecayTree
+itype=71   sqrts=7  year=2011 	name=Data2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bs2Kst0Kst0/Bs2Kst0Kst0_wide_Real2011_magUp_Job1531_v2.root             tname=Bs2Kst0Kst0/DecayTree
+itype=81   sqrts=8  year=2012 	name=Data2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bs2Kst0Kst0/Bs2Kst0Kst0_wide_Real2012_magDown_Job1539_v2.root           tname=Bs2Kst0Kst0/DecayTree
+itype=81   sqrts=8  year=2012		name=Data2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/real_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_Real2012_magUp_Job1538.root  	 tname=Bs2Kst0Kst0/DecayTree
 
+# Data Bd2JpsiKst0
+itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011    fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_Data2011_magUp_Job43.root                       tname=Bs2Kst0Kst0/DecayTree
+itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011    fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_Data2011_magDown_Job45.root                     tname=Bs2Kst0Kst0/DecayTree
+itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012    fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_Data2012_magUp_Job46.root                       tname=Bs2Kst0Kst0/DecayTree
+itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012    fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_Data2012_magDown_Job47.root                     tname=Bs2Kst0Kst0/DecayTree
