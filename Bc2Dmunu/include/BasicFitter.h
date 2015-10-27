@@ -28,9 +28,14 @@ namespace Bc2Dmunu {
       void makeBu2DstmunuPdf();
       void makeCombinatorialPdf();
       void makeTotalPdf();
+      void makeMassPdfs();
 
       void Bu2DmunuFit();
+      void Bc2DmunuFit();
+      void Bc2DstmunuFit();
       void DataFit();
+      void MassFit();
+      void RunToys();
 
   };
 

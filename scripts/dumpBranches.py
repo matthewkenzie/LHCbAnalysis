@@ -2,8 +2,8 @@
 
 import ROOT as r
 
-tf = r.TFile('nTuples/Bs2JpsiGamma/WithBremInfo/Bd2KstGamma_2012.root')
-tree = tf.Get('JpsiGamma_Tuple/DecayTree')
+tf = r.TFile('nTuples/DataTuple.root')
+tree = tf.Get('HltTuple/DecayTree')
 
 f1 = open('tmp/headerstuff.h','w')
 f2 = open('tmp/srcstuff.cc','w')

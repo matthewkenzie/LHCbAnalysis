@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 
+// ROOT stuff
 #include "TFile.h"
 #include "TTree.h"
 #include "TAxis.h"
@@ -16,22 +17,29 @@
 #include "TColor.h"
 #include "TBox.h"
 
-#include "RooDataSet.h"
-#include "RooArgSet.h"
+// roofit var types
 #include "RooRealVar.h"
-#include "RooPlot.h"
-#include "RooCBShape.h"
-#include "RooAddPdf.h"
 #include "RooConstVar.h"
-#include "RooAbsData.h"
+#include "RooArgSet.h"
+#include "RooArgList.h"
 
+// roofit data types
+#include "RooAbsData.h"
+#include "RooDataSet.h"
+#include "RooDataHist.h"
+
+// roofit pdf types
+#include "RooAddPdf.h"
+#include "RooHistPdf.h"
 #include "RooGaussian.h"
 #include "RooCBShape.h"
 
+// roofit utils
+#include "RooPlot.h"
 #include "RooMsgService.h"
-
 #include "RooStats/SPlot.h"
 
+// this package
 #include "FitterBase.h"
 #include "Utils.h"
 
@@ -1444,7 +1452,72 @@ void FitterBase::makeGaussianPDF(TString name, TString par) {
   w->import(*pdf);
   delete pdf;
   defineParamSet(name);
+}
 
+void FitterBase::makeGaussianSumPDF(TString name, TString par, int n) {
+
+  // several gaussians with the same mean
+  addParameter(name+"_mean", w->var(par)->getMin(), w->var(par)->getMax() );
+
+  RooArgList *pdfs = new RooArgList();
+  RooArgList *fracs = new RooArgList();
+
+  for ( int i=0; i<n; i++ ) {
+
+    TString sigma_name = Form("%s_sigma%d",name.Data(),i);
+    addParameter( sigma_name, 20 );
+
+    TString gaus_name = Form("%s_gaus%d",name.Data(),i);
+    RooGaussian *gaus = new RooGaussian( gaus_name, gaus_name, *w->var(par), *w->var(name+"_mean"), *w->var(sigma_name) );
+    pdfs->add(*gaus);
+
+    if ( i < n-1 ) {
+      TString frac_name = Form("%s_f%d",name.Data(),i);
+      addParameter( frac_name, 1./double(n), 0., 1. );
+      fracs->add(*w->var(frac_name) );
+    }
+  }
+
+  RooAddPdf *pdf = new RooAddPdf(name,name,*pdfs,*fracs);
+  w->import(*pdf);
+  delete pdf;
+  delete pdfs;
+  delete fracs;
+  defineParamSet(name);
+}
+
+void FitterBase::makeDisjointGaussianSumPDF(TString name, TString par, int n) {
+
+  // several gaussians with different means
+
+  RooArgList *pdfs = new RooArgList();
+  RooArgList *fracs = new RooArgList();
+
+  for ( int i=0; i<n; i++ ) {
+
+    TString mean_name = Form("%s_mean%d",name.Data(),i);
+    addParameter( mean_name, w->var(par)->getMin(), w->var(par)->getMax() );
+
+    TString sigma_name = Form("%s_sigma%d",name.Data(),i);
+    addParameter( sigma_name, 100, 0, 2.*(w->var(par)->getMax() - w->var(par)->getMin()) );
+
+    TString gaus_name = Form("%s_gaus%d",name.Data(),i);
+    RooGaussian *gaus = new RooGaussian( gaus_name, gaus_name, *w->var(par), *w->var(mean_name), *w->var(sigma_name) );
+    pdfs->add(*gaus);
+
+    if ( i < n-1 ) {
+      TString frac_name = Form("%s_f%d",name.Data(),i);
+      addParameter( frac_name, 1./double(n), 0., 1. );
+      fracs->add(*w->var(frac_name) );
+    }
+  }
+
+  RooAddPdf *pdf = new RooAddPdf(name,name,*pdfs,*fracs);
+  w->import(*pdf);
+  delete pdf;
+  delete pdfs;
+  delete fracs;
+  defineParamSet(name);
 }
 
 void FitterBase::makeCBPDF(TString name, TString par) {
@@ -1461,11 +1534,120 @@ void FitterBase::makeCBPDF(TString name, TString par) {
 
 void FitterBase::makeDoubleCBPDF(TString name, TString par) {
 
-  addParameter(name+"_mean"  , 5300 );
-  addParameter(name+"_sigma" , 20   );
-  addParameter(name+"_alpha" , 0.5  );
-  addParameter(name+"_n"     , 0.5  );
-  RooCBShape *pdf = new RooCBShape(name,name,*w->var(par),*w->var(name+"_mean"),*w->var(name+"_sigma"),*w->var(name+"_alpha"),*w->var(name+"_n"));
+  addParameter(name+"_mean"   , w->var(par)->getMin(), w->var(par)->getMax() );
+  addParameter(name+"_sigma"  ,  20   );
+  addParameter(name+"_alpha1" ,  0.5 ,   0., 20. );
+  addParameter(name+"_n1"     ,  0.5 ,   0., 20. );
+  addParameter(name+"_alpha2" , -0.5 , -20., 0.  );
+  addParameter(name+"_n2"     ,  0.5 ,   0., 20. );
+  addParameter(name+"_f1"     ,  0.5 ,   0., 1.  );
+  RooCBShape *cb1 = new RooCBShape(name+"_cb1",name+"_cb1",*w->var(par),*w->var(name+"_mean"),*w->var(name+"_sigma"),*w->var(name+"_alpha1"),*w->var(name+"_n1"));
+  RooCBShape *cb2 = new RooCBShape(name+"_cb2",name+"_cb2",*w->var(par),*w->var(name+"_mean"),*w->var(name+"_sigma"),*w->var(name+"_alpha2"),*w->var(name+"_n2"));
+  RooAddPdf *pdf = new RooAddPdf(name, name, RooArgList(*cb1,*cb2), RooArgList(*w->var(name+"_f1")));
+  w->import(*pdf);
+  delete pdf;
+  delete cb1;
+  delete cb2;
+  defineParamSet(name);
+}
+
+void FitterBase::makeDisjointDoubleCBPDF(TString name, TString par) {
+
+  addParameter(name+"_mean1"   , w->var(par)->getMin(), w->var(par)->getMax() );
+  addParameter(name+"_mean2"   , w->var(par)->getMin(), w->var(par)->getMax() );
+  addParameter(name+"_sigma1"  ,  100   );
+  addParameter(name+"_sigma2"  ,  100   );
+  addParameter(name+"_alpha1" ,  0.5 ,   0., 20. );
+  addParameter(name+"_n1"     ,  0.5 ,   0., 20. );
+  addParameter(name+"_alpha2" , -0.5 , -20., 0.  );
+  addParameter(name+"_n2"     ,  0.5 ,   0., 20. );
+  addParameter(name+"_f1"     ,  0.5 ,   0., 1.  );
+  RooCBShape *cb1 = new RooCBShape(name+"_cb1",name+"_cb1",*w->var(par),*w->var(name+"_mean1"),*w->var(name+"_sigma1"),*w->var(name+"_alpha1"),*w->var(name+"_n1"));
+  RooCBShape *cb2 = new RooCBShape(name+"_cb2",name+"_cb2",*w->var(par),*w->var(name+"_mean2"),*w->var(name+"_sigma2"),*w->var(name+"_alpha2"),*w->var(name+"_n2"));
+  RooAddPdf *pdf = new RooAddPdf(name, name, RooArgList(*cb1,*cb2), RooArgList(*w->var(name+"_f1")));
+  w->import(*pdf);
+  delete pdf;
+  delete cb1;
+  delete cb2;
+  defineParamSet(name);
+}
+
+void FitterBase::makeSumPDF(TString name, vector<TString> pdfList) {
+
+  RooArgList *pdfs = new RooArgList();
+  RooArgList *fracs = new RooArgList();
+
+  // make pdf and fraction list
+  for (int i=0; i<pdfList.size(); i++) {
+    if ( !w->pdf(pdfList[i]) ) {
+      print( "FitterBase", "ERROR - no pdf "+pdfList[i]+" found in workspace" );
+    }
+    pdfs->add( *w->pdf(pdfList[i]) );
+    if ( i<pdfList.size()-1 ) {
+      TString frac_name = Form("%s_f%d",name.Data(),i);
+      addParameter(frac_name , 1./double(pdfList.size()), 0., 1.);
+      fracs->add( *w->var(frac_name) );
+    }
+  }
+  RooAddPdf *pdf = new RooAddPdf(name, name, *pdfs, *fracs );
+  w->import(*pdf);
+  delete pdf;
+  delete pdfs;
+  delete fracs;
+  defineParamSet(name);
+
+}
+
+void FitterBase::makeSumPDF(TString name, TString pdf1, TString pdf2) {
+
+  vector<TString> pdfs;
+  pdfs.push_back(pdf1);
+  pdfs.push_back(pdf2);
+  makeSumPDF( name, pdfs );
+}
+
+void FitterBase::makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3) {
+
+  vector<TString> pdfs;
+  pdfs.push_back(pdf1);
+  pdfs.push_back(pdf2);
+  pdfs.push_back(pdf3);
+  makeSumPDF( name, pdfs );
+}
+
+void FitterBase::makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3, TString pdf4) {
+
+  vector<TString> pdfs;
+  pdfs.push_back(pdf1);
+  pdfs.push_back(pdf2);
+  pdfs.push_back(pdf3);
+  pdfs.push_back(pdf4);
+  makeSumPDF( name, pdfs );
+}
+
+void FitterBase::makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3, TString pdf4, TString pdf5) {
+
+  vector<TString> pdfs;
+  pdfs.push_back(pdf1);
+  pdfs.push_back(pdf2);
+  pdfs.push_back(pdf3);
+  pdfs.push_back(pdf4);
+  pdfs.push_back(pdf5);
+  makeSumPDF( name, pdfs );
+}
+
+void FitterBase::makeTemplatePDF(TString name, TString par, TString data) {
+
+  if ( !w->var(par) ) {
+    print("FitterBase", "ERROR - no such parameter "+par+" in workspace" );
+  }
+  if ( !w->data(data) ) {
+    print("FitterBase", "ERROR - no such dataset "+data+" in workspace" );
+  }
+
+  RooDataSet *dset = (RooDataSet*)w->data(data);
+  RooDataHist *dhist = new RooDataHist(data+"Hist","",RooArgSet(*w->var(par)), *dset);
+  RooHistPdf *pdf = new RooHistPdf(name,"",RooArgSet(*w->var(par)),*dhist);
   w->import(*pdf);
   delete pdf;
   defineParamSet(name);

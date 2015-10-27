@@ -19,6 +19,9 @@ namespace Bc2Dmunu {
       void setInputBranches(TTree *tree);
       void setOutputBranches(TTree *tree);
 
+      // user added vars
+      Float_t         bu_rejection_bdtoutput;
+
       Double_t        Bplus_IPCHI2_OWNPV;
       Double_t        Bplus_IP_OWNPV;
       Double_t        Bplus_MINIP;

@@ -19,11 +19,12 @@ int main(int argc, char **argv) {
   Bc2Dmunu::Variables_Analysis *v = new Bc2Dmunu::Variables_Analysis() ;
 
   // make the analysers
-  Bc2Dmunu::Trigger   *trigger   = new Bc2Dmunu::Trigger   ( "Trigger", v );
-  Bc2Dmunu::Selection *selection = new Bc2Dmunu::Selection ( "Selection", v );
-  Bc2Dmunu::Plotter   *plotter   = new Bc2Dmunu::Plotter   ( "Plotter", v );
-  Bc2Dmunu::BuRejectionBDT *bdt  = new Bc2Dmunu::BuRejectionBDT( "BDT", v );
-  bdt->setEvalMode();
+  Bc2Dmunu::Trigger   *trigger       = new Bc2Dmunu::Trigger   ( "Trigger", v );
+  Bc2Dmunu::Selection *selection     = new Bc2Dmunu::Selection ( "Selection", v );
+  Bc2Dmunu::Plotter   *plotter       = new Bc2Dmunu::Plotter   ( "Plotter", v );
+  Bc2Dmunu::BuRejectionBDT *bdtTrain = new Bc2Dmunu::BuRejectionBDT( "BDT", v );
+  bdtTrain->setTrainMode();
+
 
   // pass variables to runner
   runner.setVariables( v );
@@ -32,7 +33,7 @@ int main(int argc, char **argv) {
   runner.addAnalyser( trigger );
   runner.addAnalyser( selection );
   runner.addAnalyser( plotter );
-  runner.addAnalyser( bdt );
+  runner.addAnalyser( bdtTrain );
 
   // run
   runner.run();
@@ -42,7 +43,7 @@ int main(int argc, char **argv) {
   delete trigger;
   delete selection;
   delete plotter;
-  delete bdt;
+  delete bdtTrain;
 
   return 0;
 

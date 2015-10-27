@@ -60,15 +60,9 @@ def writeHtml( location, title, links, plots, isHome=False ):
   # title
   if opts.title != "":
     title = opts.title + " - " + title
-  html.write('<font size=\"5\"> <u> '+title+' </u> </font> <br>\n')
+  html.write('<font size=\"5\" style=border-style:double;border-left-style:none;border-right-style:none;border-top-style:none;> '+title+' </font> <br>\n')
   html.write('<script language=\"Javascript\"> document.write(\"Last modified: \" + document.lastModified + \" (UTC)\"); </script> <br>\n')
   html.write('<br>\n')
-
-  # check for pngs
-  if 'png' not in plots.keys() and not isHome:
-    html.write('No png files found\n')
-    html.close()
-    return
 
   # links
   if isHome:
@@ -78,7 +72,7 @@ def writeHtml( location, title, links, plots, isHome=False ):
       html.write('&#160; &#160; &#8627; <a href=\"'+link_name+'/index.html\">'+link_name+'</a> <br> \n')
     return
   else:
-    html.write('<div onClick=\"openClose(\'links\')\" style=\"cursor:hand; cursor:pointer\"><b><u><font color=\"blue\"> Other plots: </font></u></b> (click to expand) </div> \n')
+    html.write('<div onClick=\"openClose(\'links\')\" style=\"cursor:hand; cursor:pointer\"><b><u><font color=\"blue\"> Other locations: </font></u></b> (click to expand) </div> \n')
     html.write('<div id=\"links\" class=\"texter\"> \n')
     html.write('&#160; &#160; <a href=\"../index.html\">Home</a> <br> \n')
     for link in links:
@@ -86,6 +80,22 @@ def writeHtml( location, title, links, plots, isHome=False ):
       html.write('&#160; &#160; &#8627; <a href=\"../'+link_name+'/index.html\">'+link_name+'</a> <br> \n')
     html.write('</div>\n')
     html.write('<br>\n')
+
+  ## check for pngs and pdfs
+  #if 'png' not in plots.keys() and 'pdf' not in plots.keys() and not isHome:
+    #html.write('No png or pdf files found\n')
+    #html.close()
+    #return
+
+  # if no pngs then just have a list of links to files
+  if 'png' not in plots.keys():
+    for ftype, fnames in plots.iteritems():
+      for f in fnames:
+        path = os.path.relpath( f, location )
+        basename = os.path.basename( path )
+        html.write('<a href='+path+'>'+basename+'</a><br>\n')
+        print '\t \t', path
+    return
 
   # contents
   html.write('<div onClick=\"openClose(\'contents\')\" style=\"cursor:hand; cursor:pointer\"><b><u><font color=\"blue\"> Contents: </font></u></b> (click to expand) </div> \n')

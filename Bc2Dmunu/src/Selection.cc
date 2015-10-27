@@ -18,10 +18,13 @@ bool Bc2Dmunu::Selection::AnalyseEvent(){
   // do physics cuts here:
   //
 
-  // PID fav
-  if ( v->Kminus_PIDK < 5. || v->piplus_PIDK > -5. ) return false;
+  if ( v->Bplus_TAU < 0. ) return false;
+  if ( v->muplus_PIDK > -2. ) return false;
+  if ( v->muplus_MINIPCHI2 < 9. ) return false;
 
-  if ( v->Bplus_M < 4000 ) return false;
+  // PID fav
+  if ( v->Kminus_PIDK < 2. || v->piplus_PIDK > -2. ) return false;
+
   // PID sup
   //if ( v->Kminus_PIDK > -5. || v->piplus_PIDK < 5. ) return false;
 

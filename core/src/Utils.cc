@@ -5,17 +5,17 @@
 
 using namespace std;
 
-void Utils::print(TString info, TString message, bool flush) {
+void Utils::print(TString info, TString message, bool isFlush) {
 
-  cout << Form("%-30s",info.Data()) << message << "\r";
+  cout << Form("%-30s",info.Data()) << message ;
 
-  if ( flush ) cout << "\r" << flush;
+  if ( isFlush ) cout << "\r" << flush;
   else cout << endl;
 
 }
 
-void Utils::print(TString cl_name, TString func_name, TString message, bool flush) {
-  print(cl_name+":"+func_name+"()", message, flush);
+void Utils::print(TString cl_name, TString func_name, TString message, bool isFlush) {
+  print(cl_name+":"+func_name+"()", message, isFlush);
 }
 
 void Utils::error(TString message) {

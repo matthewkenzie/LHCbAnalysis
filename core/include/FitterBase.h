@@ -62,8 +62,17 @@ class FitterBase {
     void makeGaussConstraintFromParameter(TString name, TString par);
 
     void makeGaussianPDF(TString name, TString par);
+    void makeGaussianSumPDF(TString name, TString par, int n);
+    void makeDisjointGaussianSumPDF(TString name, TString par, int n);
     void makeCBPDF(TString name, TString par);
     void makeDoubleCBPDF(TString name, TString par);
+    void makeDisjointDoubleCBPDF(TString name, TString par);
+    void makeTemplatePDF(TString name, TString par, TString data);
+    void makeSumPDF(TString name, TString pdf1, TString pdf2);
+    void makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3);
+    void makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3, TString pdf4);
+    void makeSumPDF(TString name, TString pdf1, TString pdf2, TString pdf3, TString pdf4, TString pdf5);
+    void makeSumPDF(TString name, std::vector<TString> pdfList);
 
     void makeDatasets();
     void fillDatasets(TString fname, TString tname);

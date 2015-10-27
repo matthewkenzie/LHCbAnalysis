@@ -23,6 +23,7 @@ void Bc2Dmunu::Plotter::defineHistograms(){
 
   addHist("Bplus_M"    , "m(B^{+}) [MeV]", 100, 2000,8000, "R");
   addHist("Bplus_Mcorr", "m_{corr}(B^{+}) [MeV]", 100,2000,8000, "R");
+  addHist("Bplus_TAU",   "#tau(B^{+}) [ns]", 100,0,0.01,"R");
   addHist("D0_M"       , "m(D^{0}) [MeV]", 100, 1800, 1950, "R");
   addHist("D0_LOGMINIPCHI2", "Log Min IP #chi^{2} (D^{0})", 100,-5,15,"L");
 
@@ -37,6 +38,10 @@ void Bc2Dmunu::Plotter::defineHistograms(){
 
   addHist("Kminus_PIDK", "PIDK (K^{-})",   100, 0, 200, "R");
   addHist("piplus_PIDK", "PIDK (#pi^{+})", 100, -200, 0, "L");
+
+  addHist("D0_PT",   "p_{T}(D^{0}) [MeV/c]", 100, 0, 10000, "R");
+
+  addHist("bu_rejection_bdtoutput", "BDT", 100, -1, 1., "R");
 
   addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
 }
@@ -76,7 +81,9 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   // fill hists now
   fillHist("Bplus_M"     , v->Bplus_M      );
   fillHist("Bplus_Mcorr" , v->Bplus_Mcorr  );
+  fillHist("Bplus_TAU"   , v->Bplus_TAU    );
   fillHist("D0_M"        , v->D0_M         );
+  fillHist("D0_PT"       , v->D0_PT        );
   fillHist("D0_LOGMINIPCHI2", TMath::Log(v->D0_MINIPCHI2) );
   fillHist("Bplus_LOGMINIPCHI2", TMath::Log(v->Bplus_MINIPCHI2) );
   fillHist("Bplus_DIRA_OWNPV", v->Bplus_DIRA_OWNPV );
@@ -86,6 +93,7 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   fillHist("D0_ENDVERTEX_CHI2",  v->D0_ENDVERTEX_CHI2 ) ;
   fillHist("Kminus_PIDK", v->Kminus_PIDK );
   fillHist("piplus_PIDK", v->piplus_PIDK );
+  fillHist("bu_rejection_bdtoutput", v->bu_rejection_bdtoutput);
   fillHist("nCandidate", int(v->nCandidate) );
   return true;
 }

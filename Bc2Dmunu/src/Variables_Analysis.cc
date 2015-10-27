@@ -183,6 +183,9 @@ void Bc2Dmunu::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("evname"                                , &evname                                  );
   tree->Branch("year"                                  , &year                                    );
 
+  // user added vars
+  tree->Branch("bu_rejection_bdtoutput"                , &bu_rejection_bdtoutput                  );
+
   tree->Branch("Bplus_IPCHI2_OWNPV"                    , &Bplus_IPCHI2_OWNPV                      , "Bplus_IPCHI2_OWNPV/D"                  );
   tree->Branch("Bplus_IP_OWNPV"                        , &Bplus_IP_OWNPV                          , "Bplus_IP_OWNPV/D"                      );
   tree->Branch("Bplus_MINIP"                           , &Bplus_MINIP                             , "Bplus_MINIP/D"                         );
