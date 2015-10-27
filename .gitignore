@@ -1,0 +1,9 @@
+*/nTuples
+*/plots
+*/bin
+*/root
+*/tmp
+*/.DS_Store
+doc/html
+doc/latex
+build/
