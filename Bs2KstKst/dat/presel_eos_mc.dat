@@ -72,7 +72,7 @@ itype=-89  sqrts=8  year=2012  name=Lb2ppipipi_MC2012             fname=root://e
 itype=-89  sqrts=8  year=2012  name=Lb2ppipipi_MC2012             fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magUp_Lb2ppipipi_15204010_Job1594.root        tname=Bs2Kst0Kst0/DecayTree
 
 # Bd2JpsiKst
-itype=-710 sqrts=7  year=2011 name=Bd2JpsiKst_MC2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2011_magUp_Job35.root                                            tname=Bs2Kst0Kst0/DecayTree
-itype=-710 sqrts=7  year=2011 name=Bd2JpsiKst_MC2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2011_magDown_Job39.root                                          tname=Bs2Kst0Kst0/DecayTree
-itype=-810 sqrts=8  year=2012 name=Bd2JpsiKst_MC2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2012_magUp_Job37.root                                            tname=Bs2Kst0Kst0/DecayTree
-itype=-810 sqrts=8  year=2012 name=Bd2JpsiKst_MC2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2012_magDown_Job38.root                                          tname=Bs2Kst0Kst0/DecayTree
+itype=-710 sqrts=7  year=2011 name=Bd2JpsiKst_MC2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2011_magUp_Job35.root                                            tname=B2JpsiKst0/DecayTree
+itype=-710 sqrts=7  year=2011 name=Bd2JpsiKst_MC2011              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2011_magDown_Job39.root                                          tname=B2JpsiKst0/DecayTree
+itype=-810 sqrts=8  year=2012 name=Bd2JpsiKst_MC2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2012_magUp_Job37.root                                            tname=B2JpsiKst0/DecayTree
+itype=-810 sqrts=8  year=2012 name=Bd2JpsiKst_MC2012              fname=root://eoslhcb.cern.ch//eos/lhcb/user/r/romerov/Ntuples/Bd2JpsiKst0/Bd2JpsiKst0_MC2012_magDown_Job38.root                                          tname=B2JpsiKst0/DecayTree

@@ -96,11 +96,11 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
 
   writtenSubScripts.push_back(subfname);
 
+  print("CreateBatchJob::write()","Written subfile: "+subfname);
 }
 
 void CreateBatchJob::writeJobFiles() {
 
-  cout << rOpt.jobSplitting << endl;
   if ( rOpt.jobSplitting > -1 ) {
 
     // job splitting on
@@ -152,7 +152,7 @@ void CreateBatchJob::submitJob() {
 
   for ( unsigned int i=0; i<writtenSubScripts.size(); i++) {
 
-      print("CreateBatchJob::submitJob()",string(Form("Will submit: %s.sh to queue: %s",writtenSubScripts[i].c_str(),rOpt.queue.c_str())));
+      print("CreateBatchJob::submitJob()",string(Form("Will submit: %s to queue: %s",writtenSubScripts[i].c_str(),rOpt.queue.c_str())));
 
 
     string cwd  = boost::filesystem::current_path().string();
