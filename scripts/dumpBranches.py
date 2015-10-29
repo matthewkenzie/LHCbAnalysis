@@ -1,13 +1,29 @@
 #!/usr/bin/env python
 
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-f","--filename")
+parser.add_option("-t","--treename")
+parser.add_option("-o","--outputloc",default="tmp")
+(opts,args) = parser.parse_args()
+
 import ROOT as r
+import os
+import sys
 
-tf = r.TFile('nTuples/DataTuple.root')
-tree = tf.Get('HltTuple/DecayTree')
+tf = r.TFile(opts.filename)
+if not tf:
+  sys.exit('Not a valid filename: '+opts.filename)
 
-f1 = open('tmp/headerstuff.h','w')
-f2 = open('tmp/srcstuff.cc','w')
-f3 = open('tmp/srcstuff2.cc','w')
+tree = tf.Get(opts.treename)
+if not tree:
+  sys.exit('No such tree '+opts.tree+' in file')
+
+os.system('mkdir -p %s'%opts.outputloc)
+
+headerLines       = []
+sourceInputLines  = []
+sourceOutputLines = []
 
 for branch in tree.GetListOfBranches():
 
@@ -26,14 +42,25 @@ for branch in tree.GetListOfBranches():
       except:
         dec_name += '[100]'
 
-  f1.write('%-20s %-40s;\n'%(type_name,dec_name))
+  headerLines.append('      %-20s %-40s;\n'%(type_name,dec_name))
   if '[' in dec_name and ']' in dec_name:
-    f2.write('tree->SetBranchAddress(%-40s,  %-40s);\n'%('\"'+branch_name+'\"',name))
+    sourceInputLines.append('  tree->SetBranchAddress(%-40s,  %-40s);\n'%('\"'+branch_name+'\"',name))
   else:
-    f2.write('tree->SetBranchAddress(%-40s, &%-40s);\n'%('\"'+branch_name+'\"',name))
+    sourceInputLines.append('  tree->SetBranchAddress(%-40s, &%-40s);\n'%('\"'+branch_name+'\"',name))
 
-  f3.write('tree->Branch(%-40s, &%-40s, %-40s);\n'%('\"'+name+'\"', name, '\"'+title+'\"'))
+  sourceOutputLines.append('  tree->Branch(%-40s, &%-40s, %-40s);\n'%('\"'+name+'\"', name, '\"'+title+'\"'))  
 
-f1.close()
-f2.close()
-f3.close()
+f = open('%s/branchdump.h'%opts.outputloc,'w')
+f.write('// ---- HEADER ---- //\n')
+for line in headerLines:
+  f.write(line)
+f.write('// ---- SRC input --- //\n')
+for line in sourceInputLines:
+  f.write(line)
+f.write('// ---- SRC output --- //\n')
+for line in sourceOutputLines:
+  f.write(line)
+
+f.close()
+
+print 'Written output to: \n\t', f.name
