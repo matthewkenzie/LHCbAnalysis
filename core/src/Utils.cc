@@ -19,6 +19,6 @@ void Utils::print(TString cl_name, TString func_name, TString message, bool isFl
 }
 
 void Utils::error(TString message) {
-  print("ERROR:", message);
+  print("ERROR: ", message);
   exit(1);
 }

@@ -14,5 +14,5 @@
 # MC
 
 # Data
-itype=80   sqrts=8  year=2012  name=Data        fname=nTuples/DataTuple.root  tname=HltTuple/DecayTree
+itype=80   sqrts=8  year=2012  name=Data        fname=nTuples/HltTuple.root  tname=HltTuple/DecayTree
 

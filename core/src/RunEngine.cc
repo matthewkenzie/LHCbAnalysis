@@ -132,15 +132,16 @@ void RunEngine::run() {
     // setup first and last entries
     Long64_t lEntry = arg.lastEntry  > 0 ? arg.lastEntry  : intree->GetEntries() ;
     Long64_t fEntry = arg.firstEntry >= 0 ? arg.firstEntry : 0 ;
+    if (lEntry > intree->GetEntries() ) lEntry = intree->GetEntries(); // incase requested entries is larger than what's in file
+
+    // set the run variables (needs to go here in case there are zero entries)
+    v->itype   = itypes[f];
+    v->evname  = evnames[f];
+    v->sqrts   = sqrtss[f];
+    v->year    = years[f];
 
     for ( Long64_t iEntry = fEntry; iEntry < lEntry; iEntry++ ) {
       intree->GetEntry( iEntry );
-
-      // set the run variables
-      v->itype   = itypes[f];
-      v->evname  = evnames[f];
-      v->sqrts   = sqrtss[f];
-      v->year    = years[f];
 
       // print progress
       int update_schedule = 1000; // will update 1000 times

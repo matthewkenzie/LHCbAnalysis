@@ -10,6 +10,7 @@
 
 #include "RooWorkspace.h"
 #include "RooHist.h"
+#include "RooArgSet.h"
 
 #include "FitterUtils.h"
 
@@ -29,10 +30,14 @@ class FitterBase {
     void addObsVar(TString name, float min, float max);
     void addObsVar(TString name, int min, int max);
     void addObsVar(TString name, short int min, short int max);
+    void addObsVar(TString name, long int min, long int max);
+    void addObsVar(TString name, bool start_val);
     void addObsVar(TString name, TString title, TString unit, double min, double max);
     void addObsVar(TString name, TString title, TString unit, float min, float max);
     void addObsVar(TString name, TString title, TString unit, int min, int max);
     void addObsVar(TString name, TString title, TString unit, short int min, short int max);
+    void addObsVar(TString name, TString title, TString unit, long int min, long int max);
+    void addObsVar(TString name, TString title, TString unit, bool start_val);
     void setUnit(TString var, TString unit);
     void setBins(TString var, int bins);
 
@@ -115,7 +120,7 @@ class FitterBase {
 
     double integral(TString pdf, TString var, TString scale="", double low=-999, double high=-999);
 
-    void sfit(TString pdf, TString data);
+    void sfit(TString pdf_name, TString data_name, TString yields_name="", TString nonyields_name="");
     void sproject(TString data_name, TString var_name);
 
     TCanvas* createCanvas(int canv_w=800, int canv_h=600);
@@ -138,6 +143,7 @@ class FitterBase {
     void   setDrawLog(bool val=true) { pDrawLog = val; }
     void   setTitle(TString title) { pTitle = title; }
     void   setResidType(int type)  { pResidType = type; }
+    void   setRedPull(int type) { pRedPull = type; }
 
     void   fillOutputTrees( TFile *outf );
 
@@ -147,6 +153,8 @@ class FitterBase {
     std::map<TString,float> obs_values_f;
     std::map<TString,int> obs_values_i;
     std::map<TString,short int> obs_values_s;
+    std::map<TString,long int> obs_values_l;
+    std::map<TString,bool> obs_values_b;
 
     std::map<TString,std::pair<double,double> > cut_value_d;
     std::map<TString,std::pair<float,float> >  cut_value_f;
@@ -169,6 +177,7 @@ class FitterBase {
     bool    pDrawLog;
     TString pTitle;
     int     pResidType;
+    int     pRedPull; // plot red pull points
 };
 
 #endif

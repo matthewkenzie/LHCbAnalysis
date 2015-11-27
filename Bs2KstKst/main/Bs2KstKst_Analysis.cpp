@@ -19,11 +19,11 @@ int main(int argc, char **argv) {
   Bs2KstKst::Variables_Analysis *v = new Bs2KstKst::Variables_Analysis() ;
 
   // make the analysers
-  Bs2KstKst::BDTNoPID *bdtRunner = new Bs2KstKst::BDTNoPID     ( "BDTNoPID" , v );
+  Bs2KstKst::BDTNoPID              *bdtRunner = new Bs2KstKst::BDTNoPID     ( "BDTNoPID" , v );
   bdtRunner->setEvalMode();
-  Bs2KstKst::AddPIDVarsAndDatasets *addVars = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"    , v );
-  Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid  = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
-  Bs2KstKst::AddAngles             *addAng  = new Bs2KstKst::AddAngles             ( "AddAngles"     , v );
+  Bs2KstKst::AddPIDVarsAndDatasets *addVars   = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"    , v );
+  Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid    = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
+  Bs2KstKst::AddAngles             *addAng    = new Bs2KstKst::AddAngles             ( "AddAngles"     , v );
 
   // pass variables to runner
   runner.setVariables( v );

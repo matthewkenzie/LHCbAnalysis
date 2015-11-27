@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   runner.addAnalyser( trigger );
   runner.addAnalyser( selection );
   runner.addAnalyser( plotter );
-  runner.addAnalyser( bdt );
+  //runner.addAnalyser( bdt );
 
   // run
   runner.run();

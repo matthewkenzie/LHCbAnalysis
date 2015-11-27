@@ -25,13 +25,16 @@ void Dst2D0pi::Plotter::defineHistograms(){
   addHist("D0_M"           , "m(D^{0}) [MeV/c^{2}]", 100, 1800, 1950, "R");
   addHist("DstD0_Mdiff"    , "m(D^{#star}) - m(D^{0}) [MeV/c^{2}]", 100, 0,200, "L");
   addHist("D0_PT"          ,  "p_{T}(D^{0}) [MeV/c]", 100, 0, 40000, "R");
+  addHist("D0_LIFETIME"    , "t(D^{0}) [ns]" , 100, 0, 0.005, "R");
   addHist("D0_TAU"         , "t(D^{0}) [ns]" , 100, 0, 0.005, "R");
-  addHist("D0_MINIPCHI2"   , "Min IP #chi^{2} (D^{0})", 100,-5,15,"R");
+  addHist("D0_MINIPCHI2"   , "Min IP #chi^{2} (D^{0})", 100,0,25,"R");
   addHist("D0_LOGMINIPCHI2", "Log Min IP #chi^{2} (D^{0})", 100,-5,15,"L");
   addHist("D0_ENDVERTEX_CHI2",  "Vtx #chi^{2} (D^{-})", 100, 0, 25, "R");
   addHist("D0_LOGENDVERTEX_CHI2", "Log Vtx #chi^{2} (D^{0})", 100, -5, 15, "R" );
-  //addHist("Kminus_PIDK", "PIDK (K^{-})",   100, 0, 200, "R");
-  //addHist("piplus_PIDK", "PIDK (#pi^{+})", 100, -200, 0, "L");
+  addHist("Kminus_MINIPCHI2", "Min IP #chi^{2} (K)", 100,0,100, "R");
+  addHist("piplus_MINIPCHI2", "Min IP #chi^{2} (K)", 100,0,100, "R");
+  addHist("Kminus_PIDK", "PIDK (K^{-})",   100, 0, 200, "R");
+  addHist("piplus_PIDK", "PIDK (#pi^{+})", 100, -200, 0, "L");
 
   addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
 }
@@ -69,17 +72,20 @@ void Dst2D0pi::Plotter::defineDrawingConfig(){
 bool Dst2D0pi::Plotter::fillHistograms(){
 
   // fill hists now
-  fillHist("Dst_M"       , v->Dst_M        );
+  fillHist("Dst_M"       , v->Dst_2010_plus_M        );
   fillHist("D0_M"        , v->D0_M         );
-  fillHist("DstD0_Mdiff" , (v->Dst_M-v->D0_M) );
+  fillHist("DstD0_Mdiff" , (v->Dst_2010_plus_M-v->D0_M) );
   fillHist("D0_PT"       , v->D0_PT        );
+  fillHist("D0_LIFETIME" , v->D0_LIFETIME       );
   fillHist("D0_TAU"      , v->D0_TAU       );
   fillHist("D0_MINIPCHI2", v->D0_MINIPCHI2 );
   fillHist("D0_LOGMINIPCHI2", TMath::Log(v->D0_MINIPCHI2) );
   fillHist("D0_ENDVERTEX_CHI2",  v->D0_ENDVERTEX_CHI2 ) ;
   fillHist("D0_LOGENDVERTEX_CHI2", TMath::Log( v->D0_ENDVERTEX_CHI2 ) );
-  //fillHist("Kminus_PIDK", v->Kminus_PIDK );
-  //fillHist("piplus_PIDK", v->piplus_PIDK );
+  fillHist("Kminus_MINIPCHI2", v->Kminus_MINIPCHI2 );
+  fillHist("piplus_MINIPCHI2", v->piplus_MINIPCHI2 );
+  fillHist("Kminus_PIDK", v->Kminus_PIDK );
+  fillHist("piplus_PIDK", v->piplus_PIDK );
   fillHist("nCandidate", int(v->nCandidate) );
   return true;
 }

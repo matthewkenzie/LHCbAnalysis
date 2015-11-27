@@ -226,8 +226,13 @@ void PlotterBase::drawHistograms(){
     //
     gStyle->SetOptStat(0);
     histContainer[0]->GetYaxis()->SetRangeUser(0,max*1.3);
-    histContainer[0]->GetYaxis()->SetTitle("Events");
-    if (normalise) histContainer[0]->GetYaxis()->SetTitle("Probability");
+    // get bin width
+    TString ext="";
+    if ( histContainer[0]->GetBinWidth(1) == histContainer[0]->GetBinWidth(2) ) {
+      ext += Form(" / %3.1f",histContainer[0]->GetBinWidth(1));
+    }
+    histContainer[0]->GetYaxis()->SetTitle("Events"+ext);
+    if (normalise) histContainer[0]->GetYaxis()->SetTitle("Probability"+ext);
     histContainer[0]->GetXaxis()->SetTitleOffset(0.8);
     histContainer[0]->GetYaxis()->SetTitleOffset(0.7);
 

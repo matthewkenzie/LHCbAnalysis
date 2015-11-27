@@ -131,7 +131,7 @@ AUX_SOURCE_DIRECTORY( ./roofit/src        CORE_LIB_SOURCES )
 ######################################
 
 # generate root dictionary
-file ( GLOB TMP_CUSTOM_ROOT_INCS roofit/include/*.h )
+file ( GLOB TMP_CUSTOM_ROOT_INCS roofit/include/Roo*.h )
 # strip full path name
 foreach( fil ${TMP_CUSTOM_ROOT_INCS} )
   file( RELATIVE_PATH pat ${PROJECT_SOURCE_DIR}/core/include ${fil} )
@@ -139,7 +139,11 @@ foreach( fil ${TMP_CUSTOM_ROOT_INCS} )
 endforeach()
 # add to root dict
 set( CUSTOM_ROOT_DICT ${PROJECT_NAME}Dict )
-ROOT_GENERATE_DICTIONARY( ${CUSTOM_ROOT_DICT} ${CUSTOM_ROOT_INCS} )
+set( CUSTOM_ROOT_LINKDEF "LinkDef.h" )
+ROOT_GENERATE_DICTIONARY( ${CUSTOM_ROOT_DICT}
+  ${CUSTOM_ROOT_INCS}
+  LINKDEF ${CUSTOM_ROOT_LINKDEF}
+)
 add_custom_target( ${CUSTOM_ROOT_DICT} DEPENDS ${CUSTOM_ROOT_DICT}.cxx ${CUSTOM_ROOT_DICT}.h )
 list( APPEND CORE_LIB_SOURCES ${CUSTOM_ROOT_DICT}.cxx )
 

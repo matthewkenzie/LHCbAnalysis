@@ -17,5 +17,6 @@ itype=-81  sqrts=8  year=2012  name=Bc2DstmuMC  fname=nTuples/Bc2Dstmu_MC.root  
 itype=-82  sqrts=8  year=2012  name=Bu2DmuMC    fname=nTuples/Bu2D0mu_MC.root        tname=Jpsi_Tuple/DecayTree
 
 # Data
-itype=80   sqrts=8  year=2012  name=Data        fname=nTuples/D0_favoured_data.root  tname=Jpsi_Tuple/DecayTree
+itype=80   sqrts=8  year=2012  name=DataFav     fname=nTuples/D0_favoured_data.root  tname=Jpsi_Tuple/DecayTree
+itype=81   sqrts=8  year=2012  name=DataSup     fname=nTuples/D0mu_suppressed.root   tname=Jpsi_Tuple/DecayTree
 

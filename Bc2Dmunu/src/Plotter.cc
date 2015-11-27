@@ -30,14 +30,26 @@ void Bc2Dmunu::Plotter::defineHistograms(){
   addHist("Bplus_LOGMINIPCHI2", "Log Min IP #chi^{2} (B^{+})", 100,-5,15,"L");
   addHist("Bplus_DIRA_OWNPV",   "DIRA (B^{+})", 100, 0.999,1.0,"L");
 
-  addHist("Bplus_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (B^{+})", 100, -5, 15, "L");
-  addHist("D0_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (D^{0})", 100, -5, 15, "L");
+  addHist("Bplus_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (B^{+})", 100, -10, 2, "L");
+  addHist("D0_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (D^{0})", 100, -10, 2, "L");
 
-  addHist("Bplus_ENDVERTEX_CHI2", "Vtx #chi^{2} (B^{+})", 100, 0, 16, "L");
-  addHist("D0_ENDVERTEX_CHI2", "Vtx #chi^{2} (D^{0})", 100, 0, 16, "L");
+  addHist("Bplus_ENDVERTEX_CHI2", "Vtx #chi^{2} (B^{+})", 100, 0, 8, "L");
+  addHist("D0_ENDVERTEX_CHI2", "Vtx #chi^{2} (D^{0})", 100, 0, 8, "L");
 
   addHist("Kminus_PIDK", "PIDK (K^{-})",   100, 0, 200, "R");
   addHist("piplus_PIDK", "PIDK (#pi^{+})", 100, -200, 0, "L");
+  addHist("Kminus_NNK" , "NNK (K^{-})",    100, 0, 1, "R");
+  addHist("piplus_NNK" , "NNK (#pi^{+})",  100, 0, 1, "L");
+  addHist("Kminus_NNKpi" , "NNKpi (K^{-})",    100, 0, 1, "R");
+  addHist("piplus_NNKpi" , "NNKpi (#pi^{+})",  100, 0, 1, "L");
+  addHist("Kminus_NNpi" , "NNpi (K^{-})",    100, 0, 1, "R");
+  addHist("piplus_NNpi" , "NNpi (#pi^{+})",  100, 0, 1, "L");
+  addHist("Kminus_ghost" , "ghost (K^{-})",    100, 0, 1, "R");
+  addHist("piplus_ghost" , "ghost (#pi^{+})",  100, 0, 1, "L");
+
+  addHist("Kminus_MINIPCHI2", "MIN IP #chi^{2} (K^{-})"    , 100, 0, 150, "R");
+  addHist("piplus_MINIPCHI2", "MIN IP #chi^{2} (#pi^{+})"  , 100, 0, 150, "R");
+  addHist("muplus_MINIPCHI2", "MIN IP #chi^{2} (#mu^{+})"  , 100, 0, 200, "R");
 
   addHist("D0_PT",   "p_{T}(D^{0}) [MeV/c]", 100, 0, 10000, "R");
 
@@ -67,10 +79,14 @@ void Bc2Dmunu::Plotter::defineDrawingConfig(){
   addDrawOpt("mc_Bc_Dst", "MC B^{+}_{c}#rightarrow D^{*}#mu#nu", -81);
   setDrawOptDefaultFill(greenFill->GetNumber());
 
-  addDrawOpt("data",   "Data", 80);
+  addDrawOpt("data_fav",   "Data (fav)", 80);
   setDrawOptDefaultPoint(kBlack);
 
+  addDrawOpt("data_sup",   "Data (sup)", 81);
+  setDrawOptDefaultPoint(kBlue);
+
   addResidOpt(make_pair(3,0));
+  addResidOpt(make_pair(4,0));
   setResidType(1);
   // -------------------------------------------- //
 
@@ -91,8 +107,21 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   fillHist("D0_LOGENDVERTEX_CHI2", TMath::Log( v->D0_ENDVERTEX_CHI2 ) );
   fillHist("Bplus_ENDVERTEX_CHI2",  v->Bplus_ENDVERTEX_CHI2 ) ;
   fillHist("D0_ENDVERTEX_CHI2",  v->D0_ENDVERTEX_CHI2 ) ;
-  fillHist("Kminus_PIDK", v->Kminus_PIDK );
-  fillHist("piplus_PIDK", v->piplus_PIDK );
+
+  fillHist("Kminus_PIDK"  , v->Kminus_PIDK );
+  fillHist("piplus_PIDK"  , v->piplus_PIDK );
+  fillHist("Kminus_NNK"   , v->Kminus_NNK  );
+  fillHist("piplus_NNK"   , v->piplus_NNK  );
+  fillHist("Kminus_NNKpi" , v->Kminus_NNKpi);
+  fillHist("piplus_NNKpi" , v->piplus_NNKpi);
+  fillHist("Kminus_NNpi"  , v->Kminus_NNpi );
+  fillHist("piplus_NNpi"  , v->piplus_NNpi );
+  fillHist("Kminus_ghost" , v->Kminus_ghost);
+  fillHist("piplus_ghost" , v->piplus_ghost);
+  fillHist("Kminus_MINIPCHI2", v->Kminus_MINIPCHI2);
+  fillHist("piplus_MINIPCHI2", v->piplus_MINIPCHI2);
+  fillHist("muplus_MINIPCHI2", v->muplus_MINIPCHI2);
+
   fillHist("bu_rejection_bdtoutput", v->bu_rejection_bdtoutput);
   fillHist("nCandidate", int(v->nCandidate) );
   return true;

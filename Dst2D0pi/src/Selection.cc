@@ -19,12 +19,16 @@ bool Dst2D0pi::Selection::AnalyseEvent(){
   //
   //
   //
-  if ( ! v->Dst_Hlt1CalibTrackingKPiDecision_TOS &&
-       ! v->Dst_Hlt1CalibTrackingKKDecision_TOS  &&
-       ! v->Dst_Hlt1CalibTrackingPiPiDecision_TOS   ) return false;
+  if ( ! v->Dst_2010_plus_Hlt1CalibTrackingKPiDecision_TOS &&
+       ! v->Dst_2010_plus_Hlt1CalibTrackingKKDecision_TOS  &&
+       ! v->Dst_2010_plus_Hlt1CalibTrackingPiPiDecision_TOS   ) return false;
+
+  //if ( v->D0_PT < 4000 ) return false;
+  //if ( v->D0_MINIPCHI2 < 5 ) return false;
+  //if ( (v->Dst_2010_plus_M - v->D0_M) > 150 ) return false;
 
   //if ( (v->Dst_M - v->D0_M) > 150 ) return false;
-  if ( v->D0_TAU < 0. ) return false;
+  //if ( v->D0_TAU < 0. ) return false;
   //if ( v->D0_MINIPCHI2 < 3. ) return false;
   //if ( v->Dst_M < 1980 ) return false;
   //if ( v->Dst_M > 2040 ) return false;

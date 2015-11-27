@@ -55,7 +55,8 @@ FitterBase::FitterBase(TString wsname, TString name, bool _verbose, bool _debug)
   pBoxX(0.22),
   pDrawLog(false),
   pTitle(""),
-  pResidType(0)
+  pResidType(0),
+  pRedPull(-1)
 {
   if ( !debug ) {
     RooMsgService::instance().setGlobalKillBelow(FATAL);
@@ -63,10 +64,18 @@ FitterBase::FitterBase(TString wsname, TString name, bool _verbose, bool _debug)
   }
   gROOT->ProcessLine(".x ~/bin/lhcbStyle.C");
   gStyle->SetPalette(1);
+  // make ws
 	w = new RooWorkspace(wsname);
+  // add itype and eventNumber (saved by default)
+  w->factory( "itype[-9999,9999]" );
+  w->factory(" eventNumber[0,10e10]" );
+  // make observables
 	RooArgSet *observables = new RooArgSet();
+  observables->add( *w->var("itype") );
+  observables->add( *w->var("eventNumber") );
 	w->defineSet("observables",*observables);
 	delete observables;
+  // make constraints
   RooArgSet *constraints = new RooArgSet();
   w->defineSet("constraints",*constraints);
   delete constraints;
@@ -133,6 +142,14 @@ void FitterBase::addObsVar(TString name, short int min, short int max) {
   addObsVar(name,name,"",min,max);
 }
 
+void FitterBase::addObsVar(TString name, long int min, long int max) {
+  addObsVar(name,name,"",min,max);
+}
+
+void FitterBase::addObsVar(TString name, bool start_val) {
+  addObsVar(name,name,"",start_val);
+}
+
 void FitterBase::addObsVar(TString name, TString title, TString unit, double min, double max){
 	w->factory(Form("%s[%f,%f]",name.Data(),min,max));
 	((RooArgSet*)w->set("observables"))->add(*w->var(name));
@@ -156,7 +173,10 @@ void FitterBase::addObsVar(TString name, TString title, TString unit, float min,
 }
 
 void FitterBase::addObsVar(TString name, TString title, TString unit, int min, int max){
-	w->factory(Form("%s[%d,%d]",name.Data(),min,max));
+	if ( name == "itype" ) {
+    error("itype is already read you cannot add it. It will get saved with the output by default");
+  }
+  w->factory(Form("%s[%d,%d]",name.Data(),min,max));
 	((RooArgSet*)w->set("observables"))->add(*w->var(name));
   w->var(name)->SetTitle(title);
   w->var(name)->setUnit(unit);
@@ -172,6 +192,28 @@ void FitterBase::addObsVar(TString name, TString title, TString unit, short int 
   w->var(name)->SetTitle(title);
   w->var(name)->setUnit(unit);
   obs_values_s[name] = -99;
+  if ( verbose || debug ) {
+    print("Added observable "+name);
+  }
+}
+
+void FitterBase::addObsVar(TString name, TString title, TString unit, long int min, long int max) {
+	w->factory(Form("%s[%ld,%ld]",name.Data(),min,max));
+	((RooArgSet*)w->set("observables"))->add(*w->var(name));
+  w->var(name)->SetTitle(title);
+  w->var(name)->setUnit(unit);
+  obs_values_l[name] = -99;
+  if ( verbose || debug ) {
+    print("Added observable "+name);
+  }
+}
+
+void FitterBase::addObsVar(TString name, TString title, TString unit, bool start_val) {
+	w->factory(Form("%s[%d,%d]",name.Data(),0,1));
+	((RooArgSet*)w->set("observables"))->add(*w->var(name));
+  w->var(name)->SetTitle(title);
+  w->var(name)->setUnit(unit);
+  obs_values_b[name] = start_val;
   if ( verbose || debug ) {
     print("Added observable "+name);
   }
@@ -281,7 +323,9 @@ void FitterBase::fillDatasets(TString fname, TString tname){
 
   // default variables to read
 	int itype;
+  ULong64_t eventNumber;
 	tree->SetBranchAddress("itype",&itype);
+  tree->SetBranchAddress("eventNumber",&eventNumber);
 
   // set branch addresses from tree into container for observables
   //RooRealVar *parg;
@@ -303,6 +347,12 @@ void FitterBase::fillDatasets(TString fname, TString tname){
   for (map<TString,short int>::iterator it = obs_values_s.begin(); it != obs_values_s.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_s[it->first]);
   }
+  for (map<TString,long int>::iterator it = obs_values_l.begin(); it != obs_values_l.end(); it++) {
+    tree->SetBranchAddress(it->first, &obs_values_l[it->first]);
+  }
+  for (map<TString,bool>::iterator it = obs_values_b.begin(); it != obs_values_b.end(); it++) {
+    tree->SetBranchAddress(it->first, &obs_values_b[it->first]);
+  }
 
   // set branch address for cut values and requirements
   setBranchAddresses(tree);
@@ -310,6 +360,10 @@ void FitterBase::fillDatasets(TString fname, TString tname){
   // now loop entries
 	for (int e=0; e<tree->GetEntries(); e++){
 		tree->GetEntry(e);
+
+    // set itype and eventNumber
+    w->var("itype")->setVal( itype );
+    w->var("eventNumber")->setVal( eventNumber );
 
     // print occasional entries in debug mode
     if ( debug && e%50000==0 ) {
@@ -327,33 +381,49 @@ void FitterBase::fillDatasets(TString fname, TString tname){
     RooRealVar *parg;
 		TIterator *iter = observables->createIterator();
 		while ((parg = (RooRealVar*)iter->Next())) {
-			//if (obs_values[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values[parg->GetName()] > w->var(parg->GetName())->getMax()) {
-				//passes=false;
-			//}
-			//w->var(parg->GetName())->setVal(obs_values[parg->GetName()]);
-      if ( obs_values_d.find(parg->GetName()) != obs_values_d.end() ) {
+
+      // have to skip itype and eventNumber
+      if ( parg->GetName()==TString("itype") || parg->GetName()==TString("eventNumber") ) {
+        passes=true;
+      }
+      // doubles
+      else if ( obs_values_d.find(parg->GetName()) != obs_values_d.end() ) {
         if (obs_values_d[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values_d[parg->GetName()] > w->var(parg->GetName())->getMax()) {
           passes=false;
         }
         w->var(parg->GetName())->setVal(obs_values_d[parg->GetName()]);
       }
+      // floats
       else if ( obs_values_f.find(parg->GetName()) != obs_values_f.end() ) {
         if (obs_values_f[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values_f[parg->GetName()] > w->var(parg->GetName())->getMax()) {
           passes=false;
         }
         w->var(parg->GetName())->setVal(obs_values_f[parg->GetName()]);
       }
+      // ints
       else if ( obs_values_i.find(parg->GetName()) != obs_values_i.end() ) {
         if (obs_values_i[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values_i[parg->GetName()] > w->var(parg->GetName())->getMax()) {
           passes=false;
         }
         w->var(parg->GetName())->setVal(obs_values_i[parg->GetName()]);
       }
+      // shorts
       else if ( obs_values_s.find(parg->GetName()) != obs_values_s.end() ) {
         if (obs_values_s[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values_s[parg->GetName()] > w->var(parg->GetName())->getMax()) {
           passes=false;
         }
         w->var(parg->GetName())->setVal(obs_values_s[parg->GetName()]);
+      }
+      // longs
+      else if ( obs_values_l.find(parg->GetName()) != obs_values_l.end() ) {
+        if (obs_values_l[parg->GetName()] < w->var(parg->GetName())->getMin() || obs_values_l[parg->GetName()] > w->var(parg->GetName())->getMax()) {
+          passes=false;
+        }
+        w->var(parg->GetName())->setVal(obs_values_l[parg->GetName()]);
+      }
+      // bools
+      else if ( obs_values_b.find(parg->GetName()) != obs_values_b.end() ) {
+        w->var(parg->GetName())->setVal(obs_values_b[parg->GetName()]);
       }
       else {
         cerr << "ERROR -- FitterBase::fillDatasets() -- observable with name " << parg->GetName() << " has not be found in any of the observable maps" << endl;
@@ -392,6 +462,10 @@ void FitterBase::fillOutputTrees( TFile *outf ) {
     TTree *tree = new TTree( dset->GetName(), dset->GetName() );
     cout << Form("Filling output tree: %s",tree->GetName()) << endl;
 
+    // default variables (itype, eventNumber)
+    int itype;
+    ULong64_t eventNumber;
+
     // make map container for variables
     map<TString, double> out_vars;
 
@@ -403,16 +477,22 @@ void FitterBase::fillOutputTrees( TFile *outf ) {
     while ( (var = (RooRealVar*)iter->Next()) ) {
 
       TString br_name = var->GetName();
+      if ( br_name == "itype" || br_name == "eventNumber" ) continue;
       out_vars[br_name] = -999.;
     }
 
     // set tree branches
+    tree->Branch( "itype",       &itype,       "itype/I" );
+    tree->Branch( "eventNumber", &eventNumber, "eventNumber/l" );
     for ( map<TString,double>::iterator val = out_vars.begin(); val != out_vars.end(); val++ ) {
       tree->Branch( val->first ,  &val->second,  val->first+"/D" );
     }
     // fill tree
     for (int i=0; i<dset->numEntries(); i++) {
       const RooArgSet *dset_args = dset->get(i);
+      // defaults
+      itype = int( dset_args->getRealValue( "itype" ) );
+      eventNumber = long( dset_args->getRealValue( "eventNumber" ) );
       // iterate these and add them to obs and sw values as appropriate
       RooRealVar *var;
       TIterator *iter = dset_args->createIterator();
@@ -478,6 +558,9 @@ void FitterBase::defineYieldSet(TString pdf_name){
   TIterator *iter = comps->createIterator();
   while ( (parg = (RooAbsPdf*)iter->Next()) ) {
     if ( parg == w->pdf(pdf_name) ) continue;
+    // also catch the yield constrained to another yield case (i.e. that it's not really a pdf)
+    if ( ! w->pdf(parg->GetName()) ) continue;
+    parg->Print();
     RooArgSet *argset = parg->getParameters(*w->set("observables"));
     nonYieldParams->add(*argset);
     allNonYieldParams->add(*argset);
@@ -664,6 +747,26 @@ void FitterBase::plot(TString var, TString data, TString pdf, int resid, TString
     line.SetLineColor(kBlue);
     line.DrawLine(plot->GetXaxis()->GetXmin(),0.,plot->GetXaxis()->GetXmax(),0.);
     underHist->Draw("Psame");
+    // draw red pull points
+    if (pRedPull>-1) {
+      RooHist *redPull = new RooHist();
+      int newp=0;
+      for (int p=0; p<underHist->GetN(); p++) {
+        double x,y;
+        underHist->GetPoint(p,x,y);
+        if ( TMath::Abs(y)>pRedPull ) {
+          redPull->SetPoint(newp,x,y);
+          redPull->SetPointError(newp,0.,0.,underHist->GetErrorYlow(p),underHist->GetErrorYhigh(p));
+          newp++;
+        }
+      }
+      redPull->SetLineWidth(underHist->GetLineWidth());
+      redPull->SetMarkerStyle(underHist->GetMarkerStyle());
+      redPull->SetMarkerSize(underHist->GetMarkerSize());
+      redPull->SetLineColor(kRed);
+      redPull->SetMarkerColor(kRed);
+      redPull->Draw("Psame");
+    }
   }
   canv->Update();
   canv->Modified();
@@ -840,6 +943,26 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
     line.SetLineColor(kBlue);
     line.DrawLine(plot->GetXaxis()->GetXmin(),0.,plot->GetXaxis()->GetXmax(),0.);
     underHist->Draw("Psame");
+    // draw red pull points
+    if (pRedPull>-1) {
+      RooHist *redPull = new RooHist();
+      int newp=0;
+      for (int p=0; p<underHist->GetN(); p++) {
+        double x,y;
+        underHist->GetPoint(p,x,y);
+        if ( TMath::Abs(y)>pRedPull ) {
+          redPull->SetPoint(newp,x,y);
+          redPull->SetPointError(newp,0.,0.,underHist->GetErrorYlow(p),underHist->GetErrorYhigh(p));
+          newp++;
+        }
+      }
+      redPull->SetLineWidth(underHist->GetLineWidth());
+      redPull->SetMarkerStyle(underHist->GetMarkerStyle());
+      redPull->SetMarkerSize(underHist->GetMarkerSize());
+      redPull->SetLineColor(kRed);
+      redPull->SetMarkerColor(kRed);
+      redPull->Draw("Psame");
+    }
   }
 
   canv->Update();
@@ -1018,32 +1141,44 @@ void FitterBase::fit(TString pdf, TString data, bool constrained) {
   }
 }
 
-void FitterBase::sfit(TString pdf_name, TString data_name) {
+void FitterBase::sfit(TString pdf_name, TString data_name, TString yields_name, TString nonyields_name) {
 
   // check pdf, data and yields exist
+  //
+  if ( !w->loadSnapshot(Form("%s_fit",pdf_name.Data())) ) {
+    error( Form("FitterBase::sfit() -- No snapshot %s_fit found. You must fit the pdf to the data before sweighting",pdf_name.Data()) );
+  }
+  w->loadSnapshot(Form("%s_fit",pdf_name.Data()));
+  // pdf
   RooAbsPdf *pdf    = w->pdf(pdf_name);
   if ( !pdf ) {
-    cerr << "ERROR -- FitterBase::sfit() -- pdf name \'" << pdf_name << "\' is NULL" << endl;
+    error( Form("FitterBase::sfit() -- pdf name \'%s\' is NULL",pdf_name.Data()) );
   }
+  // data
   RooDataSet *data  = (RooDataSet*)w->data(data_name);
   if ( !data ) {
-    cerr << "ERROR -- FitterBase::sfit() -- data name \'" << data_name << "\' is NULL" << endl;
-    exit(1);
+    error( Form("FitterBase::sfit() -- data name \'%s\' is NULL",data_name.Data()) );
   }
-  RooArgSet *yields = (RooArgSet*)w->set(Form("%s_yield_params",pdf_name.Data()));
-  if ( !yields ) {
-    cerr << "ERROR -- FitterBase::sfit() -- yields name \'" << pdf_name << "_yield_params\' is NULL" << endl;
-    exit(1);
+  // yields
+  if ( yields_name=="" ) {
+    yields_name = Form("%s_yield_params",pdf_name.Data());
   }
-  RooArgSet *nonyields = (RooArgSet*)w->set(Form("%s_nonyield_params",pdf_name.Data()));
+  RooArgSet *yields = (RooArgSet*)w->set(yields_name);
   if ( !yields ) {
-    cerr << "ERROR -- FitterBase::sfit() -- nonyields name \'" << pdf_name << "_nonyield_params\' is NULL" << endl;
-    exit(1);
+    error( Form("FitterBase::sfit() -- yields name \'%s\' is NULL",yields_name.Data()) );
+  }
+  // nonyields
+  if ( nonyields_name=="" ) {
+    nonyields_name = Form("%s_nonyield_params",pdf_name.Data());
+  }
+  RooArgSet *nonyields = (RooArgSet*)w->set(nonyields_name);
+  if ( !nonyields ) {
+    error( Form("FitterBase::sfit() -- nonyields name \'%s\' is NULL",nonyields_name.Data()) );
   }
 
   print("Performing sfit of pdf: "+pdf_name+" to data: "+data_name);
 
-  pdf->fitTo(*data, Extended());
+  pdf->fitTo(*data, Extended()); // shouldn't need another fit as should have loaded snapshot but it doesn't work without it
   nonyields->setAttribAll("Constant");
 
   if ( verbose || debug ) {
@@ -1056,6 +1191,10 @@ void FitterBase::sfit(TString pdf_name, TString data_name) {
       nonyields->Print("v") :
       nonyields->Print()    ;
   }
+
+  //print("What's happening?");
+  //TString a;
+  //cin >> a;
 
   RooStats::SPlot *sData = new RooStats::SPlot(Form("%s_sfit",data->GetName()),Form("%s sfit",data->GetTitle()), *data, pdf, RooArgList(*yields));
   w->import(*sData);
@@ -1343,6 +1482,9 @@ bool FitterBase::passesRequirements(DataSet &dset){
 void FitterBase::printEntry(int entry){
 
   print(Form("----- Printing contents of entry %-6d: -----",entry));
+  print("   DEFAULT:", true);
+  print(Form(" \t %-20s %d", "itype", int(w->var("itype")->getVal())),true);
+  print(Form(" \t %-20s %ld", "eventNumber", long(w->var("eventNumber")->getVal())),true);
   print("   OBSERVABLES:",true);
   for (map<TString,double>::iterator val = obs_values_d.begin(); val != obs_values_d.end(); val++){
     print(Form(" \t %-20s %f",val->first.Data(),val->second),true);
@@ -1354,6 +1496,12 @@ void FitterBase::printEntry(int entry){
     print(Form(" \t %-20s %d",val->first.Data(),val->second),true);
   }
   for (map<TString,short int>::iterator val = obs_values_s.begin(); val != obs_values_s.end(); val++){
+    print(Form(" \t %-20s %d",val->first.Data(),val->second),true);
+  }
+  for (map<TString,long int>::iterator val = obs_values_l.begin(); val != obs_values_l.end(); val++){
+    print(Form(" \t %-20s %ld",val->first.Data(),val->second),true);
+  }
+  for (map<TString,bool>::iterator val = obs_values_b.begin(); val != obs_values_b.end(); val++){
     print(Form(" \t %-20s %d",val->first.Data(),val->second),true);
   }
   print("   CUTS/REQUIREMENTS:",true);
