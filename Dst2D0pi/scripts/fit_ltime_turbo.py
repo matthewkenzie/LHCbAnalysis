@@ -1,0 +1,142 @@
+import ROOT as r
+r.gROOT.ProcessLine('.x ~/bin/lhcbStyle.C')
+
+xmin = 0.7
+xmax = 5
+
+tf = r.TFile('nTuples/TurboOut.root')
+tree = tf.Get('TeslaTuple/DecayTree')
+
+cuts = r.TCut( "D0_Hlt1CalibTrackingKPiDecision_TOS && (Dst_M-D0_M>145) && (Dst_M-D0_M<146) && abs(Dst_DIRA_OWNPV)>0.999 && (Dst_ENDVERTEX_CHI2<5) && Kminus_PIDK>40 && piplus_PIDK<-40")
+#cuts = r.TCut( "D0_Hlt1CalibTrackingKPiDecision_TOS && D0_MINIPCHI2<9 && (Dst_M-D0_M)>143 && (Dst_M-D0_M)<148" )
+#cuts = r.TCut("")
+
+th1f_t = r.TH1F('t','',100,0,5)
+th1f_dstm = r.TH1F('dstm','',100,1950,2050)
+th1f_dm = r.TH1F('dm','',100,1830,1900)
+
+tree.Draw('1000.*D0_LTIME>>t',cuts,'goff')
+tree.Draw('Dst_M>>dstm',cuts,'goff')
+tree.Draw('D0_M>>dm',cuts,'goff')
+
+
+print th1f_t.GetBinWidth(1)
+
+c = r.TCanvas('c','c',1200,800)
+c.Divide(2,2)
+c.cd(1)
+th1f_t.Draw("HIST")
+c.cd(2)
+th1f_dstm.Draw("HIST")
+c.cd(3)
+th1f_dm.Draw("HIST")
+c.Update()
+c.Modified()
+
+raw_input()
+import sys
+sys.exit()
+
+th1f = th1f_t.Clone()
+tf1 = r.TF1('f','[0]*exp(-x/[1])',xmin+0.05,xmax)
+tf1.SetParameter(0,7.)
+tf1.SetParameter(1,0.4)
+#tf1 = r.TF1('f','expo',xmin,10.)
+
+th1f.Fit(tf1,'N','',xmin+0.05,xmax)
+
+lat = r.TLatex()
+lat.SetNDC()
+lat.SetTextSize(0.1)
+
+fr = r.TLatex()
+fr.SetNDC()
+fr.SetTextSize(0.07)
+
+th1f.GetXaxis().SetTitle('t(D^{0}) [ps]')
+th1f.GetXaxis().SetTitleSize(0.07)
+th1f.GetXaxis().SetTitleOffset(0.9)
+
+import os
+os.system('mkdir -p plots/LFit/pdf')
+os.system('mkdir -p plots/LFit/png')
+os.system('mkdir -p plots/LFit/C')
+
+canv = r.TCanvas()
+th1f.Draw("LEP")
+tf1.SetLineColor(r.kRed)
+tf1.SetLineWidth(2)
+tf1.Draw("Lsame")
+th1f.Draw("LEPsame")
+lat.DrawLatex(0.75,0.8,'LHCb')
+#fr.DrawLatex(0.58,0.7,'#tau = %5.1f #pm %-4.1f fs'%(tf1.GetParameter(1)*1000.,tf1.GetParError(1)*1000.))
+canv.Update()
+canv.Modified()
+canv.Print("plots/LFit/pdf/lfit.pdf")
+canv.Print("plots/LFit/png/lfit.png")
+canv.Print("plots/LFit/C/lfit.C")
+
+canv2 = r.TCanvas()
+canv.DrawClonePad()
+canv2.SetLogy()
+canv2.Update()
+canv2.Modified()
+canv2.Print("plots/LFit/pdf/lfit_log.pdf")
+canv2.Print("plots/LFit/png/lfit_log.png")
+canv2.Print("plots/LFit/C/lfit_log.C")
+
+th1f_dmass = r.TH1F("dmass","",50,1815,1915)
+tree.Draw('D0_M>>dmass','1000.*D0_LIFETIME>%f && D0_Hlt1CalibTrackingKPiDecision_TOS'%xmin,'goff')
+canv3 = r.TCanvas()
+th1f_dmass.GetXaxis().SetTitle('m(D^{0}) [MeV/c^{2}]')
+th1f_dmass.GetXaxis().SetTitleSize(0.07)
+th1f_dmass.GetXaxis().SetTitleOffset(0.9)
+tf1_dmass = r.TF1("f_dmass","gaus(0)+gaus(3)+pol1(6)",1815,1915)
+tf1_dmass.SetParameter(0,1000)
+tf1_dmass.SetParameter(1,1860)
+tf1_dmass.SetParameter(2,10)
+tf1_dmass.SetParameter(3,1000)
+tf1_dmass.SetParameter(4,1860)
+tf1_dmass.SetParameter(5,10)
+th1f_dmass.Fit(tf1_dmass,'N')
+th1f_dmass.Draw("LEP")
+tf1_dmass.SetLineColor(r.kRed)
+tf1_dmass.SetLineWidth(2)
+tf1_dmass.Draw("Lsame")
+th1f_dmass.Draw("LEPsame")
+lat.DrawLatex(0.75,0.8,'LHCb')
+canv3.Update()
+canv3.Modified()
+canv3.Print("plots/LFit/pdf/dmass.pdf")
+canv3.Print("plots/LFit/png/dmass.png")
+canv3.Print("plots/LFit/C/dmass.C")
+
+th1f_dstmass = r.TH1F("dstmass","",50,1960,2060)
+tree.Draw('Dst_2010_plus_M>>dstmass','1000.*D0_LIFETIME>%f && D0_Hlt1CalibTrackingKPiDecision_TOS'%xmin,'goff')
+canv4 = r.TCanvas()
+th1f_dstmass.GetXaxis().SetTitle('m(D*^{+}) [MeV/c^{2}]')
+th1f_dstmass.GetXaxis().SetTitleSize(0.07)
+th1f_dstmass.GetXaxis().SetTitleOffset(0.9)
+tf1_dstmass = r.TF1("f_dstmass","gaus(0)+gaus(3)+pol1(6)",1960,2060)
+tf1_dstmass.SetParameter(0,1000)
+tf1_dstmass.SetParameter(1,2010)
+tf1_dstmass.SetParameter(2,10)
+tf1_dstmass.SetParameter(3,1000)
+tf1_dstmass.SetParameter(4,2010)
+tf1_dstmass.SetParameter(5,10)
+th1f_dstmass.Fit(tf1_dstmass,'N')
+th1f_dstmass.Draw("LEP")
+tf1_dstmass.SetLineColor(r.kRed)
+tf1_dstmass.SetLineWidth(2)
+tf1_dstmass.Draw("Lsame")
+th1f_dstmass.Draw("LEPsame")
+lat.DrawLatex(0.75,0.8,'LHCb')
+canv4.Update()
+canv4.Modified()
+canv4.Print("plots/LFit/pdf/dstmass.pdf")
+canv4.Print("plots/LFit/png/dstmass.png")
+canv4.Print("plots/LFit/C/dstmass.C")
+
+
+
+raw_input()
