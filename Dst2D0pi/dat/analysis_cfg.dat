@@ -14,5 +14,6 @@
 # MC
 
 # Data
-itype=80   sqrts=8  year=2012  name=Data        fname=nTuples/HltTuple.root  tname=HltTuple/DecayTree
+#itype=80   sqrts=8  year=2012  name=Data        fname=nTuples/HltTuple.root  tname=HltTuple/DecayTree
+itype=80   sqrts=8  year=2012  name=Data        fname=/afs/cern.ch/user/m/mkenzie/eos/lhcb/user/m/mkenzie/HLT/TurboOut.root  tname=TeslaTuple/DecayTree
 

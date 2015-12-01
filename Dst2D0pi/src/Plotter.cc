@@ -72,11 +72,11 @@ void Dst2D0pi::Plotter::defineDrawingConfig(){
 bool Dst2D0pi::Plotter::fillHistograms(){
 
   // fill hists now
-  fillHist("Dst_M"       , v->Dst_2010_plus_M        );
+  fillHist("Dst_M"       , v->Dst_M        );
   fillHist("D0_M"        , v->D0_M         );
-  fillHist("DstD0_Mdiff" , (v->Dst_2010_plus_M-v->D0_M) );
+  fillHist("DstD0_Mdiff" , (v->Dst_M-v->D0_M) );
   fillHist("D0_PT"       , v->D0_PT        );
-  fillHist("D0_LIFETIME" , v->D0_LIFETIME       );
+  fillHist("D0_LIFETIME" , v->D0_LTIME       );
   fillHist("D0_TAU"      , v->D0_TAU       );
   fillHist("D0_MINIPCHI2", v->D0_MINIPCHI2 );
   fillHist("D0_LOGMINIPCHI2", TMath::Log(v->D0_MINIPCHI2) );
