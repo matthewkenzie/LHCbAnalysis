@@ -19,6 +19,9 @@ namespace Dst2D0pi {
       void setInputBranches(TTree *tree);
       void setOutputBranches(TTree *tree);
 
+      // My Var
+      Double_t             D0_LTIME_ps                             ;
+
       Double_t             Dst_BPVVDZ                              ;
       Double_t             Dst_DIRA_OWNPV                          ;
       Double_t             Dst_ENDVERTEX_CHI2                      ;

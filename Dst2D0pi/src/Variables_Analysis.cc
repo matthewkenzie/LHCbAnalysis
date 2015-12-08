@@ -520,6 +520,8 @@ void Dst2D0pi::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("evname"                                , &evname                                  );
   tree->Branch("year"                                  , &year                                    );
 
+  tree->Branch("D0_LTIME_ps"                           , &D0_LTIME_ps                             , "D0_LTIME_ps/D"                         );
+
   tree->Branch("Dst_BPVVDZ"                            , &Dst_BPVVDZ                              , "Dst_BPVVDZ/D"                          );
   tree->Branch("Dst_DIRA_OWNPV"                        , &Dst_DIRA_OWNPV                          , "Dst_DIRA_OWNPV/D"                      );
   tree->Branch("Dst_ENDVERTEX_CHI2"                    , &Dst_ENDVERTEX_CHI2                      , "Dst_ENDVERTEX_CHI2/D"                  );

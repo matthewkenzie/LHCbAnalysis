@@ -28,6 +28,9 @@ bool Dst2D0pi::Selection::AnalyseEvent(){
   if ( TMath::Abs( v->Dst_DIRA_OWNPV ) < 0.9999 ) return false;
   if ( v->D0_MINIPCHI2>9 ) return false;
 
+  // set var
+  v->D0_LTIME_ps = 1000.* v->D0_LTIME;
+
 	return true;
 }
 
