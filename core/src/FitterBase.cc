@@ -829,11 +829,13 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
 
   upperPad->cd();
   plot->Draw();
-  leg->Draw("same");
+  if ( leg->GetNRows() > 0 ) {
+    leg->Draw("same");
+  }
 
   // if requested plot title
   if ( pTitle != "" ) {
-    TPaveText *text = new TPaveText(0.22,0.8,0.45,0.9,"ndc");
+    TPaveText *text = new TPaveText(0.24,0.8,0.47,0.9,"ndc");
     text->SetFillColor(0);
     text->SetShadowColor(0);
     text->SetLineColor(0);
@@ -1116,7 +1118,10 @@ void FitterBase::plot2D(TString xvar, TString yvar, TString obj) {
 
 }
 
-void FitterBase::fit(TString pdf, TString data, bool constrained) {
+void FitterBase::fit(TString pdf, TString data, bool constrained, double rangeLow, double rangeHigh) {
+
+  bool range = false;
+  if ( rangeLow > -999 && rangeHigh > -999 && rangeHigh>rangeLow ) range = true;
 
   print("Fitting pdf: "+pdf+" to dataset: "+data);
 
@@ -1128,10 +1133,16 @@ void FitterBase::fit(TString pdf, TString data, bool constrained) {
 
   if (w->pdf(pdf) && w->data(data)) {
     if ( constrained ){
-      w->pdf(pdf)->fitTo(*w->data(data),Constrained());
+      if ( range )
+        w->pdf(pdf)->fitTo(*w->data(data),Constrained(),Range(rangeLow,rangeHigh));
+      else
+        w->pdf(pdf)->fitTo(*w->data(data),Constrained());
     }
     else {
-      w->pdf(pdf)->fitTo(*w->data(data));
+      if ( range )
+        w->pdf(pdf)->fitTo(*w->data(data),Range(rangeLow,rangeHigh));
+      else
+        w->pdf(pdf)->fitTo(*w->data(data));
     }
   }
   saveSnapshot(Form("%s_fit",pdf.Data()),pdf);

@@ -115,7 +115,7 @@ class FitterBase {
     void saveSnapshot(TString name, TString pdf);
     void loadSnapshot(TString name);
 
-		void fit(TString pdf, TString data, bool constrained=false);
+		void fit(TString pdf, TString data, bool constrained=false, double rangeLow=-999, double rangeHigh=-999);
     void freeze(TString pdf);
 
     double integral(TString pdf, TString var, TString scale="", double low=-999, double high=-999);
