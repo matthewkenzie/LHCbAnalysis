@@ -22,10 +22,9 @@ bool Dst2D0pi::Selection::AnalyseEvent(){
        ! v->Dst_Hlt1CalibTrackingKPiDecision_TOS ||
        ! v->Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS ) return false;
   
-  if ( (v->Dst_M - v->D0_M) < 144.5 ) return false;
-  if ( (v->Dst_M - v->D0_M) > 146.5 ) return false;
+  if ( (v->Dst_M - v->D0_M) < 144 ) return false;
+  if ( (v->Dst_M - v->D0_M) > 147 ) return false;
   
-  if ( TMath::Abs( v->Dst_DIRA_OWNPV ) < 0.9999 ) return false;
   if ( v->D0_MINIPCHI2>9 ) return false;
 
   // set var

@@ -5,6 +5,9 @@ import sys
 
 files = sys.argv[1:]
 
+runningSum = 0.
+runningErr = 0.
+
 for f in files:
 
   tf = r.TFile(f)
@@ -19,4 +22,8 @@ for f in files:
   print '%40s  :   %6.2f  +/- %6.2f pb' %(f,intL,errL)
 
   tf.Close()
+  
+  runningSum += intL
+  runningErr += errL
 
+print 'TOTAL  :  %6.2f  +/- %6.2f pb' %(runningSum,runningErr)
