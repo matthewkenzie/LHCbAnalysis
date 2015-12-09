@@ -11,9 +11,9 @@ Dst2D0pi::LifetimeFitter::~LifetimeFitter(){}
 
 void Dst2D0pi::LifetimeFitter::addObsVars(){
 
-  addObsVar("Dst_M",       "m(D*^{+})", "MeV", 1985., 2035.);
-  addObsVar("D0_M",        "m(D^{0})",  "MeV", 1830., 1900.);
-  addObsVar("D0_LTIME_ps", "t(D^{0})",  "ps" , 0.00, 0.5);
+  addObsVar("Dst_M",       "m(D*^{+})", "MeV", 1950., 2080.);
+  addObsVar("D0_M",        "m(D^{0})",  "MeV", 1810., 1920.);
+  addObsVar("D0_LTIME_ps", "t(D^{0})",  "ps" , 0.00 , 5.);
 }
 
 void Dst2D0pi::LifetimeFitter::addCuts(){
@@ -49,17 +49,22 @@ void Dst2D0pi::LifetimeFitter::constructPdfs() {
 
 void Dst2D0pi::LifetimeFitter::run() {
 
-  fit("dst_mass", "Data");
-  fit("d0_mass", "Data");
-  fit("d0_t", "Data", false, 0.00025, 0.005);
+  //w->var("Dst_M")->setBins(260);
+  //w->var("D0_M")->setBins(220);
+  //w->var("D0_LTIME_ps")->setBins(200);
+  //makeDataHist( "Data", "DataHist" );
+
+  fit("dst_mass", "Data", false, 1970, 2050);
+  fit("d0_mass", "Data" , false, 1820,1910);
+  fit("d0_t", "Data", false, 0.25, 5.);
 
 }
 
 void Dst2D0pi::LifetimeFitter::makePlots() {
 
-  plot( "Dst_M","Data","dst_mass",2 );
-  plot( "D0_M" ,"Data","d0_mass" ,2 );
-  plot( "D0_LTIME_ps", "Data", "d0_t", 2);
+  plot( "Dst_M","Data","dst_mass", 2 , "", false, 1970, 2050 );
+  plot( "D0_M" ,"Data","d0_mass" , 2 , "", false, 1820, 1910 );
+  plot( "D0_LTIME_ps", "Data", "d0_t", 2, "", false, 0.,5.   );
 
   PlotComponent pc_data( "Data", "Data" );
   pc_data.setDefaultDataStyle();
@@ -100,14 +105,14 @@ void Dst2D0pi::LifetimeFitter::makePlots() {
   setResidType(2);
   setRedPull(3);
 
-  plot("Dst_M", plotComps_Dst_M, "Dst_M");
-  plot("D0_M",  plotComps_D0_M,  "D0_M" );
+  plot("Dst_M", plotComps_Dst_M, "Dst_M", 0, 1970, 2050 );
+  plot("D0_M",  plotComps_D0_M,  "D0_M" , 0, 1820, 1910 );
   plot("D0_LTIME_ps", plotComps_D0_t, "D0_LTIME_ps");
 
   setResidType(0);
   setDrawLog(false);
-  plot("Dst_M", plotComps_Dst_M, "Dst_M_NoPull");
-  plot("D0_M",  plotComps_D0_M,  "D0_M_NoPull" );
+  plot("Dst_M", plotComps_Dst_M, "Dst_M_NoPull", 0, 1970, 2050 );
+  plot("D0_M",  plotComps_D0_M,  "D0_M_NoPull" , 0, 1820, 1910 );
   plot("D0_LTIME_ps", plotComps_D0_t, "D0_LTIME_ps_NoPull");
 
 }

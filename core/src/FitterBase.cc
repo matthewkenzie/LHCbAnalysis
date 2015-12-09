@@ -448,6 +448,18 @@ void FitterBase::fillDatasets(TString fname, TString tname){
   tf->Close();
 }
 
+void FitterBase::makeDataHist(TString dsname, TString dhname) {
+
+  RooDataSet *data = (RooDataSet*)w->data(dsname);
+  if ( !data ) error( Form("ERROR -- FitterBase::makeDataHist() -- dataset %s does not exist in workspace",dsname.Data() ) );
+
+  print( Form("Making DataHist %s from DataSet %s",dhname.Data(),dsname.Data() ) );
+  RooDataHist *dhist = new RooDataHist(dhname,"",*w->set("observables"), *data);
+  w->import( *dhist );
+  delete dhist;
+
+}
+
 void FitterBase::fillOutputTrees( TFile *outf ) {
 
   TDirectory *dir = outf->mkdir("trees");
@@ -627,13 +639,16 @@ void FitterBase::plotMultiCanv( int n, TString name, int canv_w, int canv_h ) {
   canv->Print(Form("plots/%s/C/%s.C",    fitterName.Data(),name.Data()));
 }
 
-void FitterBase::plot(TString var, TString data, TString pdf, int resid, TString title, bool drawLeg){
+void FitterBase::plot(TString var, TString data, TString pdf, int resid, TString title, bool drawLeg, double xlow, double xhigh){
+
+  if ( xlow < 0 ) xlow = w->var(var)->getMin();
+  if ( xhigh < 0 ) xhigh = w->var(var)->getMax();
 
   w->pdf(pdf) ?
     print("Plotting data: "+data+" and pdf: "+pdf+" in variable: "+var) :
     print("Plotting data: "+data+" in variable: "+var) ;
 
-  RooPlot *plot = w->var(var)->frame(Title(data));
+  RooPlot *plot = w->var(var)->frame(Title(data),Range(xlow,xhigh));
   plot->GetXaxis()->SetTitleOffset(0.8);
   plot->GetYaxis()->SetTitleOffset(0.75);
 
@@ -778,7 +793,10 @@ void FitterBase::plot(TString var, TString data, TString pdf, int resid, TString
   delete leg;
 }
 
-void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fname, const RooArgList *params) {
+void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fname, const RooArgList *params, double xlow, double xhigh) {
+
+  if ( xlow < 0 ) xlow = w->var(var)->getMin();
+  if ( xhigh < 0 ) xhigh = w->var(var)->getMax();
 
   print("Plotting following components in variable: "+var);
   for (unsigned int i=0; i<plotComps.size(); i++){
@@ -795,7 +813,7 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
   lowerPad->Draw();
   upperPad->SetLeftMargin(0.18);
   lowerPad->SetLeftMargin(0.18);
-  RooPlot *plot = w->var(var)->frame();
+  RooPlot *plot = w->var(var)->frame(Range(xlow,xhigh));
   TString xtitle = w->var(var)->GetTitle();
   if (TString(w->var(var)->getUnit())!=TString("")) xtitle = Form("%s (%s)",w->var(var)->GetTitle(),w->var(var)->getUnit());
   plot->GetXaxis()->SetTitle(xtitle);
@@ -819,6 +837,7 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
 
   // set specifics for residuals
   RooHist *underHist;
+  RooHist *redPull;
   if ( pResidType>0 ) {
     if (pResidType==1) underHist = plot->residHist();
     if (pResidType==2) underHist = plot->pullHist();
@@ -947,7 +966,7 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
     underHist->Draw("Psame");
     // draw red pull points
     if (pRedPull>-1) {
-      RooHist *redPull = new RooHist();
+      redPull = new RooHist();
       int newp=0;
       for (int p=0; p<underHist->GetN(); p++) {
         double x,y;
@@ -1043,6 +1062,9 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
       line.SetLineColor(kBlue);
       line.DrawLine(plot->GetXaxis()->GetXmin(),0.,plot->GetXaxis()->GetXmax(),0.);
       underHist->Draw("Psame");
+      if ( pRedPull>0 ) {
+        redPull->Draw("Psame");
+      }
     }
     canvLog->Update();
     canvLog->Modified();

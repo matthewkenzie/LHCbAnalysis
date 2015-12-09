@@ -81,6 +81,7 @@ class FitterBase {
 
     void makeDatasets();
     void fillDatasets(TString fname, TString tname);
+    void makeDataHist(TString dsname, TString dhname);
 
     void save(TString fname);
     void print(TString line, bool blank=false);
@@ -127,8 +128,8 @@ class FitterBase {
 
     void plotMultiCanv( int n, TString name, int canv_w=800, int canv_h=600 );
 
-    void plot(TString var, TString data, TString pdf="", int resid=0, TString title="", bool drawLeg=true); // resid==0 (no resid), ==1 (resid hist), ==2 (pull hist)
-    void plot(TString var, std::vector<PlotComponent> plotComps, TString fname, const RooArgList *params=NULL);
+    void plot(TString var, TString data, TString pdf="", int resid=0, TString title="", bool drawLeg=true, double xlow=-1, double xhigh=-1); // resid==0 (no resid), ==1 (resid hist), ==2 (pull hist)
+    void plot(TString var, std::vector<PlotComponent> plotComps, TString fname, const RooArgList *params=NULL, double xlow=-1, double xhigh=-1);
     void plot2D(TString xvar, TString yvar, TString obj);
 
     void splot(TString var, TString data, TString title="", int bins=-1);
