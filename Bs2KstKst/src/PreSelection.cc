@@ -78,7 +78,7 @@ bool Bs2KstKst::PreSelection::AnalyseEvent(){
   if ( v->Kstb_MM < 750 || v->Kstb_MM > 1700 ) return false;                   // stripping in range (740,2100)
 
   //// 3-body mass ( 99% eff )
-  //if ( v->M_KKPiPlus < 2200 || v->M_KKPiMinus < 2200 ) return false;           // not in stripping
+  if ( v->M_KKPiPlus < 2100 || v->M_KKPiMinus < 2100 ) return false;           // not in stripping
 
   //// Track cuts
   ////// chi2/dof  ( 100% eff )
@@ -100,8 +100,8 @@ bool Bs2KstKst::PreSelection::AnalyseEvent(){
   //if ( v->Piminus_ProbNNpi     < 0.0 ) return false;                            // not in stripping
   //if ( v->Kplus_isMuon               ) return false;                            // not in stripping
   //if ( v->Kminus_isMuon              ) return false;                            // not in stripping
-  //if ( v->Piplus_isMuon              ) return false;                            // not in stripping
-  //if ( v->Piminus_isMuon             ) return false;                            // not in stripping
+  if ( v->Piplus_isMuon              ) return false;                            // not in stripping
+  if ( v->Piminus_isMuon             ) return false;                            // not in stripping
   // -----------------------------------------------------------------------
 
 	// MC only
