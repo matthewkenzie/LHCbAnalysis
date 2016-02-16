@@ -25,7 +25,7 @@ bool Dst2D0pi::Selection::AnalyseEvent(){
   if ( (v->Dst_M - v->D0_M) < 144 ) return false;
   if ( (v->Dst_M - v->D0_M) > 147 ) return false;
   
-  if ( v->D0_MINIPCHI2>9 ) return false;
+  //if ( v->D0_MINIPCHI2>9 ) return false;
 
   // set var
   v->D0_LTIME_ps = 1000.* v->D0_LTIME;
