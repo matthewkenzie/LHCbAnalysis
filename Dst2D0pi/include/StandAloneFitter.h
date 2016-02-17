@@ -27,7 +27,10 @@ namespace Dst2D0pi {
       StandAloneFitter();
       ~StandAloneFitter();
 
-      void run();
+      void run(bool makeDatasets, bool loadDatasets);
+
+      void MakeDataSets();
+      void LoadDataSets();
 
       void D0MassFit();
       inline void SetSignalWindow( double xmin, double xmax ) { signalWindowMin=xmin; signalWindowMax=xmax; signalWindowSet=true; }

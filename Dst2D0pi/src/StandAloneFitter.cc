@@ -25,79 +25,257 @@ Dst2D0pi::StandAloneFitter::StandAloneFitter():
   nPrompt(-1),
   nSec(-1),
   nBkg(-1)
-{
-  w = new RooWorkspace("w","w");
-  p = new StandAlonePlotter(w);
-}
+{}
 
 Dst2D0pi::StandAloneFitter::~StandAloneFitter(){}
 
-void Dst2D0pi::StandAloneFitter::run(){
+void Dst2D0pi::StandAloneFitter::run(bool makeDatasets, bool loadDatasets){
 
   cout << "Fitter" << endl;
 
+  SetSignalWindow( 1840, 1890 );
+  SetIPCut(1.);
+
+  // Make DataSets
+  if ( !loadDatasets ) {
+    MakeDataSets();
+  }
+  else {
+    LoadDataSets();
+  }
+
+  // Run fit
+  if ( !makeDatasets ) {
+
+    // make plot tool
+    p = new StandAlonePlotter(w);
+
+    // D0 mass fit
+    D0MassFit();
+
+    // Integrate n_sig, n_bkg in signal window
+    GetYieldsInMassWindow();
+
+    // IP chi2 fit
+    D0IPChi2Fit();
+
+    // Integrate n_sig, n_prompt, n_sec in ip chi2 cut
+    GetYieldsFromIPCut();
+
+    // Lifetime fit
+    D0LifetimeFit();
+
+    // Print some stuff
+    cout << " --------- After D0 Mass Fit ---------- " << endl;
+    cout << "\t nSigInWindow: " << nSigInWindow << endl;
+    cout << "\t nBkgInWindow: " << nBkgInWindow << endl;
+    cout << " --------- After IP chi2 Fit --------- " << endl;
+    cout << "\t nPrompt: " << nPrompt << endl;
+    cout << "\t nSec:    " << nSec << endl;
+    cout << "\t nBkg:    " << nBkg << endl;
+    cout << " --------- After lifetime Fit --------- " << endl;
+    cout << "\t nPrompt: " << w->var("n_prompt")->getVal() << endl;
+    cout << "\t nSec:    " << w->function("n_sec")->getVal() << endl;
+    cout << "\t nbkg:    " << w->var("n_bkg")->getVal() << endl;
+    cout << "\t tau:     " << w->var("D0_tau")->getVal() << endl;
+    cout << "\t Quote:   " << Form("t = ( %6.2f +/- %4.2f ) fs", w->var("D0_tau")->getVal()*1000., w->var("D0_tau")->getError()*1000.) << endl;
+    cout << " ------------------------------------- " << endl;
+
+    w->writeToFile("root/StandAloneFitterOut.root");
+
+  }
+
+}
+
+void Dst2D0pi::StandAloneFitter::MakeDataSets(){
+
+  assert( signalWindowSet );
+  assert( ipCutSet );
+
+  // open files
   dataFile = new TFile("nTuples/NewFiles/TurboOut_hadd.root");
   dataTree = (TTree*)dataFile->Get("TeslaTuple/DecayTree");
 
   mcFile = new TFile("nTuples/NewFiles/MCOut_hadd.root");
   mcTree = (TTree*)mcFile->Get("MCTuple/DecayTree");
 
-  cuts = "(Dst_L0HadronDecision_TOS && Dst_Hlt1CalibTrackingKPiDecision_TOS && Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS) && (Dst_M-D0_M) > 144 && (Dst_M-D0_M) < 147 && (D0_LTIME*1000>0.25) && (D0_LTIME*1000<4.)";
-  // as above but no trigger
-  mccuts_prompt = "(Dst_M-D0_M) > 144 && (Dst_M-D0_M) < 147 && (D0_LTIME*1000>0.25) && (D0_LTIME*1000<4.)";
-  mccuts_sec    = "(Dst_M-D0_M) > 144 && (Dst_M-D0_M) < 147 && (D0_LTIME*1000>0.25) && (D0_LTIME*1000<4.)";
+  assert( dataTree );
+  assert( mcTree );
 
-  // D0 mass fit
-  D0MassFit();
+  // tree variables
+  bool   t_Dst_L0HadronDecision_TOS;
+  bool   t_Dst_Hlt1CalibTrackingKPiDecision_TOS;
+  bool   t_Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS;
+  double t_D0_M;
+  double t_Dst_M;
+  double t_D0_LTIME;
+  double t_D0_MINIPCHI2;
+  int    t_Dst_MC_ISPROMPT;
 
-  // Integrate n_sig, n_bkg in signal window
-  SetSignalWindow( 1840, 1890 );
-  GetYieldsInMassWindow();
+  // crack open a workspace
+  w = new RooWorkspace("w","w");
 
-  // IP chi2 fit
-  D0IPChi2Fit();
-
-  // Integrate n_sig, n_prompt, n_sec in ip chi2 cut
-  SetIPCut(1.);
-  GetYieldsFromIPCut();
-
-  // Lifetime fit
-  D0LifetimeFit();
-
-  // Print some stuff
-  cout << " --------- After D0 Mass Fit ---------- " << endl;
-  cout << "\t nSigInWindow: " << nSigInWindow << endl;
-  cout << "\t nBkgInWindow: " << nBkgInWindow << endl;
-  cout << " --------- After IP chi2 Fit --------- " << endl;
-  cout << "\t nPrompt: " << nPrompt << endl;
-  cout << "\t nSec:    " << nSec << endl;
-  cout << "\t nBkg:    " << nBkg << endl;
-  cout << " --------- After lifetime Fit --------- " << endl;
-  cout << "\t nPrompt: " << w->var("n_prompt")->getVal() << endl;
-  cout << "\t nSec:    " << w->function("n_sec")->getVal() << endl;
-  cout << "\t nbkg:    " << w->var("n_bkg")->getVal() << endl;
-  cout << "\t tau:     " << w->var("D0_tau")->getVal() << endl;
-  cout << "\t Quote:   " << Form("t = ( %6.2f +/- %4.2f ) fs", w->var("D0_tau")->getVal()*1000., w->var("D0_tau")->getError()*1000.) << endl;
-  cout << " ------------------------------------- " << endl;
-
-  w->writeToFile("root/StandAloneFitterOut.root");
-}
-
-void Dst2D0pi::StandAloneFitter::D0MassFit() {
-
-  // make variable
+  // make roo variables
   w->factory( "D0_M[1810,1920]" );
   w->var("D0_M")->setBins(2200);
   w->var("D0_M")->setUnit("MeV");
   w->var("D0_M")->SetTitle("m(D0)");
   RooRealVar *D0_M = (RooRealVar*)w->var("D0_M");
 
-  // make dataset
-  TH1F *D0_M_th1f = new TH1F( "D0_M_th1f", "", D0_M->getBins(), D0_M->getMin(), D0_M->getMax() );
-  dataTree->Draw( "D0_M >> D0_M_th1f", cuts, "goff" );
-  RooDataHist *D0_M_dh = new RooDataHist( "D0_M_dh", "", RooArgList( *D0_M ), Import( *D0_M_th1f ) );
+  w->factory( "D0_LOGIPCHI2[-10,15]" );
+  w->var("D0_LOGIPCHI2")->setBins(2500);
+  w->var("D0_LOGIPCHI2")->setUnit("");
+  w->var("D0_LOGIPCHI2")->SetTitle("log(IP #chi^{2}) (D0)");
+  RooRealVar *D0_LOGIPCHI2 = (RooRealVar*)w->var("D0_LOGIPCHI2");
+
+  w->factory("D0_t[0.0,5.0]");
+  w->var("D0_t")->setBins(2000);
+  w->var("D0_t")->setUnit("ps");
+  w->var("D0_t")->SetTitle("t(D0)");
+  RooRealVar *D0_t = (RooRealVar*)w->var("D0_t");
+
+  // Data
+  dataTree->SetBranchAddress( "Dst_L0HadronDecision_TOS", &t_Dst_L0HadronDecision_TOS );
+  dataTree->SetBranchAddress( "Dst_Hlt1CalibTrackingKPiDecision_TOS", &t_Dst_Hlt1CalibTrackingKPiDecision_TOS );
+  dataTree->SetBranchAddress( "Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS", &t_Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS );
+  dataTree->SetBranchAddress( "D0_M", &t_D0_M );
+  dataTree->SetBranchAddress( "Dst_M", &t_Dst_M );
+  dataTree->SetBranchAddress( "D0_LTIME", &t_D0_LTIME );
+  dataTree->SetBranchAddress( "D0_MINIPCHI2", &t_D0_MINIPCHI2 );
+
+  // Hists
+  TH1F *D0_M_th1f            = new TH1F( "D0_M_th1f"            , "", D0_M->getBins()        , D0_M->getMin()        , D0_M->getMax()         );
+  TH1F *D0_LOGIPCHI2_th1f    = new TH1F( "D0_LOGIPCHI2_th1f"    , "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
+  TH1F *D0_LOGIPCHI2_th1f_sb = new TH1F( "D0_LOGIPCHI2_th1f_sb" , "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
+  TH1F *D0_t_th1f            = new TH1F( "D0_t_th1f"            , "", D0_t->getBins()        , D0_t->getMin()        , D0_t->getMax()         );
+  TH1F *D0_t_th1f_sb         = new TH1F( "D0_t_th1f_sb"         , "", D0_t->getBins()        , D0_t->getMin()        , D0_t->getMax()         );
+
+  cout << "Filling Data" << endl;
+
+  // fill
+  for ( Long64_t ev=0; ev<dataTree->GetEntries(); ev++ ) {
+
+    if ( ev%10000==0 ) {
+      cout << "\t" << ev << " / " << dataTree->GetEntries() << endl;
+    }
+
+    dataTree->GetEntry(ev);
+
+    if ( !t_Dst_L0HadronDecision_TOS ) continue;
+    if ( !t_Dst_Hlt1CalibTrackingKPiDecision_TOS ) continue;
+    if ( !t_Dst_Hlt2CharmHadDstp2D0Pip_D02KmPip_LTUNBTurboDecision_TOS ) continue;
+    if ( (t_Dst_M-t_D0_M)<144 ) continue;
+    if ( (t_Dst_M-t_D0_M)>147 ) continue;
+    if ( (t_D0_LTIME*1000.)<0.25 ) continue;
+    if ( (t_D0_LTIME*1000.)>4.) continue;
+
+    D0_M_th1f->Fill( t_D0_M );
+
+    // mass window
+    if ( t_D0_M>signalWindowMin && t_D0_M<signalWindowMax ) {
+      D0_LOGIPCHI2_th1f->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
+      if ( TMath::Log( t_D0_MINIPCHI2 ) < ipCut ) {
+        D0_t_th1f->Fill( t_D0_LTIME*1000. );
+      }
+    }
+    else {
+      D0_LOGIPCHI2_th1f_sb->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
+      D0_t_th1f_sb->Fill( t_D0_LTIME*1000. );
+    }
+
+  }
+
+  // make roo datahists
+  RooDataHist *D0_M_dh             = new RooDataHist( "D0_M_dh"            , "",  RooArgList( *D0_M )        , Import( *D0_M_th1f )            );
+  RooDataHist *D0_LOGIPCHI2_dh     = new RooDataHist( "D0_LOGIPCHI2_dh"    , "",  RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f )    );
+  RooDataHist *D0_LOGIPCHI2_dh_sb  = new RooDataHist( "D0_LOGIPCHI2_dh_sb" , "",  RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f_sb ) );
+  RooDataHist *D0_t_dh             = new RooDataHist( "D0_t_dh"            , "",  RooArgList( *D0_t )        , Import( *D0_t_th1f )            );
+  RooDataHist *D0_t_dh_sb          = new RooDataHist( "D0_t_dh_sb"         , "",  RooArgList( *D0_t )        , Import( *D0_t_th1f_sb )         );
+
+  TH1F *D0_LOGIPCHI2_th1f_sb_rb = (TH1F*)D0_LOGIPCHI2_th1f_sb->Clone(Form("%s_rb",D0_LOGIPCHI2_th1f_sb->GetName()));
+  D0_LOGIPCHI2_th1f_sb_rb->Rebin(25);
+  RooDataHist *D0_LOGIPCHI2_dh_sb_rb = new RooDataHist("D0_LOGIPCHI2_dh_sb_rb","",RooArgList(*w->var("D0_LOGIPCHI2")), Import(*D0_LOGIPCHI2_th1f_sb_rb));
+  w->import( *D0_LOGIPCHI2_dh_sb_rb );
+
   w->import( *D0_M_dh );
-  delete D0_M_dh;
+  w->import( *D0_LOGIPCHI2_dh );
+  w->import( *D0_LOGIPCHI2_dh_sb );
+  w->import( *D0_t_dh );
+  w->import( *D0_t_dh_sb );
+
+  // MC
+  mcTree->SetBranchAddress( "D0_M", &t_D0_M );
+  mcTree->SetBranchAddress( "Dst_M", &t_Dst_M );
+  mcTree->SetBranchAddress( "D0_LTIME", &t_D0_LTIME );
+  mcTree->SetBranchAddress( "D0_MINIPCHI2", &t_D0_MINIPCHI2 );
+  mcTree->SetBranchAddress( "Dst_MC_ISPROMPT", &t_Dst_MC_ISPROMPT );
+
+  // Hists
+  TH1F *D0_LOGIPCHI2_th1f_prompt_mc = new TH1F( "D0_LOGIPCHI2_th1f_prompt_mc" , "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
+  TH1F *D0_LOGIPCHI2_th1f_sec_mc    = new TH1F( "D0_LOGIPCHI2_th1f_sec_mc"    , "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
+  TH1F *D0_t_th1f_prompt_mc         = new TH1F( "D0_t_th1f_prompt_mc"         , "", D0_t->getBins()        , D0_t->getMin()        , D0_t->getMax()         );
+  TH1F *D0_t_th1f_sec_mc            = new TH1F( "D0_t_th1f_sec_mc"            , "", D0_t->getBins()        , D0_t->getMin()        , D0_t->getMax()         );
+
+  cout << "Filling MC" << endl;
+
+  // fill
+  for ( Long64_t ev=0; ev<mcTree->GetEntries(); ev++ ) {
+
+    if ( ev%10000==0 ) {
+      cout << "\t" << ev << " / " << mcTree->GetEntries() << endl;
+    }
+
+    mcTree->GetEntry(ev);
+
+    if ( (t_Dst_M-t_D0_M)<144 ) continue;
+    if ( (t_Dst_M-t_D0_M)>147 ) continue;
+    if ( (t_D0_LTIME*1000.)<0.25 ) continue;
+    if ( (t_D0_LTIME*1000.)>4.) continue;
+
+    // mass window
+    if ( t_Dst_MC_ISPROMPT == 1 ) {
+      D0_LOGIPCHI2_th1f_prompt_mc->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
+      D0_t_th1f_prompt_mc->Fill( t_D0_LTIME*1000. );
+    }
+    if ( t_Dst_MC_ISPROMPT == 0 ) {
+      D0_LOGIPCHI2_th1f_sec_mc->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
+      D0_t_th1f_sec_mc->Fill( t_D0_LTIME*1000. );
+    }
+  }
+
+  // make roo datahists
+  RooDataHist *D0_LOGIPCHI2_dh_prompt_mc = new RooDataHist( "D0_LOGIPCHI2_dh_prompt_mc" , "",  RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f_prompt_mc ) );
+  RooDataHist *D0_LOGIPCHI2_dh_sec_mc    = new RooDataHist( "D0_LOGIPCHI2_dh_sec_mc"    , "",  RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f_sec_mc )    );
+  RooDataHist *D0_t_dh_prompt_mc         = new RooDataHist( "D0_t_dh_prompt_mc"         , "",  RooArgList( *D0_t )        , Import( *D0_t_th1f_prompt_mc )         );
+  RooDataHist *D0_t_dh_sec_mc            = new RooDataHist( "D0_t_dh_sec_mc"            , "",  RooArgList( *D0_t )        , Import( *D0_t_th1f_sec_mc )            );
+
+  w->import( *D0_LOGIPCHI2_dh_prompt_mc );
+  w->import( *D0_LOGIPCHI2_dh_sec_mc );
+  w->import( *D0_t_dh_prompt_mc );
+  w->import( *D0_t_dh_sec_mc );
+
+  cout << Form("%-30s : %8.0f", "D0_M_dh"                  , w->data("D0_M_dh")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_LOGIPCHI2_dh"          , w->data("D0_LOGIPCHI2_dh")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_LOGIPCHI2_dh_sb"       , w->data("D0_LOGIPCHI2_dh_sb")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_t_dh"                  , w->data("D0_t_dh")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_t_dh_sb"               , w->data("D0_t_dh_sb")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_LOGIPCHI2_dh_prompt_mc", w->data("D0_LOGIPCHI2_dh_prompt_mc")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_LOGIPCHI2_dh_sec_mc"   , w->data("D0_LOGIPCHI2_dh_sec_mc")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_t_dh_prompt_mc"        , w->data("D0_t_dh_prompt_mc")->sumEntries() ) << endl;
+  cout << Form("%-30s : %8.0f", "D0_t_dh_sec_mc"           , w->data("D0_t_dh_sec_mc")->sumEntries() ) << endl;
+
+  cout << "Written cache file to root/DatasetCache.root" << endl;
+  w->writeToFile("root/DatasetCache.root");
+}
+
+void Dst2D0pi::StandAloneFitter::LoadDataSets() {
+
+  TFile *inFile = TFile::Open("root/DatasetCache.root");
+  w = (RooWorkspace*)inFile->Get("w");
+
+}
+
+void Dst2D0pi::StandAloneFitter::D0MassFit() {
 
   // mass pdf
   // sig
@@ -174,40 +352,6 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   assert( isMassFit );
   assert( haveYields );
 
-  // make variable
-  w->factory( "D0_LOGIPCHI2[-10,15]" );
-  w->var("D0_LOGIPCHI2")->setBins(2500);
-  w->var("D0_LOGIPCHI2")->setUnit("");
-  w->var("D0_LOGIPCHI2")->SetTitle("log(IP #chi^{2}) (D0)");
-  RooRealVar *D0_LOGIPCHI2 = (RooRealVar*)w->var("D0_LOGIPCHI2");
-
-  // make datasets
-  // data
-  TH1F *D0_LOGIPCHI2_th1f = new TH1F( "D0_LOGIPCHI2_th1f", "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
-  TString window_cuts = cuts + TString( Form(" && (D0_M > %6.1f && D0_M < %6.1f)", signalWindowMin, signalWindowMax) );
-  dataTree->Draw( "TMath::Log(D0_MINIPCHI2) >> D0_LOGIPCHI2_th1f", cuts, "goff" );
-  RooDataHist *D0_LOGIPCHI2_dh = new RooDataHist( "D0_LOGIPCHI2_dh", "", RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f ) );
-  w->import( *D0_LOGIPCHI2_dh );
-  delete D0_LOGIPCHI2_dh;
-  // data in mass sidebands (to get combinatorial shape)
-  TH1F *D0_LOGIPCHI2_th1f_sb = new TH1F( "D0_LOGIPCHI2_th1f_sb", "", D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax() );
-  TString sb_cuts = cuts + TString( Form(" && (D0_M < %6.1f || D0_M > %6.1f) ",signalWindowMin,signalWindowMax) );
-  dataTree->Draw( "TMath::Log(D0_MINIPCHI2) >> D0_LOGIPCHI2_th1f_sb", sb_cuts, "goff" );
-  RooDataHist *D0_LOGIPCHI2_dh_sb = new RooDataHist( "D0_LOGIPCHI2_dh_sb", "", RooArgList( *D0_LOGIPCHI2 ), Import( *D0_LOGIPCHI2_th1f_sb ) );
-  w->import( *D0_LOGIPCHI2_dh_sb );
-  delete D0_LOGIPCHI2_dh_sb;
-  // mc prompt and secondary
-  TH1F *D0_LOGIPCHI2_th1f_prompt_mc = new TH1F("D0_LOGIPCHI2_th1f_prompt_mc","",D0_LOGIPCHI2->getBins(), D0_LOGIPCHI2->getMin(), D0_LOGIPCHI2->getMax());
-  TH1F *D0_LOGIPCHI2_th1f_sec_mc = new TH1F("D0_LOGIPCHI2_th1f_sec_mc","",D0_LOGIPCHI2->getBins(),D0_LOGIPCHI2->getMin(),D0_LOGIPCHI2->getMax());
-  mcTree->Draw( "TMath::Log(D0_MINIPCHI2) >> D0_LOGIPCHI2_th1f_prompt_mc", mccuts_prompt, "goff" );
-  mcTree->Draw( "TMath::Log(D0_MINIPCHI2) >> D0_LOGIPCHI2_th1f_sec_mc", mccuts_sec, "goff" );
-  RooDataHist *D0_LOGIPCHI2_dh_prompt_mc = new RooDataHist("D0_LOGIPCHI2_dh_prompt_mc","",RooArgList(*w->var("D0_LOGIPCHI2")), Import(*D0_LOGIPCHI2_th1f_prompt_mc));
-  RooDataHist *D0_LOGIPCHI2_dh_sec_mc = new RooDataHist("D0_LOGIPCHI2_dh_sec_mc","",RooArgList(*w->var("D0_LOGIPCHI2")), Import(*D0_LOGIPCHI2_th1f_sec_mc));
-  w->import( *D0_LOGIPCHI2_dh_prompt_mc );
-  w->import( *D0_LOGIPCHI2_dh_sec_mc );
-  delete D0_LOGIPCHI2_dh_prompt_mc;
-  delete D0_LOGIPCHI2_dh_sec_mc;
-
   // prompt
   w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g1 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m[0.4,1.2], D0_LOGIPCHI2_prompt_s1[1,0.1,2])" );
   w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g2 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s2[1,0.1,8])" );
@@ -229,11 +373,7 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   //w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_f2*D0_LOGIPCHI2_sec_g2, D0_LOGIPCHI2_sec_bf)" );
   w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_sec_cb)" );
   // bkg
-  TH1F *D0_LOGIPCHI2_th1f_sb_rb = (TH1F*)D0_LOGIPCHI2_th1f_sb->Clone(Form("%s_rb",D0_LOGIPCHI2_th1f_sb->GetName()));
-  D0_LOGIPCHI2_th1f_sb_rb->Rebin(25);
-  RooDataHist *D0_LOGIPCHI2_dh_sb_rb = new RooDataHist("D0_LOGIPCHI2_dh_sb_rb","",RooArgList(*w->var("D0_LOGIPCHI2")), Import(*D0_LOGIPCHI2_th1f_sb_rb));
-  RooHistPdf *D0_LOGIPCHI2_bkg_pdf = new RooHistPdf("D0_LOGIPCHI2_bkg_pdf","",RooArgList(*w->var("D0_LOGIPCHI2")), *D0_LOGIPCHI2_dh_sb_rb);
-  w->import( *D0_LOGIPCHI2_dh_sb_rb );
+  RooHistPdf *D0_LOGIPCHI2_bkg_pdf = new RooHistPdf("D0_LOGIPCHI2_bkg_pdf","",RooArgList(*w->var("D0_LOGIPCHI2")), *(RooDataHist*)w->data("D0_LOGIPCHI2_dh_sb_rb") );
   w->import( *D0_LOGIPCHI2_bkg_pdf );
 
   // the pdf
@@ -314,41 +454,8 @@ void Dst2D0pi::StandAloneFitter::D0LifetimeFit() {
   assert( isIPCHI2Fit );
   assert( haveFinalYields );
 
-  // make variable
-  w->factory("D0_t[0.0,5.0]");
-  w->var("D0_t")->setBins(2000);
-  w->var("D0_t")->setUnit("ps");
-  w->var("D0_t")->SetTitle("t(D0)");
-  RooRealVar *D0_t = (RooRealVar*)w->var("D0_t");
-
   // set fit range
   w->var("D0_t")->setRange( "t_fit_range", 0.25, 4. );
-
-  // make datasets
-  //
-  TString lifetime_cuts = cuts + TString( Form(" && (D0_M > %6.1f && D0_M < %6.1f) && (TMath::Log( D0_MINIPCHI2 ) < %5.3f)", signalWindowMin, signalWindowMax, ipCut) );
-  TH1F *D0_t_th1f = new TH1F( "D0_t_th1f", "", D0_t->getBins(), D0_t->getMin(), D0_t->getMax() );
-  dataTree->Draw( "D0_LTIME*1000 >> D0_t_th1f", lifetime_cuts, "goff" );
-  RooDataHist *D0_t_dh = new RooDataHist( "D0_t_dh", "", RooArgList( *D0_t ), Import( *D0_t_th1f ) );
-  w->import( *D0_t_dh );
-  delete D0_t_dh;
-  // sideband cut not including IP Chi2 cut which shouldn't bias lifetime
-  TString sb_cuts = cuts + TString( Form(" && (D0_M < %6.1f || D0_M > %6.1f)", signalWindowMin, signalWindowMax) );
-  //TString sb_cuts = cuts + TString( Form(" && (D0_M < %6.1f || D0_M > %6.1f) && (TMath::Log( D0_MINIPCHI2 ) < %5.3f)", signalWindowMin, signalWindowMax, ipCut) );
-  TH1F *D0_t_th1f_sb = new TH1F( "D0_t_th1f_sb", "", D0_t->getBins(), D0_t->getMin(), D0_t->getMax() );
-  dataTree->Draw( "D0_LTIME*1000 >> D0_t_th1f_sb", sb_cuts, "goff" );
-  RooDataHist *D0_t_dh_sb = new RooDataHist( "D0_t_dh_sb", "", RooArgList( *D0_t ), Import( *D0_t_th1f_sb ) );
-  w->import( *D0_t_dh_sb );
-  delete D0_t_dh_sb;
-  TH1F *D0_t_th1f_sec_mc = new TH1F( "D0_t_th1f_sec_mc","", D0_t->getBins(), D0_t->getMin(), D0_t->getMax() );
-  mcTree->Draw(" D0_LTIME*1000 >> D0_t_th1f_sec_mc", mccuts_sec, "goff" );
-  RooDataHist *D0_t_dh_sec_mc = new RooDataHist( "D0_t_dh_sec_mc", "", RooArgList( *D0_t ), Import( *D0_t_th1f_sec_mc ) );
-  w->import( *D0_t_dh_sec_mc );
-  delete D0_t_dh_sec_mc;
-
-  cout << mcTree->GetEntries(mccuts_sec) << endl;
-  cout << D0_t_th1f_sec_mc->GetEntries() << endl;
-  cout << w->data("D0_t_dh_sec_mc")->sumEntries() << endl;
 
   // try and get lifetime shape for the combinatorial
   w->factory( "Exponential::D0_t_bkg_e1( D0_t, D0_t_bkg_lambda1[-0.8,-10.,-0.1] )" );
@@ -376,9 +483,14 @@ void Dst2D0pi::StandAloneFitter::D0LifetimeFit() {
   params->setAttribAll("Constant");
 
   // get lifetime shape for secondaries from MC
-  w->factory( "Exponential::D0_t_sec_e1( D0_t, D0_t_sec_lambda1[-100.,0] )" );
-  w->factory( "Exponential::D0_t_sec_e2( D0_t, D0_t_sec_lambda2[-20.,0] )" );
-  w->factory( "SUM::D0_t_sec_pdf( D0_t_sec_f1[0.8,0.1,1.]*D0_t_sec_e1, D0_t_sec_e2 )" );
+  //w->factory( "Exponential::D0_t_sec_e1( D0_t, D0_t_sec_lambda1[-100.,0] )" );
+  //w->factory( "Exponential::D0_t_sec_e2( D0_t, D0_t_sec_lambda2[-20.,0] )" );
+  //w->factory( "SUM::D0_t_sec_pdf( D0_t_sec_f1[0.8,0.1,1.]*D0_t_sec_e1, D0_t_sec_e2 )" );
+  //w->factory("Gaussian::D0_t_sec_g( D0_t, D0_t_sec_m[0.3,0.25,5.], D0_t_sec_s[5.,0.01,10.] )");
+  //w->factory("Exponential::D0_t_sec_e( D0_t, D0_t_sec_lambda[-10,0.] )");
+  //w->factory("FFTConvPdf::D0_t_sec_pdf( D0_t, D0_t_sec_g, D0_t_sec_e )");
+  w->factory("GaussModel::D0_t_sec_g( D0_t, D0_t_sec_m[0.3,0.001,0.6], D0_t_sec_s[0.5,0.001,1.] )");
+  w->factory("Decay::D0_t_sec_pdf( D0_t, D0_t_sec_lambda[0.4,0.,10.], D0_t_sec_g, RooDecay::SingleSided )");
   w->pdf( "D0_t_sec_pdf" )->fitTo( *w->data("D0_t_dh_sec_mc"), Range("t_fit_range") );
 
   PlotComponent pc_sec_mc( "D0_t_dh_sec_mc", "Secondary MC" );
