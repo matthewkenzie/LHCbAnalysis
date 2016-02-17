@@ -25,6 +25,7 @@ class TMVAWrapperBase : public Analyser {
     enum mode {
       kTrain,
       kEval,
+      kPlot,
     };
 
     TMVAWrapperBase(TString _name, const Variables *_v, mode _rMode=kTrain);
@@ -56,7 +57,8 @@ class TMVAWrapperBase : public Analyser {
     void setMode(mode val) { rMode = val; }
     inline void setTrainMode() { rMode = kTrain; }
     inline void setEvalMode() { rMode = kEval; }
-    
+    inline void setPlotMode() { rMode = kPlot; }
+
     const Variables *v;
     mode rMode;
 
@@ -86,6 +88,9 @@ class TMVAWrapperBase : public Analyser {
     void train();
     void test();
     void evaluate();
+    void print();
+    void plot();
+    void save();
 
     TFile *outFile;
     std::map<TString, std::vector<TMVA::Factory*> > factoryContainer;

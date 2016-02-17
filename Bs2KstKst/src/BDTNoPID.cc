@@ -108,8 +108,9 @@ bool Bs2KstKst::BDTNoPID::setEventValuesAndEvaluate() {
   setVal("B_s0_DIRA_OWNPV",v->B_s0_DIRA_OWNPV);
   setVal("B_s0_ENDVERTEX_CHI2",v->B_s0_ENDVERTEX_CHI2);
 
+
   // TRAINING
-  if ( rMode == kTrain ) {
+  if ( rMode == kTrain || rMode == kPlot ) {
     // MC only
     if ( v->itype < 0 ) {
       addSignalEvent(year);

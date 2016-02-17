@@ -64,6 +64,20 @@ class DataSet {
     std::map<TString,bool> requirements_b;
 };
 
+class CombDataSet {
+
+  public:
+    CombDataSet(TString _name, TString _title, TString _cat_name);
+    CombDataSet(TString _name, TString _title, TString _cat_name, std::map<TString,TString> _catDataMap);
+    void addCatDataset( TString cat, TString data );
+
+    TString name;
+    TString title;
+    TString cat_name;
+    std::map<TString,TString> catDataMap;
+    RooWorkspace *w;
+};
+
 class PlotComponent {
 
   public:
@@ -92,6 +106,17 @@ class PlotComponent {
     void setSolidLine(int color);
     void setSolidFill(int color);
 
+};
+
+class DrawBox {
+
+  public:
+    DrawBox( double _xmin, double _xmax, int _color );
+    ~DrawBox();
+
+    double xmin;
+    double xmax;
+    double color;
 };
 
 #endif

@@ -54,28 +54,14 @@ void TMVAWrapperBase::Term(){
     train();
     test();
     evaluate();
-
-    // print ev counts
-    cout << Form("%-30s","TMVAWrapperBase::Term()") << "Training Statistics" << endl;
-    cout << Form("%-30s","") << "\t" << Form("%-10s      %2s %10s %10s","Cat","b","Test","Train") << endl;
-    for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
-      // sig
-      for (int b=0; b<numberOfBDTs; b++) {
-        cout << Form("%-30s","TMVAWrapperBase::Term()") << "\t" << Form("%-10s (S): %2d %10d %10d",cat->Data(),b,sigEvCounts[*cat][b].first, sigEvCounts[*cat][b].second) << endl;
-      }
-      // bkg
-      for (int b=0; b<numberOfBDTs; b++) {
-        cout << Form("%-30s","TMVAWrapperBase::Term()") << "\t" << Form("%-10s (B): %2d %10d %10d",cat->Data(),b,bkgEvCounts[*cat][b].first, bkgEvCounts[*cat][b].second) << endl;
-      }
-    }
-    cout << Form("%-30s","TMVAWrapperBase::Term()") << " " << "Saving training tree and making histograms" << endl;
-    createTrainingHistograms();
-    outFile->cd();
-    trainingTree->Write();
-    cout << Form("%-30s","TMVAWrapperBase::Term()") << " " << "Training output written to: " << outFile->GetName() << endl;
-    outFile->Close();
-    delete outFile;
-
+    print();
+    plot();
+    save();
+  }
+  if ( rMode==kPlot ) {
+    print();
+    plot();
+    save();
   }
 
   cout << Form("%-30s","TMVAWrapperBase::Term()") << " " << "Terminating Analyser (" << name << ")." << endl;
@@ -110,7 +96,7 @@ void TMVAWrapperBase::initMVAFactories() {
   checkInit();
 
   // TRAINING MODE
-  if ( rMode == kTrain ) {
+  if ( rMode == kTrain || rMode == kPlot ) {
     outFile = TFile::Open(outfilename,"RECREATE");
 
     // Set branches of training tree
@@ -125,20 +111,22 @@ void TMVAWrapperBase::initMVAFactories() {
     // loop over BDT categories (e.g. 2011/2012)
     for (vector<TString>::iterator cat = categories.begin(); cat != categories.end(); cat++) {
 
-      factoryContainer[*cat] = vector<TMVA::Factory*>();
+      if ( rMode == kTrain ) factoryContainer[*cat] = vector<TMVA::Factory*>();
       sigEvCounts[*cat] = vector<pair<int,int> >();
       bkgEvCounts[*cat] = vector<pair<int,int> >();
 
       // loop over number of BDTs
       for (int b=0; b<numberOfBDTs; b++){
-        factoryContainer[*cat].push_back(new Factory(Form("%sFactory",name.Data()),outFile,factoryOptions));
+        if ( rMode == kTrain ) factoryContainer[*cat].push_back(new Factory(Form("%sFactory",name.Data()),outFile,factoryOptions));
         // set counters
         sigEvCounts[*cat].push_back(make_pair(0,0));
         bkgEvCounts[*cat].push_back(make_pair(0,0));
 
         // add variables to BDT
-        for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++){
-          factoryContainer[*cat][b]->AddVariable(*var);
+        if ( rMode == kTrain ) {
+          for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++){
+            factoryContainer[*cat][b]->AddVariable(*var);
+          }
         }
       }
     }
@@ -209,6 +197,35 @@ void TMVAWrapperBase::evaluate() {
   }
 }
 
+void TMVAWrapperBase::print() {
+  // print ev counts
+  cout << Form("%-30s","TMVAWrapperBase::Term()") << "Training Statistics" << endl;
+  cout << Form("%-30s","") << "\t" << Form("%-10s      %2s %10s %10s","Cat","b","Test","Train") << endl;
+  for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
+    // sig
+    for (int b=0; b<numberOfBDTs; b++) {
+      cout << Form("%-30s","TMVAWrapperBase::Term()") << "\t" << Form("%-10s (S): %2d %10d %10d",cat->Data(),b,sigEvCounts[*cat][b].first, sigEvCounts[*cat][b].second) << endl;
+    }
+    // bkg
+    for (int b=0; b<numberOfBDTs; b++) {
+      cout << Form("%-30s","TMVAWrapperBase::Term()") << "\t" << Form("%-10s (B): %2d %10d %10d",cat->Data(),b,bkgEvCounts[*cat][b].first, bkgEvCounts[*cat][b].second) << endl;
+    }
+  }
+}
+
+void TMVAWrapperBase::plot() {
+  cout << Form("%-30s","TMVAWrapperBase::Term()") << " " << "Making training histograms" << endl;
+  createTrainingHistograms();
+}
+
+void TMVAWrapperBase::save() {
+  outFile->cd();
+  trainingTree->Write();
+  cout << Form("%-30s","TMVAWrapperBase::Term()") << " " << "Training output written to: " << outFile->GetName() << endl;
+  outFile->Close();
+  delete outFile;
+}
+
 void TMVAWrapperBase::addEvent(TString cat, bool isSig) {
   vector<double> values;
   // check map has been filled
@@ -234,21 +251,21 @@ void TMVAWrapperBase::addEvent(TString cat, bool isSig) {
     for (int b=0; b<numberOfBDTs; b++) {
       if (b==relBDT) {
         if (isSig) {
-          factoryContainer[cat][b]->AddSignalTestEvent(values);
+          if ( rMode == kTrain ) factoryContainer[cat][b]->AddSignalTestEvent(values);
           sigEvCounts[cat][b].first += 1;
         }
         else {
-          factoryContainer[cat][b]->AddBackgroundTestEvent(values);
+          if ( rMode == kTrain ) factoryContainer[cat][b]->AddBackgroundTestEvent(values);
           bkgEvCounts[cat][b].first += 1;
         }
       }
       else {
         if (isSig) {
-          factoryContainer[cat][b]->AddSignalTrainingEvent(values);
+          if ( rMode == kTrain ) factoryContainer[cat][b]->AddSignalTrainingEvent(values);
           sigEvCounts[cat][b].second += 1;
         }
         else {
-          factoryContainer[cat][b]->AddBackgroundTrainingEvent(values);
+          if ( rMode == kTrain ) factoryContainer[cat][b]->AddBackgroundTrainingEvent(values);
           bkgEvCounts[cat][b].second += 1;
         }
       }
@@ -257,21 +274,21 @@ void TMVAWrapperBase::addEvent(TString cat, bool isSig) {
   else { // no BDT cycling
     if (v->eventNumber%2==0) {
       if (isSig) {
-        factoryContainer[cat][0]->AddSignalTestEvent(values);
+        if ( rMode == kTrain ) factoryContainer[cat][0]->AddSignalTestEvent(values);
         sigEvCounts[cat][0].first += 1;
       }
       else {
-        factoryContainer[cat][0]->AddBackgroundTestEvent(values);
+        if ( rMode == kTrain ) factoryContainer[cat][0]->AddBackgroundTestEvent(values);
         bkgEvCounts[cat][0].first += 1;
       }
     }
     else {
       if (isSig) {
-        factoryContainer[cat][0]->AddSignalTrainingEvent(values);
+        if ( rMode == kTrain ) factoryContainer[cat][0]->AddSignalTrainingEvent(values);
         sigEvCounts[cat][0].second += 1;
       }
       else {
-        factoryContainer[cat][0]->AddBackgroundTrainingEvent(values);
+        if ( rMode == kTrain ) factoryContainer[cat][0]->AddBackgroundTrainingEvent(values);
         bkgEvCounts[cat][0].second += 1;
       }
     }
@@ -318,7 +335,12 @@ float TMVAWrapperBase::evaluateMVAValue(TString cat) {
 }
 
 TString TMVAWrapperBase::getHistName(TString cat, int b, TString var, TString ext) {
-  return TString(Form("%s_%d_%s%s",cat.Data(),b,var.Data(),ext.Data()));
+  if ( b==-1) { // b=-1 gets the sum
+    return TString(Form("%s_%s%s",cat.Data(),var.Data(),ext.Data()));
+  }
+  else {
+    return TString(Form("%s_%d_%s%s",cat.Data(),b,var.Data(),ext.Data()));
+  }
 }
 
 void TMVAWrapperBase::setHistStyle(TH1F *sigTrain, TH1F *bkgTrain, TH1F *sigTest, TH1F *bkgTest){
@@ -418,6 +440,20 @@ void TMVAWrapperBase::createTrainingHistograms() {
       bdtoutBranches[b]->Fill();
     }
   }
+  // also nice to sum histograms over each nBDT in each category
+  // only need this for the BDT output as the sum of training and test will be the same across all BDTs
+  for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
+    for (int i=0; i<4; i++) {
+      TString sumHistName = getHistName(*cat, -1, "bdtoutput", types[i]);
+      TString histName = getHistName(*cat, 0, "bdtoutput", types[i]);
+      TH1F *th1f = (TH1F*)histStore[histName]->Clone(sumHistName);
+      for (int b=1; b<numberOfBDTs; b++) {
+        th1f->Add( histStore[ getHistName(*cat,b,"bdtoutput",types[i]) ] );
+      }
+      histStore[sumHistName] = th1f;
+    }
+  }
+
   // new directory in outfile for histograms
   TDirectory *dir = outFile->mkdir(Form("%s_TrainingHists",name.Data()));
   dir->cd();
@@ -432,6 +468,8 @@ void TMVAWrapperBase::createTrainingHistograms() {
       }
       makePlot(*cat,b,"bdtoutput");
     }
+    // and the sums
+    makePlot(*cat,-1,"bdtoutput");
   }
   histStore.clear();
 }
@@ -514,6 +552,7 @@ void TMVAWrapperBase::makePlot(TString cat, int b, TString var) {
   canv->Update();
   canv->Modified();
   TString canvName = Form("%s_%d_%s",cat.Data(),b,var.Data());
+  if ( b==-1 ) canvName = Form("%s_%s",cat.Data(),var.Data());
   canv->Print(Form("plots/%s/pdf/%s.pdf",name.Data(),canvName.Data()));
   canv->Print(Form("plots/%s/png/%s.png",name.Data(),canvName.Data()));
   canv->Print(Form("plots/%s/C/%s.C",name.Data(),canvName.Data()));

@@ -49,6 +49,23 @@ DataSet::DataSet(TString _name, TString _title, RooWorkspace* _w, int typ1, int 
   addType(typ4);
 }
 
+CombDataSet::CombDataSet(TString _name, TString _title, TString _cat_name):
+  name(_name),
+  title(_title),
+  cat_name(_cat_name)
+{}
+
+CombDataSet::CombDataSet(TString _name, TString _title, TString _cat_name, map<TString,TString> _catDataMap):
+  name(_name),
+  title(_title),
+  cat_name(_cat_name),
+  catDataMap(_catDataMap)
+{}
+
+void CombDataSet::addCatDataset( TString cat, TString data ){
+  catDataMap[cat] = data;
+}
+
 PlotComponent::PlotComponent(TString _name, TString _title):
   name(_name),
   title(_title),
@@ -175,3 +192,11 @@ void PlotComponent::setSolidFill(int color){
   fstyle = 1001;
   doption = "LF";
 }
+
+DrawBox::DrawBox( double _xmin, double _xmax, int _color ):
+  xmin(_xmin),
+  xmax(_xmax),
+  color(_color)
+{}
+
+DrawBox::~DrawBox(){}

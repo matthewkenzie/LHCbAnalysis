@@ -15,6 +15,7 @@
 #include "FitterUtils.h"
 
 class DataSet;
+class CombDataSet;
 
 class FitterBase {
 
@@ -38,6 +39,13 @@ class FitterBase {
     void addObsVar(TString name, TString title, TString unit, short int min, short int max);
     void addObsVar(TString name, TString title, TString unit, long int min, long int max);
     void addObsVar(TString name, TString title, TString unit, bool start_val);
+
+    void addCategory(TString name, std::vector<TString> cat_values);
+    void addCategory(TString name, TString cat1);
+    void addCategory(TString name, TString cat1, TString cat2);
+    void addCategory(TString name, TString cat1, TString cat2, TString cat3);
+    void addCategory(TString name, TString cat1, TString cat2, TString cat3, TString cat4);
+
     void setUnit(TString var, TString unit);
     void setBins(TString var, int bins);
 
@@ -45,6 +53,7 @@ class FitterBase {
     void addDataset(TString name, TString title, int itype1, int itype2);
     void addDataset(TString name, TString title, int itype1, int itype2, int itype3);
     void addDataset(TString name, TString title, int itype1, int itype2, int itype3, int itype4);
+    void addCombDataset(TString name, TString title, TString cat, std::map<TString,TString> catDataMap);
 
     void addCut(TString name, double low, double high);
     void addCut(TString name, float low, float high);
@@ -81,6 +90,7 @@ class FitterBase {
 
     void makeDatasets();
     void fillDatasets(TString fname, TString tname);
+    void makeCombinedDatasets();
     void makeDataHist(TString dsname, TString dhname);
 
     void save(TString fname);
@@ -107,6 +117,7 @@ class FitterBase {
   protected:
 
     std::vector<DataSet> dataSets;
+    std::vector<CombDataSet> combDataSets;
     std::vector<int> colors;
     std::vector<TObject*> saveObjsStore;
     std::vector<TCanvas*> canvs;

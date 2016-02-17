@@ -572,6 +572,7 @@ void Bs2KstKst::MultiDimCutOpt::getEventEstimates(TTree *tree) {
   //w->var("sig_mc_mean")->setConstant(false);
   //w->pdf("pdf")->fitTo(*binned);
   double cut_vals[3] = {-1.0,0.0,0.0};
+  w->Print("v");
   plot(w->data("full_data"),w->pdf("pdf"),"full",cut_vals);
   w->var("B_s0_DTF_B_s0_M")->setRange("window",5300,5500);
   RooAbsReal *integral = w->pdf("bkg_pdf")->createIntegral(RooArgSet(*w->var("B_s0_DTF_B_s0_M")),NormSet(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Range("window"));

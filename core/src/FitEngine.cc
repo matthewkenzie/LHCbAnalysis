@@ -61,6 +61,7 @@ void FitEngine::run() {
     fitter->addDatasets();
     fitter->makeDatasets();
     fitter->fillDatasets( arg.infilename, arg.intreename );
+    fitter->makeCombinedDatasets();
     fitter->constructPdfs();
   }
 

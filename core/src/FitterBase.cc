@@ -22,6 +22,7 @@
 #include "RooConstVar.h"
 #include "RooArgSet.h"
 #include "RooArgList.h"
+#include "RooCategory.h"
 
 // roofit data types
 #include "RooAbsData.h"
@@ -219,6 +220,48 @@ void FitterBase::addObsVar(TString name, TString title, TString unit, bool start
   }
 }
 
+void FitterBase::addCategory(TString name, vector<TString> cat_values) {
+  RooCategory *cat = new RooCategory(name,name);
+  for ( int i=0; i<cat_values.size(); i++) {
+    cat->defineType(cat_values[i]);
+  }
+  w->import( *cat );
+  delete cat;
+  if ( !w->cat(name) ){
+    error( Form("Category %s did not get added properly",name.Data()) );
+  }
+}
+
+void FitterBase::addCategory(TString name, TString cat1) {
+  vector<TString> cat_values;
+  cat_values.push_back(cat1);
+  addCategory(name, cat_values);
+}
+
+void FitterBase::addCategory(TString name, TString cat1, TString cat2) {
+  vector<TString> cat_values;
+  cat_values.push_back(cat1);
+  cat_values.push_back(cat2);
+  addCategory(name, cat_values);
+}
+
+void FitterBase::addCategory(TString name, TString cat1, TString cat2, TString cat3) {
+  vector<TString> cat_values;
+  cat_values.push_back(cat1);
+  cat_values.push_back(cat2);
+  cat_values.push_back(cat3);
+  addCategory(name, cat_values);
+}
+
+void FitterBase::addCategory(TString name, TString cat1, TString cat2, TString cat3, TString cat4) {
+  vector<TString> cat_values;
+  cat_values.push_back(cat1);
+  cat_values.push_back(cat2);
+  cat_values.push_back(cat3);
+  cat_values.push_back(cat4);
+  addCategory(name, cat_values);
+}
+
 void FitterBase::setUnit(TString var, TString unit){
   if (!w->var(var)) cerr << "WARNING -- FitterBase::setUnit() -- no variable named " << var << " in workspace" << endl;
   w->var(var)->setUnit(unit);
@@ -247,6 +290,11 @@ void FitterBase::addDataset(TString name, TString title, int itype1, int itype2,
 void FitterBase::addDataset(TString name, TString title, int itype1, int itype2, int itype3, int itype4) {
   dataSets.push_back(DataSet(name,title,w,itype1,itype2,itype3,itype4));
   if ( verbose || debug ) print("Added dataset "+name);
+}
+
+void FitterBase::addCombDataset(TString name, TString title, TString cat, std::map<TString,TString> catDataMap) {
+  combDataSets.push_back( CombDataSet(name,title,cat,catDataMap) );
+  if ( verbose || debug ) print("Added combined dataset "+name);
 }
 
 void FitterBase::addCut(TString name, double low, double high){
@@ -300,7 +348,7 @@ void FitterBase::addRequirement(TString dset, TString name, int val){
 void FitterBase::addRequirement(TString dset, TString name, bool val){
   dataSets[dataSets.size()-1].addRequirement(name, val);
   values_b[name] = false;
-  if ( verbose || debug ) val ? print("Added requirement "+name+" is true for dataset "+dset) : print("Added cut "+name+" is false for dataset "+dset);
+  if ( verbose || debug ) val ? print("Added requirement "+name+" is true for dataset "+dset) : print("Added requirement "+name+" is false for dataset "+dset);
 }
 
 void FitterBase::makeDatasets() {
@@ -446,6 +494,33 @@ void FitterBase::fillDatasets(TString fname, TString tname){
     }
   }
   tf->Close();
+}
+
+void FitterBase::makeCombinedDatasets() {
+
+  print("Making combined datasets....");
+
+  for (vector<CombDataSet>::iterator combIt = combDataSets.begin(); combIt != combDataSets.end(); combIt++ ) {
+    // check the category exists
+    if (!w->cat(combIt->cat_name)) {
+      error( Form("Trying to make a combined dataset %s but cannot find the category %s in the workspace",combIt->name.Data(), combIt->cat_name.Data()) );
+    }
+
+    // now make a map between the category names and the RooDataSets
+    map<string,RooDataSet*> dsetMap;
+    for (map<TString,TString>::iterator catIt = combIt->catDataMap.begin(); catIt != combIt->catDataMap.end(); catIt++ ) {
+      if ( !w->data( catIt->second ) ) {
+        error( Form("Looking to add dataset %s with category name %s and couldn't find the dataset",catIt->first.Data(),catIt->second.Data()) );
+      }
+      dsetMap[string(catIt->first.Data())] = (RooDataSet*)w->data( catIt->second );
+    }
+    RooDataSet *dset = new RooDataSet( combIt->name, combIt->title, *w->set("observables"), Index( *w->cat(combIt->cat_name) ), Import( dsetMap ) );
+    w->import( *dset );
+    delete dset;
+    if ( verbose || debug ) {
+      print( "Added combined dataset: "+combIt->name );
+    }
+  }
 }
 
 void FitterBase::makeDataHist(TString dsname, TString dhname) {
@@ -818,7 +893,7 @@ void FitterBase::plot(TString var, vector<PlotComponent> plotComps, TString fnam
   if (TString(w->var(var)->getUnit())!=TString("")) xtitle = Form("%s (%s)",w->var(var)->GetTitle(),w->var(var)->getUnit());
   plot->GetXaxis()->SetTitle(xtitle);
   plot->GetXaxis()->SetTitleOffset(0.8);
-  plot->GetYaxis()->SetTitleOffset(0.8);
+  plot->GetYaxis()->SetTitleOffset(1.0);
 
   TLegend *leg;
   if ( plotComps.size()<7 ) {

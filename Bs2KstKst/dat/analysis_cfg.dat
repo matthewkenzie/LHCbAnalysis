@@ -60,5 +60,5 @@ itype=71   sqrts=7  year=2011 	name=Data2011                     fname=nTuples/p
 itype=81   sqrts=8  year=2012 	name=Data2012                     fname=nTuples/presel/Data2012_hadd.root                 tname=AnalysisTree
 
 # Data Bd2JpsiKst
-itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011           fname=nTuples/presel/DataBd2JpsiKst2011_hadd.root       tname=AnalysisTree
-itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012           fname=nTuples/presel/DataBd2JpsiKst2012_hadd.root       tname=AnalysisTree
+#itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011           fname=nTuples/presel/DataBd2JpsiKst2011_hadd.root       tname=AnalysisTree
+#itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012           fname=nTuples/presel/DataBd2JpsiKst2012_hadd.root       tname=AnalysisTree
