@@ -24,7 +24,7 @@ namespace Dst2D0pi {
 
     public:
 
-      StandAloneFitter();
+      StandAloneFitter(TString dfile, TString mcfile);
       ~StandAloneFitter();
 
       void run(bool makeDatasets, bool loadDatasets);
@@ -45,9 +45,11 @@ namespace Dst2D0pi {
 
     private:
 
+      TString dataFileName;
       TFile *dataFile;
       TTree *dataTree;
 
+      TString mcFileName;
       TFile *mcFile;
       TTree *mcTree;
 

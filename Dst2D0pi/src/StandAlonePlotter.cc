@@ -12,7 +12,9 @@ Dst2D0pi::StandAlonePlotter::StandAlonePlotter( RooWorkspace *_w, TString _pName
   pTitleX(0.24),
   pBoxX(0.22),
   pDrawLog(false),
-  pRedPull(-1)
+  pRedPull(-1),
+  pLogYMin(-99),
+  pLogYMax(-99)
 {
   system(Form("mkdir -p plots/%s/pdf",pName.Data()));
   system(Form("mkdir -p plots/%s/png",pName.Data()));
@@ -262,7 +264,12 @@ void Dst2D0pi::StandAlonePlotter::plot(TString var, vector<PlotComponent> plotCo
     upperPadLog->SetLeftMargin(0.18);
     lowerPadLog->SetLeftMargin(0.18);
     RooPlot *logplot = (RooPlot*)plot->Clone();
-    logplot->GetYaxis()->SetRangeUser(1.,plot->GetMaximum()*2);
+    if ( pLogYMin > 0 && pLogYMax > 0 ) {
+      logplot->GetYaxis()->SetRangeUser( pLogYMin, pLogYMax );
+    }
+    else {
+      logplot->GetYaxis()->SetRangeUser(1.,plot->GetMaximum()*2);
+    }
     upperPadLog->cd();
     logplot->Draw();
     if ( leg->GetNRows() > 0 ) {

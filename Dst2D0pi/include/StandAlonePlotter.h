@@ -42,6 +42,8 @@ namespace Dst2D0pi{
       double pBoxX;
       bool pDrawLog;
       int pRedPull;
+      double pLogYMin;
+      double pLogYMax;
 
     private:
 
