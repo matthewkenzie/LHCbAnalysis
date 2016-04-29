@@ -79,7 +79,9 @@ PlotComponent::PlotComponent(TString _name, TString _title):
   binning(-1),
   doption("L"),
   invisible(false),
-  noleg(false)
+  noleg(false),
+  slice(""),
+  project("")
 {}
 
 PlotComponent::PlotComponent(TString _name, TString _title, int _lcolor):
@@ -95,7 +97,9 @@ PlotComponent::PlotComponent(TString _name, TString _title, int _lcolor):
   binning(-1),
   doption("L"),
   invisible(false),
-  noleg(false)
+  noleg(false),
+  slice(""),
+  project("")
 {}
 
 PlotComponent::PlotComponent(TString _name, TString _title, int _lcolor, int _lstyle):
@@ -111,7 +115,9 @@ PlotComponent::PlotComponent(TString _name, TString _title, int _lcolor, int _ls
   binning(-1),
   doption("L"),
   invisible(false),
-  noleg(false)
+  noleg(false),
+  slice(""),
+  project("")
 {}
 
 void PlotComponent::plotOn(RooWorkspace *w, RooPlot *plot, TLegend *leg){
@@ -125,6 +131,20 @@ void PlotComponent::plotOn(RooWorkspace *w, RooPlot *plot, TLegend *leg){
     comp.Remove(0,comp.First(":")+1);
   }
 
+  TString slice_name = slice;
+  TString slice_value = slice;
+  if (slice.Contains(":")) {
+    slice_name.Remove(slice_name.First(":"),slice_name.Length());
+    slice_value.Remove(0,slice_value.First(":")+2);
+  }
+
+  TString project_name = project;
+  TString project_value = project;
+  if (project.Contains(":")) {
+    project_name.Remove( project_name.First(":"), project_name.Length() );
+    project_value.Remove( 0, project_value.First(":")+2 );
+  }
+
   // set binning to default if not requested
   if ( binning == -1 ) {
     binning = plot->getPlotVar()->getBins();
@@ -132,26 +152,69 @@ void PlotComponent::plotOn(RooWorkspace *w, RooPlot *plot, TLegend *leg){
 
   // check if dset
   if (w->data(name)) {
-    if (mstyle > 0) {
-      if ( invisible ) w->data(name)->plotOn(plot,Binning(binning),LineColor(lcolor),MarkerColor(mcolor),MarkerStyle(mstyle),Invisible());
-      else             w->data(name)->plotOn(plot,Binning(binning),LineColor(lcolor),MarkerColor(mcolor),MarkerStyle(mstyle));
+
+    // plot options
+    RooLinkedList l;
+    RooCmdArg cmd1 = Binning(binning)    ; l.Add( &cmd1 );
+    RooCmdArg cmd2 = LineColor(lcolor)   ; l.Add( &cmd2 );
+    RooCmdArg cmd3 = MarkerColor(mcolor) ; l.Add( &cmd3 );
+    RooCmdArg cmd4;
+    RooCmdArg cmd5;
+    RooCmdArg cmd6;
+    if ( mstyle > 0 ) {
+      cmd4 = MarkerStyle(mstyle);
+      l.Add( &cmd4 );
     }
-    else {
-      if ( invisible ) w->data(name)->plotOn(plot,Binning(binning),LineColor(lcolor),MarkerColor(mcolor),Invisible());
-      else             w->data(name)->plotOn(plot,Binning(binning),LineColor(lcolor),MarkerColor(mcolor));
+    if ( invisible )  {
+      cmd5 = Invisible();
+      l.Add( &cmd5 );
     }
+    if ( slice!="" )  {
+      cmd6 = Cut( slice_name+"=="+slice_name+"::"+slice_value );
+      l.Add( &cmd6 );
+    }
+
+    // plot
+    w->data(name)->plotOn(plot,l);
+
   }
 
   // check if pdf
   else if (w->pdf(main)) {
+
+    // plot options
+    RooLinkedList l;
+    RooCmdArg cmd1 = LineColor(lcolor)  ; l.Add( &cmd1 );
+    RooCmdArg cmd2 = LineColor(lcolor)  ; l.Add( &cmd2 );
+    RooCmdArg cmd3 = LineStyle(lstyle)  ; l.Add( &cmd3 );
+    RooCmdArg cmd4 = LineWidth(lwidth)  ; l.Add( &cmd4 );
+    RooCmdArg cmd5 = FillColor(fcolor)  ; l.Add( &cmd5 );
+    RooCmdArg cmd6 = FillStyle(fstyle)  ; l.Add( &cmd6 );
+    RooCmdArg cmd7 = DrawOption(doption); l.Add( &cmd7 );
+    RooCmdArg cmd8;
+    RooCmdArg cmd9;
+    RooCmdArg cmd10;
+    RooCmdArg cmd11;
     if (name.Contains(":")) {
-      if ( invisible ) w->pdf(main)->plotOn(plot,Components(comp),LineColor(lcolor),LineStyle(lstyle),LineWidth(lwidth),FillColor(fcolor),FillStyle(fstyle),DrawOption(doption),Invisible());
-      else             w->pdf(main)->plotOn(plot,Components(comp),LineColor(lcolor),LineStyle(lstyle),LineWidth(lwidth),FillColor(fcolor),FillStyle(fstyle),DrawOption(doption));
+      cmd8 = Components(comp);
+      l.Add( &cmd8 );
     }
-    else {
-      if ( invisible ) w->pdf(main)->plotOn(plot,LineColor(lcolor),LineStyle(lstyle),LineWidth(lwidth),FillColor(fcolor),FillStyle(fstyle),DrawOption(doption),Invisible());
-      else             w->pdf(main)->plotOn(plot,LineColor(lcolor),LineStyle(lstyle),LineWidth(lwidth),FillColor(fcolor),FillStyle(fstyle),DrawOption(doption));
+    if (invisible) {
+      cmd9 = Invisible();
+      l.Add( &cmd9 );
     }
+    if ( slice!="" )  {
+      cmd10 = Slice( *w->cat(slice_name), slice_value );
+      l.Add( &cmd10 );
+    }
+    if ( project!="") {
+      cmd11 = ProjWData( *w->cat(project_name), *w->data(project_value) );
+      l.Add( &cmd11 );
+    }
+
+    // plot
+    w->pdf(main)->plotOn( plot, l );
+
   }
 
   // add to legend if necessary

@@ -37,6 +37,7 @@ namespace Dst2D0pi {
       void GetYieldsInMassWindow();
 
       void D0IPChi2Fit();
+      void D0DistanceFit();
 
       inline void SetIPCut( double xmax ) { ipCut=xmax; ipCutSet=true; }
       void GetYieldsFromIPCut();
@@ -79,6 +80,9 @@ namespace Dst2D0pi {
       double nPrompt;
       double nSec;
       double nBkg;
+      double nPromptErr;
+      double nSecErr;
+      double nBkgErr;
   };
 }
 

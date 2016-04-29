@@ -25,6 +25,8 @@ namespace Bs2KstKst {
       void makeInitialFitPlots();
       void makeDataPlot();
       void makeSolidDataPlot();
+      void makePerCategoryPlots();
+      void makePerCategorySolidPlots();
       void makeSWeightPlots();
 
       void Bs2KstKstFit();

@@ -32,8 +32,8 @@ bool Bs2KstKst::ApplyBDTAndPIDCuts::AnalyseEvent() {
   v->pass_pid = false;
 
   if ( v->year == "2011" ) {
-    if ( v->bdtoutput           > -0.02   ) v->pass_bdt = true;
-    if ( v->min_kaon_ProbNNk    > 0.22 &&
+    if ( v->bdtoutput           > -0.01   ) v->pass_bdt = true;
+    if ( v->min_kaon_ProbNNk    > 0.24 &&
          v->min_pion_ProbNNpiKp > 0.00    ) v->pass_pid = true;
   }
   else if ( v->year == "2012" ) {

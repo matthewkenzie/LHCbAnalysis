@@ -28,7 +28,7 @@ Bs2KstKst::InvariantMassFit::~InvariantMassFit(){}
 void Bs2KstKst::InvariantMassFit::addObsVars(){
 
   addObsVar("B_s0_DTF_B_s0_M",            "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV",  5000.,5800.);
-  //addObsVar("B_s0_DTF_B_s0_MERR",         "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV",  0.,100.);
+  addObsVar("B_s0_DTF_B_s0_MERR",         "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV",  0.,100.);
   addObsVar("B_s0_DTF_KST1_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
   addObsVar("B_s0_DTF_KST2_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
   addObsVar("B_s0_DTF_B_s0_CosTheta1",    "cos(#theta_{1})",             "",    -1., 1.);
@@ -120,55 +120,23 @@ void Bs2KstKst::InvariantMassFit::run(){
 
   DataFit();
 
-  // Splot stuff
-  //RooDataSet *data = (RooDataSet*)w->data("Data");
-  //RooAbsPdf *pdf = w->pdf("constrained_pdf");
-
-  //w->loadSnapshot("constrained_pdf_fit");
-  //RooArgList *syields = new RooArgList();
-  //syields->add( *w->var("bs2kstkst_y") );
-
-  //RooStats::SPlot *sData = new RooStats::SPlot("Data_sfit", "Data_sfit", *data, pdf, *syields);
-  //w->import(*sData);
-  //w->import(*data,Rename("Data_wsweights"));
-
-  //RooDataSet *swdata = new RooDataSet("Data_wsweights_proj_bs2kstkst_y","Data sweight proj bs2kstkst_y", data, *data->get(), 0, "bs2kstkst_y_sw");
-  //w->import(*swdata);
-
-  //RooArgSet *syields = new RooArgSet();
-  //syields->add(*w->var("bkg_y"       ));
-  //syields->add(*w->var("part_reco_y" ));
-  //syields->add(*w->var("bs2kstkst_y"  ));
-  //syields->add(*w->var("bd2kstkst_y" ));
-  //syields->add(*w->var("bd2phikst_y" ));
-  ////syields->add(*w->function("bs2phikst_y" ));
-  //syields->add(*w->var("bd2rhokst_y" ));
-  //syields->add(*w->var("lb2pkpipi_y" ));
-  //syields->add(*w->var("lb2ppipipi_y"));
-
-  //RooArgSet *nonsyields = w->pdf("constrained_pdf")->getParameters( RooArgSet( *w->set("observables"), *syields) );
-
-  //w->defineSet("syields", *syields);
-  //w->defineSet("nonsyields", *nonsyields);
-
-  //sfit("constrained_pdf","Data","syields","nonsyields");
-
-  //sfit("pdf","Data");
-
-  if ( w->pdf("constrained_pdf") ) {
-    sfit("constrained_pdf","Data");
-  }
-  else {
-    sfit("pdf","Data");
-  }
-  sproject("Data",   "bs2kstkst_y");
+  //if ( w->pdf("constrained_pdf") ) {
+    //sfit("constrained_pdf","Data");
+  //}
+  //else {
+    //sfit("pdf","Data");
+  //}
+  //sproject("Data",   "bs2kstkst_y");
 
 }
 
 void Bs2KstKst::InvariantMassFit::makePlots(){
+
   //makeInitialFitPlots();
   makeDataPlot();
   makeSolidDataPlot();
+  sfit("constrained_pdf","Data");
+  sproject("Data",   "bs2kstkst_y");
   makeSWeightPlots();
 }
 
@@ -246,7 +214,7 @@ void Bs2KstKst::InvariantMassFit::makeDataPlot(){
   w->var("part_reco_y")->SetTitle("N_{part. rec.}");
   w->var("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
   w->var("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+  w->function("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
   w->var("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
   w->function("bs2phikst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
   w->var("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
@@ -256,7 +224,7 @@ void Bs2KstKst::InvariantMassFit::makeDataPlot(){
   ordered_params->add( *w->var("bkg_y") );
   ordered_params->add( *w->var("part_reco_y") );
   ordered_params->add( *w->var("bd2kstkst_y") );
-  ordered_params->add( *w->var("bd2rhokst_y") );
+  ordered_params->add( *w->function("bd2rhokst_y") );
   ordered_params->add( *w->var("bd2phikst_y") );
   ordered_params->add( *w->function("bs2phikst_y") );
   ordered_params->add( *w->var("lb2pkpipi_y") );
@@ -335,7 +303,7 @@ void Bs2KstKst::InvariantMassFit::makeSolidDataPlot(){
   w->var("part_reco_y")->SetTitle("N_{part. rec.}");
   w->var("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
   w->var("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+  w->function("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
   w->var("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
   w->function("bs2phikst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
   w->var("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
@@ -345,7 +313,7 @@ void Bs2KstKst::InvariantMassFit::makeSolidDataPlot(){
   ordered_params->add( *w->var("bkg_y") );
   ordered_params->add( *w->var("part_reco_y") );
   ordered_params->add( *w->var("bd2kstkst_y") );
-  ordered_params->add( *w->var("bd2rhokst_y") );
+  ordered_params->add( *w->function("bd2rhokst_y") );
   ordered_params->add( *w->var("bd2phikst_y") );
   ordered_params->add( *w->function("bs2phikst_y") );
   ordered_params->add( *w->var("lb2pkpipi_y") );
@@ -353,7 +321,7 @@ void Bs2KstKst::InvariantMassFit::makeSolidDataPlot(){
   ordered_params->add( *w->var("bs2kstkst_y") );
 
   setTitle("InvariantMassFit");
-  setDrawLog(false);
+  setDrawLog(true);
   setResidType(2);
   setPBoxX(0.23);
 
@@ -690,18 +658,20 @@ void Bs2KstKst::InvariantMassFit::makeCombinatorialPdf() {
 void Bs2KstKst::InvariantMassFit::makeTotalPdf() {
 
   addParameter("bkg_y",        0, 200e3);
-  addParameter("part_reco_y",  0, 200e3);
+  addParameter("part_reco_y",  0, 10e3);
   addParameter("bs2kstkst_y",   0, 20e3);
   addParameter("bd2kstkst_y",  0, 3000);
-  addParameter("bd2phikst_y",  0, 5000);
+  addParameter("bd2phikst_y",  100, 5000);
   // add bs2phikst yield as constrained ratio
-  addParameter("yield_ratio_bsobd_phikst",  0, 1.);
+  addParameter("yield_ratio_bsobd_phikst",  0.113,0.,1.);
   addConstraint("yield_ratio_bsobd_phikst", 0.113, 0.0287);
-  //// TODO
-  //// temp solution with no uncert
   w->factory("prod::bs2phikst_y( yield_ratio_bsobd_phikst, bd2phikst_y )");
+  // add bd2rhokst yield as constrained ratio
+  addParameter("yield_ratio_bd_rhoophikst", 0.39,0.,1.);
+  addConstraint("yield_ratio_bd_rhoophikst", 0.39, 0.13);
+  w->factory("prod::bd2rhokst_y( yield_ratio_bd_rhoophikst, bd2phikst_y)");
   //addParameter("bs2phikst_y",  0, 250);
-  addParameter("bd2rhokst_y",  0, 10e4);
+  //addParameter("bd2rhokst_y",  0, 3e3);
   addParameter("lb2pkpipi_y",  0, 4000);
   addParameter("lb2ppipipi_y", 0, 4000);
 
@@ -712,7 +682,7 @@ void Bs2KstKst::InvariantMassFit::makeTotalPdf() {
   yields->add(*w->var("bd2kstkst_y" ));
   yields->add(*w->var("bd2phikst_y" ));
   yields->add(*w->function("bs2phikst_y" ));
-  yields->add(*w->var("bd2rhokst_y" ));
+  yields->add(*w->function("bd2rhokst_y" ));
   yields->add(*w->var("lb2pkpipi_y" ));
   yields->add(*w->var("lb2ppipipi_y"));
 
@@ -742,6 +712,8 @@ void Bs2KstKst::InvariantMassFit::makeTotalPdf() {
 
   // this is to catch the constraint
   ((RooArgSet*)w->set("pdf_yield_params"))->remove( *w->var("yield_ratio_bsobd_phikst") );
+  ((RooArgSet*)w->set("pdf_yield_params"))->remove( *w->var("yield_ratio_bd_rhoophikst") );
   ((RooArgSet*)w->set("pdf_nonyield_params"))->add( *w->var("yield_ratio_bsobd_phikst") );
+  ((RooArgSet*)w->set("pdf_nonyield_params"))->add( *w->var("yield_ratio_bd_rhoophikst") );
 
 }

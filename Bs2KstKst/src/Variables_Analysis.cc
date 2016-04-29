@@ -2772,5 +2772,7 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("B_s0_DTF_B_s0_Phi1"                    , &B_s0_DTF_B_s0_Phi1                      , "B_s0_DTF_B_s0_Phi1/D"                  );
   tree->Branch("B_s0_DTF_TAU"                          , &B_s0_DTF_TAU                            , "B_s0_DTF_TAU/D"                        );
   tree->Branch("B_s0_DTF_TAUERR"                       , &B_s0_DTF_TAUERR                         , "B_s0_DTF_TAUERR/D"                     );
+
+  tree->Branch("sweight"                               , &sweight                                 , "sweight/D"                             );
 }
 

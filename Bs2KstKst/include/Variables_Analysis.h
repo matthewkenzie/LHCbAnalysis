@@ -1414,6 +1414,8 @@ namespace Bs2KstKst {
       Double_t             B_s0_DTF_B_s0_Phi1                      ;
       Double_t             B_s0_DTF_TAU                            ;
       Double_t             B_s0_DTF_TAUERR                         ;
+
+      Double_t             sweight                                 ;
   };
 
 }

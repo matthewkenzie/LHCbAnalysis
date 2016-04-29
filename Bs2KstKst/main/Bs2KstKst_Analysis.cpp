@@ -6,6 +6,7 @@
 #include "AddPIDVarsAndDatasets.h"
 #include "ApplyBDTAndPIDCuts.h"
 #include "AddAngles.h"
+#include "AddSWeights.h"
 
 using namespace std;
 using namespace Utils;
@@ -24,6 +25,7 @@ int main(int argc, char **argv) {
   Bs2KstKst::AddPIDVarsAndDatasets *addVars   = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"    , v );
   Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid    = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
   Bs2KstKst::AddAngles             *addAng    = new Bs2KstKst::AddAngles             ( "AddAngles"     , v );
+  Bs2KstKst::AddSWeights           *addSW     = new Bs2KstKst::AddSWeights           ( "AddSWeights"   , v );
 
   // pass variables to runner
   runner.setVariables( v );
@@ -33,6 +35,7 @@ int main(int argc, char **argv) {
   runner.addAnalyser( addVars   );
   runner.addAnalyser( bdtPid    );
   runner.addAnalyser( addAng    );
+  runner.addAnalyser( addSW     );
 
   // run
   runner.run();
@@ -43,6 +46,7 @@ int main(int argc, char **argv) {
   delete addVars;
   delete bdtPid;
   delete addAng;
+  delete addSW;
 
   return 0;
 
