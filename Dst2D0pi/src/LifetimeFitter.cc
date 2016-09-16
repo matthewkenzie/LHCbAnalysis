@@ -149,7 +149,7 @@ void Dst2D0pi::LifetimeFitter::makePlots() {
   plotComps_D0_t.push_back(pc_pdf_d0_t);
   //plotComps_D0_t.push_back(pc_data_t);
 
-  setTitle("LHCb");
+  setTitle("#splitline{LHCb}{Trigger}");
   setDrawLog(true);
   setResidType(2);
   setRedPull(3);

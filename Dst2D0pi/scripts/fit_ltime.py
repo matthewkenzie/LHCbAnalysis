@@ -57,7 +57,7 @@ canv2.Print("plots/LFit/pdf/lfit_log.pdf")
 canv2.Print("plots/LFit/png/lfit_log.png")
 canv2.Print("plots/LFit/C/lfit_log.C")
 
-th1f_dmass = r.TH1F("dmass","",50,1815,1915)
+th1f_dmass = r.TH1F("dmass","",50,1820,1910)
 tree.Draw('D0_M>>dmass','1000.*D0_LIFETIME>%f && D0_Hlt1CalibTrackingKPiDecision_TOS'%xmin,'goff')
 canv3 = r.TCanvas()
 th1f_dmass.GetXaxis().SetTitle('m(D^{0}) [MeV/c^{2}]')
