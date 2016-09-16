@@ -52,8 +52,8 @@ itype=-79  sqrts=7  year=2011  name=Lb2ppipipi_MC2011             fname=nTuples/
 itype=-89  sqrts=8  year=2012  name=Lb2ppipipi_MC2012             fname=nTuples/presel/Lb2ppipipi_MC2012.root             tname=AnalysisTree
 
 # Bd2JpsiKst
-itype=-710 sqrts=7  year=2011  name=Bd2JpsiKst_MC2011             fname=nTuples/presel/Bd2JpsiKst_MC2011.root             tname=AnalysisTree
-itype=-810 sqrts=8  year=2012  name=Bd2JpsiKst_MC2012             fname=nTuples/presel/Bd2JpsiKst_MC2012.root             tname=AnalysisTree
+#itype=-710 sqrts=7  year=2011  name=Bd2JpsiKst_MC2011             fname=nTuples/presel/Bd2JpsiKst_MC2011.root             tname=AnalysisTree
+#itype=-810 sqrts=8  year=2012  name=Bd2JpsiKst_MC2012             fname=nTuples/presel/Bd2JpsiKst_MC2012.root             tname=AnalysisTree
 
 # Data
 itype=71   sqrts=7  year=2011 	name=Data2011                     fname=nTuples/presel/Data2011_hadd.root                 tname=AnalysisTree
