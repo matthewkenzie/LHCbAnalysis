@@ -102,6 +102,7 @@ void defineDatasets( RooWorkspace *w ) {
   RooArgSet *observables = new RooArgSet();
   observables->add( *w->var("B_s0_DTF_B_s0_M") );
   observables->add( *w->var("eventNumber") );
+  observables->add( *w->cat("DataCat") );
   w->defineSet( "observables", *observables );
   delete observables;
 
@@ -142,6 +143,7 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   TTree *tree = (TTree*)inFile->Get( tname );
 
   ULong64_t eventNumber;
+  TString   *year = 0;
   double    B_s0_DTF_B_s0_M;
   int       itype;
   bool      pass_bdt;
@@ -151,6 +153,7 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   bool      B_s0_L0Global_TIS;
 
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
+  tree->SetBranchAddress(  "year"                        , &year                        );
   tree->SetBranchAddress(  "B_s0_DTF_B_s0_M"             , &B_s0_DTF_B_s0_M             );
   tree->SetBranchAddress(  "itype"                       , &itype                       );
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
@@ -174,6 +177,17 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
     // set workspace values
     w->var("B_s0_DTF_B_s0_M")->setVal( B_s0_DTF_B_s0_M );
     w->var("eventNumber")->setVal( eventNumber );
+    if ( *year==TString("2011") ) {
+      if ( B_s0_L0HadronDecision_TOS ) w->cat("DataCat")->setLabel("HadronTOS2011");
+      else if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS ) w->cat("DataCat")->setLabel("GlobalTIS2011");
+      else continue;
+    }
+    else if ( *year==TString("2012") ) {
+      if ( B_s0_L0HadronDecision_TOS ) w->cat("DataCat")->setLabel("HadronTOS2012");
+      else if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS ) w->cat("DataCat")->setLabel("GlobalTIS2012");
+      else continue;
+    }
+    else continue;
 
     // for the most case we put the bdt and pid requirement in
     // for low stats MC samples we don't use it
@@ -259,6 +273,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   delete DataComb;
 
   inFile->Close();
+  delete inFile;
+  delete year;
 
   w->writeToFile( outfname );
 
@@ -638,7 +654,7 @@ int main() {
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
 
   //flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
-  //fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFitWorkspace.root" );
+  fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFitWorkspace.root" );
 
   TFile *tf = TFile::Open("root/MassFitWorkspace.root");
   RooWorkspace *w = (RooWorkspace*)tf->Get("w");

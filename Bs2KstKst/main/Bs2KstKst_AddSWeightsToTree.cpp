@@ -1,10 +1,13 @@
 #include <iostream>
 
 #include "TROOT.h"
+#include "TStyle.h"
+#include "TColor.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TCanvas.h"
 
 #include "RooWorkspace.h"
@@ -49,8 +52,9 @@ double getSWeight( map< ULong64_t, pair<double,double> > &resMap, ULong64_t even
     cout << "Event found " << eventNumber << " has incosistent mass " << resMap[eventNumber].first << " and " << mass << endl;
     return -999.;
   }
-
-  return resMap[eventNumber].second;
+  double sweight = resMap[eventNumber].second;
+  //cout << "Got sweight " << resMap[eventNumber].second << " for event " << eventNumber << endl;
+  return sweight;
 
 }
 
@@ -107,27 +111,36 @@ void addSWeightToTree() {
 
     tree->GetEntry(ev);
 
-    if ( ev%10000==0 ) cout << ev << " / " << tree->GetEntries() << endl;
-
     sweight = -999.;
 
     if ( (itype==71 || itype==81) && pass_bdt && pass_pid && pass_multcand ) {
 
       if ( itype==71 ) {
-        if ( B_s0_L0HadronDecision_TOS )                        sweight = getSWeight( res2011HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
-        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   sweight = getSWeight( res2011GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+        if ( B_s0_L0HadronDecision_TOS )                        {
+          sweight = getSWeight( res2011HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
+        }
+        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   {
+          sweight = getSWeight( res2011GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+        }
+
       }
       if ( itype==81 ) {
-        if ( B_s0_L0HadronDecision_TOS )                        sweight = getSWeight( res2012HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
-        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   sweight = getSWeight( res2012GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+        if ( B_s0_L0HadronDecision_TOS )                        {
+          sweight = getSWeight( res2012HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
+        }
+        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   {
+          sweight = getSWeight( res2012GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+        }
       }
     }
+
+    if ( ev%10000==0 ) cout << ev << " / " << tree->GetEntries() << endl;
 
     // notice NOT tree->Fill()
     bpt->Fill();
 
   }
-  tree->Print();
+  //tree->Print();
   tree->Write();
   delete tFile;
 
@@ -161,9 +174,70 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
 
 }
 
+void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, double xmax, int ybins, double ymin, double ymax, TString xtitle="", TString ytitle="", TString xunit="", TString yunit="" ) {
+
+  TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
+
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && pass_multcand)", "goff" );
+
+  TString title = h->GetTitle();
+  if ( xtitle!="" ) title = xtitle;
+  if ( xunit!="") title += " ("+xunit+")";
+  h->GetXaxis()->SetTitle( title );
+
+  if ( ytitle!="" ) title = ytitle;
+  if ( yunit!="" ) title += " ("+yunit+")";
+  h->GetYaxis()->SetTitle( title );
+
+  h->GetZaxis()->SetTitle( "sWeighted Events" );
+
+  h->GetXaxis()->SetTitleSize(0.06);
+  h->GetYaxis()->SetTitleSize(0.06);
+  h->GetZaxis()->SetTitleSize(0.06);
+  h->GetXaxis()->SetTitleOffset(1.3);
+  h->GetYaxis()->SetTitleOffset(1.3);
+  h->GetZaxis()->SetTitleOffset(1.);
+
+  TColor *mycol = gROOT->GetColor( kGray+3 );
+  mycol->SetAlpha(0.4);
+  h->SetLineColor( mycol->GetNumber() );
+  h->SetLineWidth(1);
+  h->GetYaxis()->SetNdivisions( h->GetXaxis()->GetNdivisions() );
+
+  TCanvas *c = new TCanvas();
+  c->cd();
+  gPad->SetPhi(40);
+  gPad->SetTheta(30);
+  gPad->SetTopMargin(0.);
+  gPad->SetBottomMargin(0.08);
+
+  h->Draw("LEGO2FBBB");
+  c->Update();
+  c->Modified();
+
+  c->Print(Form("plots/MassFit/pdf/%s_%s_sw.pdf",var1.Data(),var2.Data()));
+  c->Print(Form("plots/MassFit/png/%s_%s_sw.png",var1.Data(),var2.Data()));
+
+  delete c;
+
+  TCanvas *c2 = new TCanvas();
+  c2->cd();
+  c2->SetLeftMargin(0.15);
+  c2->SetRightMargin(0.18);
+  h->Draw("COLZ");
+  c2->Update();
+  c2->Modified();
+  c2->Print(Form("plots/MassFit/pdf/%s_%s_sw_flat.pdf",var1.Data(),var2.Data()));
+  c2->Print(Form("plots/MassFit/png/%s_%s_sw_flat.png",var1.Data(),var2.Data()));
+
+  delete c2;
+
+}
+
 void makeSWPlots() {
 
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  gStyle->SetPalette(1);
   TFile *tf = TFile::Open("root/AnalysisOutWSWeights.root");
   TTree *tree = (TTree*)tf->Get("AnalysisTree");
 
@@ -176,10 +250,11 @@ void makeSWPlots() {
   draw( tree, "B_s0_DTF_B_s0_Phi1"      , 63 , -3.15 , 3.15 , "#Phi",                        "rad"  );
   draw( tree, "B_s0_DTF_TAU"            , 50 ,  0    ,  10  , "t",                           "fs"   );
   draw( tree, "B_s0_DTF_TAUERR"         , 50 ,  0    ,  0.1 , "#sigma_{t}",                  "fs"   );
-  draw( tree, "B_s0_TAGDECISION_OS"     , 3  , -1    ,  1   , "TAG OS DEC",                  ""     );
-  draw( tree, "B_s0_TAGOMEGA_OS"        , 50 ,  0    ,  1   , "TAG OS OMEGA",                ""     );
-  draw( tree, "B_s0_SS_nnetKaon_DEC"    , 3  , -1    ,  1   , "TAG SS Kaon DEC",             ""     );
-  draw( tree, "B_s0_SS_nnetKaon_PROB"   , 50 ,  0    , 1    , "TAG SS Kaon PROB",            ""     );
+  draw( tree, "B_s0_TAGDECISION_OS"     , 3  , -1    ,  2   , "TAG OS DEC",                  ""     );
+  draw( tree, "B_s0_TAGOMEGA_OS"        , 50 ,  0    ,  0.5 , "TAG OS OMEGA",                ""     );
+  draw( tree, "B_s0_SS_nnetKaon_DEC"    , 3  , -1    ,  2   , "TAG SS Kaon DEC",             ""     );
+  draw( tree, "B_s0_SS_nnetKaon_PROB"   , 50 ,  0    ,  0.5 , "TAG SS Kaon PROB",            ""     );
+  draw2D( tree, "B_s0_DTF_KST1_M", "B_s0_DTF_KST2_M", 45, 800, 1700, 45, 800, 1700, "m(K^{-}#pi^{+})", "m(K^{+}#pi^{-})", "MeV", "MeV" );
 
   tf->Close();
 
@@ -187,7 +262,7 @@ void makeSWPlots() {
 
 int main() {
 
-  //addSWeightToTree();
+  addSWeightToTree();
   makeSWPlots();
 
   return 0;
