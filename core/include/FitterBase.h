@@ -132,7 +132,7 @@ class FitterBase {
 
     double integral(TString pdf, TString var, TString scale="", double low=-999, double high=-999);
 
-    void sfit(TString pdf_name, TString data_name, TString yields_name="", TString nonyields_name="");
+    void sfit(TString pdf_name, TString data_name, TString yields_name="", TString nonyields_name="", bool refit=true, bool loadSnapshot=true);
     void sproject(TString data_name, TString var_name);
 
     TCanvas* createCanvas(int canv_w=800, int canv_h=600);

@@ -106,8 +106,8 @@ int main(int argc, char **argv) {
     cutOpt->loadWorkspace();
   }
   else {
-    //cutOpt->makeInitialDatasets();
-    cutOpt->loadDatasetsFromFile( "root/MultiDimCutDatasets.root" );
+    cutOpt->makeInitialDatasets();
+    //cutOpt->loadDatasetsFromFile( "root/MultiDimCutDatasets.root" );
     cutOpt->makePDFs();
     cutOpt->plotShapes();
   }

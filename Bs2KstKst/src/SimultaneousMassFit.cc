@@ -31,17 +31,17 @@ void Bs2KstKst::SimultaneousMassFit::addObsVars(){
 
   addObsVar("B_s0_DTF_B_s0_M",            "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV",  5000.,5800.);
   //addObsVar("B_s0_DTF_B_s0_MERR",         "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV",  0.,100.);
-  addObsVar("B_s0_DTF_KST1_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
-  addObsVar("B_s0_DTF_KST2_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
-  addObsVar("B_s0_DTF_B_s0_CosTheta1",    "cos(#theta_{1})",             "",    -1., 1.);
-  addObsVar("B_s0_DTF_B_s0_CosTheta2",    "cos(#theta_{2})",             "",    -1., 1.);
-  addObsVar("B_s0_DTF_B_s0_Phi1",         "#Phi",                        "rad", -3.14,3.14);
-  addObsVar("B_s0_DTF_TAU",               "t",                           "fs",   0., 50.);
-  addObsVar("B_s0_DTF_TAUERR",            "#sigma_{t}",                  "fs",   0., 0.5);
-  addObsVar("B_s0_TAGDECISION_OS",        "TAG OS DEC",                  "",    -5, 5); // must pass right type (int)
-  addObsVar("B_s0_TAGOMEGA_OS",           "TAG OS OMEGA",                "",     0., 1.);
-  addObsVar("B_s0_SS_nnetKaon_DEC",       "TAG SS Kaon DEC",             "",     short(-5),short(5)); // must pass right type (int)
-  addObsVar("B_s0_SS_nnetKaon_PROB",      "TAG SS Kaon PROB",            "",     float(0.),float(1.));
+  //addObsVar("B_s0_DTF_KST1_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
+  //addObsVar("B_s0_DTF_KST2_M",            "m(K^{-}#pi^{+})",             "MeV",  750., 1700.);
+  //addObsVar("B_s0_DTF_B_s0_CosTheta1",    "cos(#theta_{1})",             "",    -1., 1.);
+  //addObsVar("B_s0_DTF_B_s0_CosTheta2",    "cos(#theta_{2})",             "",    -1., 1.);
+  //addObsVar("B_s0_DTF_B_s0_Phi1",         "#Phi",                        "rad", -3.14,3.14);
+  //addObsVar("B_s0_DTF_TAU",               "t",                           "fs",   0., 50.);
+  //addObsVar("B_s0_DTF_TAUERR",            "#sigma_{t}",                  "fs",   0., 0.5);
+  //addObsVar("B_s0_TAGDECISION_OS",        "TAG OS DEC",                  "",    -5, 5); // must pass right type (int)
+  //addObsVar("B_s0_TAGOMEGA_OS",           "TAG OS OMEGA",                "",     0., 1.);
+  //addObsVar("B_s0_SS_nnetKaon_DEC",       "TAG SS Kaon DEC",             "",     short(-5),short(5)); // must pass right type (int)
+  //addObsVar("B_s0_SS_nnetKaon_PROB",      "TAG SS Kaon PROB",            "",     float(0.),float(1.));
   //addObsVar("B_s0_L0Global_TIS",          "L0 Global TIS",               "",     false );
   //addObsVar("B_s0_L0Global_TOS",          "L0 Global TOS",               "",     false );
   //addObsVar("B_s0_L0HadronDecision_TIS",  "L0 Hadron TIS",               "",     false );
@@ -63,29 +63,30 @@ void Bs2KstKst::SimultaneousMassFit::addDatasets(){
   addRequirement("Data",       "pass_bdt", true);
   addRequirement("Data",       "pass_pid", true);
 
-  // These are the simultaneous dsets
-  addDataset("Data2011HadronTOS",   "Data (2011) Hadron TOS",  71);
-  addDataset("Data2011GlobalTIS",   "Data (2011) Global TIS",  71);
-  addDataset("Data2012HadronTOS",   "Data (2012) Hadron TOS",  81);
-  addDataset("Data2012GlobalTIS",   "Data (2012) Global TIS",  81);
+  // There's a horrible bug here that datasets are only stored in a vector so requirements must
+  // come directly adter the addDataset line (awful)
 
   // 2011 && L0_Hadron_TOS
+  addDataset("Data2011HadronTOS",   "Data (2011) Hadron TOS",  71);
   addRequirement("Data2011HadronTOS",   "pass_bdt", true);
   addRequirement("Data2011HadronTOS",   "pass_pid", true);
   addRequirement("Data2011HadronTOS",   "B_s0_L0HadronDecision_TOS", true  );
 
   // 2011 && L0_Global_TIS && !L0_Hadron_TOS
+  addDataset("Data2011GlobalTIS",   "Data (2011) Global TIS",  71);
   addRequirement("Data2011GlobalTIS",   "pass_bdt", true);
   addRequirement("Data2011GlobalTIS",   "pass_pid", true);
   addRequirement("Data2011GlobalTIS",   "B_s0_L0Global_TIS",         true );
   addRequirement("Data2011GlobalTIS",   "B_s0_L0HadronDecision_TOS", false  );
 
   // 2012 && L0_Hadron_TOS
+  addDataset("Data2012HadronTOS",   "Data (2012) Hadron TOS",  81);
   addRequirement("Data2012HadronTOS",   "pass_bdt", true);
   addRequirement("Data2012HadronTOS",   "pass_pid", true);
   addRequirement("Data2012HadronTOS",   "B_s0_L0HadronDecision_TOS", true  );
 
   // 2012 && && L0_Global_TIS !L0_Hadron_TOS
+  addDataset("Data2012GlobalTIS",   "Data (2012) Global TIS",  81);
   addRequirement("Data2012GlobalTIS",   "pass_bdt", true);
   addRequirement("Data2012GlobalTIS",   "pass_pid", true);
   addRequirement("Data2012GlobalTIS",   "B_s0_L0Global_TIS",         true );
@@ -153,57 +154,35 @@ void Bs2KstKst::SimultaneousMassFit::run(){
 
   DataFit();
 
-  // Splot stuff
-  //RooDataSet *data = (RooDataSet*)w->data("Data");
-  //RooAbsPdf *pdf = w->pdf("constrained_pdf");
-
-  //w->loadSnapshot("constrained_pdf_fit");
-  //RooArgList *syields = new RooArgList();
-  //syields->add( *w->var("bs2kstkst_y") );
-
-  //RooStats::SPlot *sData = new RooStats::SPlot("Data_sfit", "Data_sfit", *data, pdf, *syields);
-  //w->import(*sData);
-  //w->import(*data,Rename("Data_wsweights"));
-
-  //RooDataSet *swdata = new RooDataSet("Data_wsweights_proj_bs2kstkst_y","Data sweight proj bs2kstkst_y", data, *data->get(), 0, "bs2kstkst_y_sw");
-  //w->import(*swdata);
-
-  //RooArgSet *syields = new RooArgSet();
-  //syields->add(*w->var("bkg_y"       ));
-  //syields->add(*w->var("part_reco_y" ));
-  //syields->add(*w->var("bs2kstkst_y"  ));
-  //syields->add(*w->var("bd2kstkst_y" ));
-  //syields->add(*w->var("bd2phikst_y" ));
-  ////syields->add(*w->function("bs2phikst_y" ));
-  //syields->add(*w->var("bd2rhokst_y" ));
-  //syields->add(*w->var("lb2pkpipi_y" ));
-  //syields->add(*w->var("lb2ppipipi_y"));
-
-  //RooArgSet *nonsyields = w->pdf("constrained_pdf")->getParameters( RooArgSet( *w->set("observables"), *syields) );
-
-  //w->defineSet("syields", *syields);
-  //w->defineSet("nonsyields", *nonsyields);
-
-  //sfit("constrained_pdf","Data","syields","nonsyields");
-
-  //sfit("pdf","Data");
-
-  if ( w->pdf("constrained_pdf") ) {
-    sfit("constrained_pdf","Data");
-  }
-  else {
-    sfit("pdf","Data");
-  }
-  sproject("Data",   "bs2kstkst_y");
-
 }
 
 void Bs2KstKst::SimultaneousMassFit::makePlots(){
+
+  // construct the yield functions
+  w->factory( "sum::bkg_y( bkg_y_2011HadronTOS, bkg_y_2011GlobalTIS, bkg_y_2012HadronTOS, bkg_y_2012GlobalTIS )" );
+  w->factory( "sum::part_reco_y( part_reco_y_2011HadronTOS, part_reco_y_2011GlobalTIS, part_reco_y_2012HadronTOS, part_reco_y_2012GlobalTIS )" );
+  w->factory( "sum::bd2kstkst_y( bd2kstkst_y_2011HadronTOS, bd2kstkst_y_2011GlobalTIS, bd2kstkst_y_2012HadronTOS, bd2kstkst_y_2012GlobalTIS )" );
+  w->factory( "sum::bd2rhokst_y( bd2rhokst_y_2011HadronTOS, bd2rhokst_y_2011GlobalTIS, bd2rhokst_y_2012HadronTOS, bd2rhokst_y_2012GlobalTIS )" );
+  w->factory( "sum::bd2phikst_y( bd2phikst_y_2011HadronTOS, bd2phikst_y_2011GlobalTIS, bd2phikst_y_2012HadronTOS, bd2phikst_y_2012GlobalTIS )" );
+  w->factory( "sum::bs2phikst_y( bs2phikst_y_2011HadronTOS, bs2phikst_y_2011GlobalTIS, bs2phikst_y_2012HadronTOS, bs2phikst_y_2012GlobalTIS )" );
+  w->factory( "sum::lb2pkpipi_y( lb2pkpipi_y_2011HadronTOS, lb2pkpipi_y_2011GlobalTIS, lb2pkpipi_y_2012HadronTOS, lb2pkpipi_y_2012GlobalTIS )" );
+  w->factory( "sum::lb2ppipipi_y( lb2ppipipi_y_2011HadronTOS, lb2ppipipi_y_2011GlobalTIS, lb2ppipipi_y_2012HadronTOS, lb2ppipipi_y_2012GlobalTIS )" );
+  w->factory( "sum::bs2kstkst_y( bs2kstkst_y_2011HadronTOS, bs2kstkst_y_2011GlobalTIS, bs2kstkst_y_2012HadronTOS, bs2kstkst_y_2012GlobalTIS )" );
+  //
+
+  //sfit("constrained_pdf","DataCombined");
+  //sfit("constrained_pdf","DataCombined","","",false);
+  //for ( int i=0; i<w->cat("DataCat")->numTypes(); i++) {
+    //w->cat("DataCat")->setIndex(i);
+    //sfit(Form("pdf_%s",w->cat("DataCat")->getLabel()),Form("Data%s",w->cat("DataCat")->getLabel()),"","",false,false);
+  //}
+
   //makeInitialFitPlots();
-  return;
   makeDataPlot();
   makeSolidDataPlot();
-  makeSWeightPlots();
+  makePerCategoryPlots();
+  makePerCategorySolidPlots();
+  //makeSWeightPlots();
 }
 
 void Bs2KstKst::SimultaneousMassFit::makeInitialFitPlots() {
@@ -215,7 +194,7 @@ void Bs2KstKst::SimultaneousMassFit::makeInitialFitPlots() {
   plot("B_s0_DTF_B_s0_M","Lb2pKpipi","lb2pkpipi_mc_pdf",2);
   plot("B_s0_DTF_B_s0_M","Lb2ppipipi","lb2ppipipi_mc_pdf",2);
   plot("B_s0_DTF_B_s0_M","Lb2ppipipi","lb2ppipipi_mc_pdf",2);
-  plot("B_s0_DTF_B_s0_M","Data","constrained_pdf",2);
+  plot("B_s0_DTF_B_s0_M","DataCombined","constrained_pdf",2);
 }
 
 void Bs2KstKst::SimultaneousMassFit::makeDataPlot(){
@@ -226,41 +205,63 @@ void Bs2KstKst::SimultaneousMassFit::makeDataPlot(){
 
   vector<PlotComponent> plotComps;
 
-  PlotComponent pc_data( "Data", "Data" );
+  PlotComponent pc_data( "DataCombined", "Data" );
   pc_data.setDefaultDataStyle();
 
-  PlotComponent pc_data_invis( "Data", "Data Invis" );
+  PlotComponent pc_data_invis( "DataCombined", "Data Invis" );
   pc_data_invis.noleg = true;
 
   PlotComponent pc_pdf( "pdf", "Total PDF" );
   pc_pdf.setSolidLine(kBlue);
+  pc_pdf.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_bkg( "pdf:bkg_pdf", "Background (Exp)" );
+  TString bkg_pdf_name = "pdf:";
+  for (int i=0; i<w->cat("DataCat")->numTypes(); i++) {
+    w->cat("DataCat")->setIndex(i);
+    bkg_pdf_name += Form("bkg_pdf_%s",w->cat("DataCat")->getLabel());
+    if ( i < w->cat("DataCat")->numTypes()-1 ) bkg_pdf_name += ",";
+  }
+  PlotComponent pc_pdf_bkg( bkg_pdf_name, "Background (Exp)" );
   pc_pdf_bkg.setDashedLine(kGreen+1);
+  pc_pdf_bkg.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_part_reco( "pdf:part_reco_pdf", "Partially reco" );
+  TString part_reco_pdf_name = "pdf:";
+  for (int i=0; i<w->cat("DataCat")->numTypes(); i++) {
+    w->cat("DataCat")->setIndex(i);
+    part_reco_pdf_name += Form("part_reco_pdf_%s",w->cat("DataCat")->getLabel());
+    if ( i < w->cat("DataCat")->numTypes()-1 ) bkg_pdf_name += ",";
+  }
+  PlotComponent pc_pdf_part_reco( part_reco_pdf_name, "Partially reco" );
   pc_pdf_part_reco.setDashedLine(kGreen+7);
+  pc_pdf_part_reco.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig( "pdf:bs2kstkst_mc_pdf", "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
   pc_pdf_sig.setDashedLine(kRed);
+  pc_pdf_sig.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_bd( "pdf:bd2kstkst_mc_pdf", "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
   pc_pdf_sig_bd.setDashedLine(kMagenta);
+  pc_pdf_sig_bd.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_phikst( "pdf:bd2phikst_mc_pdf", "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
   pc_pdf_sig_phikst.setDashedLine(kYellow+1);
+  pc_pdf_sig_phikst.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_bsphikst( "pdf:bs2phikst_mc_pdf", "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
   pc_pdf_sig_bsphikst.setDashedLine(kBlack);
+  pc_pdf_sig_bsphikst.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_rhokst( "pdf:bd2rhokst_mc_pdf", "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})");
   pc_pdf_sig_rhokst.setDashedLine(kOrange+1);
+  pc_pdf_sig_rhokst.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_pkpipi( "pdf:lb2pkpipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})");
   pc_pdf_sig_pkpipi.setDashedLine(kViolet+1);
+  pc_pdf_sig_pkpipi.project = "DataCat::DataCombined";
 
   PlotComponent pc_pdf_sig_ppipipi( "pdf:lb2ppipipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(#pi^{-}#pi^{+})");
   pc_pdf_sig_ppipipi.setDashedLine(kBlue-7);
+  pc_pdf_sig_ppipipi.project = "DataCat::DataCombined";
 
   plotComps.push_back(pc_data);
   plotComps.push_back(pc_pdf_bkg);
@@ -276,28 +277,28 @@ void Bs2KstKst::SimultaneousMassFit::makeDataPlot(){
   plotComps.push_back(pc_data_invis);
 
   // set up yield list
-  w->var("bkg_y")->SetTitle("N_{comb.}");
-  w->var("part_reco_y")->SetTitle("N_{part. rec.}");
-  w->var("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
-  w->var("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
+  w->function("bkg_y")->SetTitle("N_{comb.}");
+  w->function("part_reco_y")->SetTitle("N_{part. rec.}");
+  w->function("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
+  w->function("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
+  w->function("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+  w->function("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
   w->function("bs2phikst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
-  w->var("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
-  w->var("lb2ppipipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
+  w->function("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
+  w->function("lb2ppipipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
 
   RooArgList *ordered_params = new RooArgList();
-  ordered_params->add( *w->var("bkg_y") );
-  ordered_params->add( *w->var("part_reco_y") );
-  ordered_params->add( *w->var("bd2kstkst_y") );
-  ordered_params->add( *w->var("bd2rhokst_y") );
-  ordered_params->add( *w->var("bd2phikst_y") );
+  ordered_params->add( *w->function("bkg_y") );
+  ordered_params->add( *w->function("part_reco_y") );
+  ordered_params->add( *w->function("bd2kstkst_y") );
+  ordered_params->add( *w->function("bd2rhokst_y") );
+  ordered_params->add( *w->function("bd2phikst_y") );
   ordered_params->add( *w->function("bs2phikst_y") );
-  ordered_params->add( *w->var("lb2pkpipi_y") );
-  ordered_params->add( *w->var("lb2ppipipi_y") );
-  ordered_params->add( *w->var("bs2kstkst_y") );
+  ordered_params->add( *w->function("lb2pkpipi_y") );
+  ordered_params->add( *w->function("lb2ppipipi_y") );
+  ordered_params->add( *w->function("bs2kstkst_y") );
 
-  setTitle("SimultaneousMassFit");
+  setTitle("#splitline{Simultaneous Mass Fit}{All Categories Combined}");
   setDrawLog(true);
   setResidType(2);
   setPBoxX(0.23);
@@ -314,42 +315,68 @@ void Bs2KstKst::SimultaneousMassFit::makeSolidDataPlot(){
 
   vector<PlotComponent> plotComps;
 
-  PlotComponent pc_data( "Data", "Data" );
+  PlotComponent pc_data( "DataCombined", "Data" );
   pc_data.setDefaultDataStyle();
 
-  PlotComponent pc_data_invis( "Data", "Data Invis" );
+  PlotComponent pc_data_invis( "DataCombined", "Data Invis" );
   pc_data_invis.noleg = true;
 
   PlotComponent pc_pdf( "pdf", "Total PDF" );
   pc_pdf.setSolidLine(kBlue+1);
-  //pc_pdf.invisible = true;
+  pc_pdf.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_bkg( "pdf:bkg_pdf", "Background (Exp)" );
+  TString comp_pdf_name = "pdf:";
+  for (int i=0; i<w->cat("DataCat")->numTypes(); i++) {
+    w->cat("DataCat")->setIndex(i);
+    comp_pdf_name += Form("bkg_pdf_%s",w->cat("DataCat")->getLabel());
+    if ( i < w->cat("DataCat")->numTypes()-1 ) comp_pdf_name += ",";
+  }
+  PlotComponent pc_pdf_bkg( comp_pdf_name, "Background (Exp)" );
   pc_pdf_bkg.setSolidFill(kGreen+1);
+  pc_pdf_bkg.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_part_reco( "pdf:bkg_pdf,part_reco_pdf", "Partially reco" );
+  for (int i=0; i<w->cat("DataCat")->numTypes(); i++) {
+    w->cat("DataCat")->setIndex(i);
+    comp_pdf_name += Form(",part_reco_pdf_%s",w->cat("DataCat")->getLabel());
+  }
+  PlotComponent pc_pdf_part_reco( comp_pdf_name, "Partially reco" );
   pc_pdf_part_reco.setSolidFill(kTeal-7);
+  pc_pdf_part_reco.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_sig( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf,bd2rhokst_mc_pdf,bs2phikst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf,bs2kstkst_mc_pdf", "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
-  pc_pdf_sig.setSolidFill(kRed-3);
-
-  PlotComponent pc_pdf_sig_bd( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf,bd2rhokst_mc_pdf,bs2phikst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf", "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
-  pc_pdf_sig_bd.setSolidFill(kMagenta-3);
-
-  PlotComponent pc_pdf_sig_phikst( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf,bd2rhokst_mc_pdf,bs2phikst_mc_pdf,bd2phikst_mc_pdf", "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
-  pc_pdf_sig_phikst.setSolidFill(kCyan-3);
-
-  PlotComponent pc_pdf_sig_bsphikst( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf,bs2phikst_mc_pdf", "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
-  pc_pdf_sig_bsphikst.setSolidFill(kGray+1);
-
-  PlotComponent pc_pdf_sig_rhokst( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf", "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})");
-  pc_pdf_sig_rhokst.setSolidFill(kOrange-3);
-
-  PlotComponent pc_pdf_sig_pkpipi( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})");
+  comp_pdf_name += ",lb2pkpipi_mc_pdf";
+  PlotComponent pc_pdf_sig_pkpipi( comp_pdf_name, "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})");
   pc_pdf_sig_pkpipi.setSolidFill(kViolet+1);
+  pc_pdf_sig_pkpipi.project = "DataCat::DataCombined";
 
-  PlotComponent pc_pdf_sig_ppipipi( "pdf:bkg_pdf,part_reco_pdf,lb2pkpipi_mc_pdf,lb2ppipipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(#pi^{-}#pi^{+})");
+  comp_pdf_name += ",lb2ppipipi_mc_pdf";
+  PlotComponent pc_pdf_sig_ppipipi( comp_pdf_name, "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(#pi^{-}#pi^{+})");
   pc_pdf_sig_ppipipi.setSolidFill(kBlue-7);
+  pc_pdf_sig_ppipipi.project = "DataCat::DataCombined";
+
+  comp_pdf_name += ",bs2phikst_mc_pdf";
+  PlotComponent pc_pdf_sig_bsphikst( comp_pdf_name, "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+  pc_pdf_sig_bsphikst.setSolidFill(kGray+1);
+  pc_pdf_sig_bsphikst.project = "DataCat::DataCombined";
+
+  comp_pdf_name += ",bd2rhokst_mc_pdf";
+  PlotComponent pc_pdf_sig_rhokst( comp_pdf_name, "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})");
+  pc_pdf_sig_rhokst.setSolidFill(kOrange-3);
+  pc_pdf_sig_rhokst.project = "DataCat::DataCombined";
+
+  comp_pdf_name += ",bd2phikst_mc_pdf";
+  PlotComponent pc_pdf_sig_phikst( comp_pdf_name, "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+  pc_pdf_sig_phikst.setSolidFill(kCyan-3);
+  pc_pdf_sig_phikst.project = "DataCat::DataCombined";
+
+  comp_pdf_name += ",bd2kstkst_mc_pdf";
+  PlotComponent pc_pdf_sig_bd( comp_pdf_name, "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+  pc_pdf_sig_bd.setSolidFill(kMagenta-3);
+  pc_pdf_sig_bd.project = "DataCat::DataCombined";
+
+  comp_pdf_name += ",bs2kstkst_mc_pdf";
+  PlotComponent pc_pdf_sig( comp_pdf_name, "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+  pc_pdf_sig.setSolidFill(kRed-3);
+  pc_pdf_sig.project = "DataCat::DataCombined";
 
   plotComps.push_back(pc_data);
   plotComps.push_back(pc_pdf_sig);
@@ -357,41 +384,288 @@ void Bs2KstKst::SimultaneousMassFit::makeSolidDataPlot(){
   plotComps.push_back(pc_pdf_sig_phikst);
   plotComps.push_back(pc_pdf_sig_rhokst);
   plotComps.push_back(pc_pdf_sig_bsphikst);
-  plotComps.push_back(pc_pdf_sig_pkpipi);
   plotComps.push_back(pc_pdf_sig_ppipipi);
+  plotComps.push_back(pc_pdf_sig_pkpipi);
   plotComps.push_back(pc_pdf_part_reco);
   plotComps.push_back(pc_pdf_bkg);
   plotComps.push_back(pc_pdf);
   plotComps.push_back(pc_data_invis);
 
   // set up yield list
-  w->var("bkg_y")->SetTitle("N_{comb.}");
-  w->var("part_reco_y")->SetTitle("N_{part. rec.}");
-  w->var("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
-  w->var("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
-  w->var("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
+  w->function("bkg_y")->SetTitle("N_{comb.}");
+  w->function("part_reco_y")->SetTitle("N_{part. rec.}");
+  w->function("bs2kstkst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
+  w->function("bd2kstkst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
+  w->function("bd2rhokst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+  w->function("bd2phikst_y")->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
   w->function("bs2phikst_y")->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
-  w->var("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
-  w->var("lb2ppipipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
+  w->function("lb2pkpipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
+  w->function("lb2ppipipi_y")->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
 
   RooArgList *ordered_params = new RooArgList();
-  ordered_params->add( *w->var("bkg_y") );
-  ordered_params->add( *w->var("part_reco_y") );
-  ordered_params->add( *w->var("bd2kstkst_y") );
-  ordered_params->add( *w->var("bd2rhokst_y") );
-  ordered_params->add( *w->var("bd2phikst_y") );
+  ordered_params->add( *w->function("bkg_y") );
+  ordered_params->add( *w->function("part_reco_y") );
+  ordered_params->add( *w->function("bd2kstkst_y") );
+  ordered_params->add( *w->function("bd2rhokst_y") );
+  ordered_params->add( *w->function("bd2phikst_y") );
   ordered_params->add( *w->function("bs2phikst_y") );
-  ordered_params->add( *w->var("lb2pkpipi_y") );
-  ordered_params->add( *w->var("lb2ppipipi_y") );
-  ordered_params->add( *w->var("bs2kstkst_y") );
+  ordered_params->add( *w->function("lb2pkpipi_y") );
+  ordered_params->add( *w->function("lb2ppipipi_y") );
+  ordered_params->add( *w->function("bs2kstkst_y") );
 
-  setTitle("SimultaneousMassFit");
-  setDrawLog(false);
+  setTitle("#splitline{Simultaneous Mass Fit}{All Categories Combined}");
+  setDrawLog(true);
   setResidType(2);
   setPBoxX(0.23);
 
   plot("B_s0_DTF_B_s0_M", plotComps, "fullfit_solid", ordered_params);
+
+}
+
+void Bs2KstKst::SimultaneousMassFit::makePerCategoryPlots(){
+
+  if ( verbose || debug ) {
+    cout << "Making per category data plots" << endl;
+  }
+
+  RooCategory *cat = (RooCategory*)w->cat("DataCat");
+
+  for ( int i=0; i<cat->numTypes(); i++) {
+    cat->setIndex(i);
+
+    vector<PlotComponent> plotComps;
+
+    TString slice = Form("DataCat::%s",cat->getLabel());
+
+    PlotComponent pc_data( "DataCombined", "Data" );
+    pc_data.setDefaultDataStyle();
+    pc_data.slice = slice;
+
+    PlotComponent pc_data_invis( "DataCombined", "Data Invis" );
+    pc_data_invis.noleg = true;
+    pc_data_invis.slice = slice;
+
+    PlotComponent pc_pdf( "pdf", "Total PDF" );
+    pc_pdf.setSolidLine(kBlue);
+    pc_pdf.slice   = slice;
+    pc_pdf.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_bkg( Form("pdf:bkg_pdf_%s",cat->getLabel()), "Background (Exp)" );
+    pc_pdf_bkg.setDashedLine(kGreen+1);
+    pc_pdf_bkg.slice   = slice;
+    pc_pdf_bkg.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_part_reco( Form("pdf:part_reco_pdf_%s",cat->getLabel()), "Partially reco" );
+    pc_pdf_part_reco.setDashedLine(kGreen+7);
+    pc_pdf_part_reco.slice   = slice;
+    pc_pdf_part_reco.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig( "pdf:bs2kstkst_mc_pdf", "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+    pc_pdf_sig.setDashedLine(kRed);
+    pc_pdf_sig.slice   = slice;
+    pc_pdf_sig.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_bd( "pdf:bd2kstkst_mc_pdf", "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+    pc_pdf_sig_bd.setDashedLine(kMagenta);
+    pc_pdf_sig_bd.slice   = slice;
+    pc_pdf_sig_bd.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_phikst( "pdf:bd2phikst_mc_pdf", "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_phikst.setDashedLine(kYellow+1);
+    pc_pdf_sig_phikst.slice   = slice;
+    pc_pdf_sig_phikst.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_bsphikst( "pdf:bs2phikst_mc_pdf", "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_bsphikst.setDashedLine(kBlack);
+    pc_pdf_sig_bsphikst.slice   = slice;
+    pc_pdf_sig_bsphikst.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_rhokst( "pdf:bd2rhokst_mc_pdf", "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_rhokst.setDashedLine(kOrange+1);
+    pc_pdf_sig_rhokst.slice   = slice;
+    pc_pdf_sig_rhokst.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_pkpipi( "pdf:lb2pkpipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_pkpipi.setDashedLine(kViolet+1);
+    pc_pdf_sig_pkpipi.slice   = slice;
+    pc_pdf_sig_pkpipi.project = "DataCat::DataCombined";
+
+    PlotComponent pc_pdf_sig_ppipipi( "pdf:lb2ppipipi_mc_pdf", "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(#pi^{-}#pi^{+})");
+    pc_pdf_sig_ppipipi.setDashedLine(kBlue-7);
+    pc_pdf_sig_ppipipi.slice   = slice;
+    pc_pdf_sig_ppipipi.project = "DataCat::DataCombined";
+
+    plotComps.push_back(pc_data);
+    plotComps.push_back(pc_pdf_bkg);
+    plotComps.push_back(pc_pdf_part_reco);
+    plotComps.push_back(pc_pdf_sig_bd);
+    plotComps.push_back(pc_pdf_sig_phikst);
+    plotComps.push_back(pc_pdf_sig_bsphikst);
+    plotComps.push_back(pc_pdf_sig_rhokst);
+    plotComps.push_back(pc_pdf_sig_pkpipi);
+    plotComps.push_back(pc_pdf_sig_ppipipi);
+    plotComps.push_back(pc_pdf_sig);
+    plotComps.push_back(pc_pdf);
+    plotComps.push_back(pc_data_invis);
+
+    // set up yield list
+    w->var(Form("bkg_y_%s",cat->getLabel()))->SetTitle("N_{comb.}");
+    w->var(Form("part_reco_y_%s",cat->getLabel()))->SetTitle("N_{part. rec.}");
+    w->var(Form("bs2kstkst_y_%s",cat->getLabel()))->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
+    w->var(Form("bd2kstkst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
+    w->var(Form("bd2rhokst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+    w->var(Form("bd2phikst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
+    w->function(Form("bs2phikst_y_%s",cat->getLabel()))->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
+    w->var(Form("lb2pkpipi_y_%s",cat->getLabel()))->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
+    w->var(Form("lb2ppipipi_y_%s",cat->getLabel()))->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
+
+    RooArgList *ordered_params = new RooArgList();
+    ordered_params->add( *w->var(Form("bkg_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("part_reco_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2kstkst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2rhokst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2phikst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->function(Form("bs2phikst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("lb2pkpipi_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("lb2ppipipi_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bs2kstkst_y_%s",cat->getLabel())) );
+
+    setTitle(Form("#splitline{Simultaneous Mass Fit}{%s}",cat->getLabel()));
+    setDrawLog(true);
+    setResidType(2);
+    setPBoxX(0.23);
+
+    plot("B_s0_DTF_B_s0_M", plotComps, Form("fullfit_%s",cat->getLabel()), ordered_params);
+
+  }
+
+}
+
+void Bs2KstKst::SimultaneousMassFit::makePerCategorySolidPlots(){
+
+  if ( verbose || debug ) {
+    cout << "Making per category data plots" << endl;
+  }
+
+  RooCategory *cat = (RooCategory*)w->cat("DataCat");
+
+  for ( int i=0; i<cat->numTypes(); i++) {
+    cat->setIndex(i);
+
+    vector<PlotComponent> plotComps;
+
+    TString slice = Form("DataCat::%s",cat->getLabel());
+
+    PlotComponent pc_data( "DataCombined", "Data" );
+    pc_data.setDefaultDataStyle();
+    pc_data.slice = slice;
+
+    PlotComponent pc_data_invis( "DataCombined", "Data Invis" );
+    pc_data_invis.noleg = true;
+    pc_data_invis.slice = slice;
+
+    PlotComponent pc_pdf( "pdf", "Total PDF" );
+    pc_pdf.setSolidLine(kBlue+1);
+    pc_pdf.slice   = slice;
+    pc_pdf.project = "DataCat::DataCombined";
+
+    TString comp_pdf_name = Form("pdf:bkg_pdf_%s",cat->getLabel());
+    PlotComponent pc_pdf_bkg( comp_pdf_name, "Background (Exp)" );
+    pc_pdf_bkg.setSolidFill(kGreen+1);
+    pc_pdf_bkg.slice   = slice;
+    pc_pdf_bkg.project = "DataCat::DataCombined";
+
+    comp_pdf_name += Form(",part_reco_pdf_%s",cat->getLabel());
+    PlotComponent pc_pdf_part_reco( comp_pdf_name, "Partially reco" );
+    pc_pdf_part_reco.setSolidFill(kTeal-7);
+    pc_pdf_part_reco.slice   = slice;
+    pc_pdf_part_reco.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",lb2pkpipi_mc_pdf";
+    PlotComponent pc_pdf_sig_pkpipi( comp_pdf_name, "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_pkpipi.setSolidFill(kViolet+1);
+    pc_pdf_sig_pkpipi.slice   = slice;
+    pc_pdf_sig_pkpipi.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",lb2ppipipi_mc_pdf";
+    PlotComponent pc_pdf_sig_ppipipi( comp_pdf_name, "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(#pi^{-}#pi^{+})");
+    pc_pdf_sig_ppipipi.setSolidFill(kBlue-7);
+    pc_pdf_sig_ppipipi.slice   = slice;
+    pc_pdf_sig_ppipipi.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",bs2phikst_mc_pdf";
+    PlotComponent pc_pdf_sig_bsphikst( comp_pdf_name, "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_bsphikst.setSolidFill(kGray+1);
+    pc_pdf_sig_bsphikst.slice   = slice;
+    pc_pdf_sig_bsphikst.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",bd2rhokst_mc_pdf";
+    PlotComponent pc_pdf_sig_rhokst( comp_pdf_name, "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_rhokst.setSolidFill(kOrange-3);
+    pc_pdf_sig_rhokst.slice   = slice;
+    pc_pdf_sig_rhokst.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",bd2phikst_mc_pdf";
+    PlotComponent pc_pdf_sig_phikst( comp_pdf_name, "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})");
+    pc_pdf_sig_phikst.setSolidFill(kCyan-3);
+    pc_pdf_sig_phikst.slice   = slice;
+    pc_pdf_sig_phikst.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",bd2kstkst_mc_pdf";
+    PlotComponent pc_pdf_sig_bd( comp_pdf_name, "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+    pc_pdf_sig_bd.setSolidFill(kMagenta-3);
+    pc_pdf_sig_bd.slice   = slice;
+    pc_pdf_sig_bd.project = "DataCat::DataCombined";
+
+    comp_pdf_name += ",bs2kstkst_mc_pdf";
+    PlotComponent pc_pdf_sig( comp_pdf_name, "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})" );
+    pc_pdf_sig.setSolidFill(kRed-3);
+    pc_pdf_sig.slice   = slice;
+    pc_pdf_sig.project = "DataCat::DataCombined";
+
+    plotComps.push_back(pc_data);
+    plotComps.push_back(pc_pdf_sig);
+    plotComps.push_back(pc_pdf_sig_bd);
+    plotComps.push_back(pc_pdf_sig_phikst);
+    plotComps.push_back(pc_pdf_sig_rhokst);
+    plotComps.push_back(pc_pdf_sig_bsphikst);
+    plotComps.push_back(pc_pdf_sig_ppipipi);
+    plotComps.push_back(pc_pdf_sig_pkpipi);
+    plotComps.push_back(pc_pdf_part_reco);
+    plotComps.push_back(pc_pdf_bkg);
+    plotComps.push_back(pc_pdf);
+    plotComps.push_back(pc_data_invis);
+
+    // set up yield list
+    w->var(Form("bkg_y_%s",cat->getLabel()))->SetTitle("N_{comb.}");
+    w->var(Form("part_reco_y_%s",cat->getLabel()))->SetTitle("N_{part. rec.}");
+    w->var(Form("bs2kstkst_y_%s",cat->getLabel()))->SetTitle("N_{B_{s}#rightarrow(K#pi)(K#pi)}");
+    w->var(Form("bd2kstkst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(K#pi)}");
+    w->var(Form("bd2rhokst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(#pi#pi)}");
+    w->var(Form("bd2phikst_y_%s",cat->getLabel()))->SetTitle("N_{B_{d}#rightarrow(K#pi)(KK)}");
+    w->function(Form("bs2phikst_y_%s",cat->getLabel()))->SetTitle("N_{B_{s}#rightarrow(K#pi)(KK)}");
+    w->var(Form("lb2pkpipi_y_%s",cat->getLabel()))->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(K#pi)}");
+    w->var(Form("lb2ppipipi_y_%s",cat->getLabel()))->SetTitle("N_{#Lambda_{b}#rightarrow(p#pi)(#pi#pi)}");
+
+    RooArgList *ordered_params = new RooArgList();
+    ordered_params->add( *w->var(Form("bkg_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("part_reco_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2kstkst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2rhokst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bd2phikst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->function(Form("bs2phikst_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("lb2pkpipi_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("lb2ppipipi_y_%s",cat->getLabel())) );
+    ordered_params->add( *w->var(Form("bs2kstkst_y_%s",cat->getLabel())) );
+
+    setTitle(Form("#splitline{Simultaneous Mass Fit}{%s}",cat->getLabel()));
+    setDrawLog(true);
+    setResidType(2);
+    setPBoxX(0.23);
+
+    plot("B_s0_DTF_B_s0_M", plotComps, Form("fullfit_solid_%s",cat->getLabel()), ordered_params);
+
+  }
 
 }
 
@@ -522,25 +796,6 @@ void Bs2KstKst::SimultaneousMassFit::DataFit() {
     w->defineSet("constrained_pdf_params",*((RooArgSet*)w->set("pdf_params")));
     w->defineSet("constrained_pdf_yield_params",*((RooArgSet*)w->set("pdf_yield_params")));
     w->defineSet("constrained_pdf_nonyield_params",*((RooArgSet*)w->set("pdf_nonyield_params")));
-
-    //if ( verbose || debug ) {
-
-      //cout << "Constrained PDF params: " << endl;
-      //w->set("constrained_pdf_params")->Print("v");
-
-      //cout << "PDF non-yield params: " << endl;
-      //w->set("pdf_nonyield_params")->Print("v");
-
-      //cout << "PDF yield params: " << endl;
-      //w->set("pdf_yield_params")->Print("v");
-
-      //cout << "Constrained PDF non-yield params: " << endl;
-      //w->set("constrained_pdf_nonyield_params")->Print("v");
-
-      //cout << "Constrained PDF yield params: " << endl;
-      //w->set("constrained_pdf_yield_params")->Print("v");
-
-    //}
 
     fit("constrained_pdf","DataCombined",true);
     //plot("B_s0_DTF_B_s0_M","Data","constrained_pdf",2);
@@ -707,10 +962,16 @@ void Bs2KstKst::SimultaneousMassFit::makePartRecoPdf() {
 
   //w->factory("Bernstein::part_reco_pdf( B_s0_DTF_B_s0_M, { bkg_bern_p0[1.], bkg_bern_p1[0.5,-1.,1.], bkg_bern_p2[0.5,-1.,1.] } )");
   //w->factory("ExpAndGaus::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_mbar(-0.05,0.05),
-  w->factory("ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5226], part_reco_c[-10.0,-50.,-10.], part_reco_p[0.4,0.,1.] )");
   //w->importClassCode(RooPhysBkg::Class(),kTRUE);
   //w->factory("PhysBkg::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5200,5000,5400], part_reco_c[-20.,-50.,-10.], part_reco_s[20,1,100] )");
-  defineParamSet("part_reco_pdf");
+
+  // make one for each category
+  RooCategory *cat = (RooCategory*)w->cat("DataCat");
+  for ( int i=0; i < cat->numTypes(); i++ ) {
+    cat->setIndex(i);
+    w->factory( Form("ArgusBG::part_reco_pdf_%s( B_s0_DTF_B_s0_M, part_reco_m0_%s[5226], part_reco_c_%s[-10.0,-50.,-10.], part_reco_p_%s[0.4,0.,1.] )",cat->getLabel(),cat->getLabel(),cat->getLabel(),cat->getLabel()) );
+    defineParamSet( Form("part_reco_pdf_%s",cat->getLabel()) );
+  }
 }
 
 void Bs2KstKst::SimultaneousMassFit::makeCombinatorialPdf() {
@@ -719,7 +980,7 @@ void Bs2KstKst::SimultaneousMassFit::makeCombinatorialPdf() {
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
   for ( int i=0; i < cat->numTypes(); i++ ) {
     cat->setIndex(i);
-    w->factory( Form("Exponential::bkg_pdf_%s( B_s0_DTF_B_s0_M, bkg_exp_p1_%s[-0.002,-0.004,0.] )", cat->getLabel(), cat->getLabel() ) );
+    w->factory( Form("Exponential::bkg_pdf_%s( B_s0_DTF_B_s0_M, bkg_exp_p1_%s[-0.002,-0.01,0.] )", cat->getLabel(), cat->getLabel() ) );
     defineParamSet( Form("bkg_pdf_%s",cat->getLabel()) );
   }
 }
@@ -764,7 +1025,7 @@ void Bs2KstKst::SimultaneousMassFit::makeTotalPdf() {
 
     RooArgList *pdfs   = new RooArgList();
     pdfs->add(*w->pdf( Form("bkg_pdf_%s", cat->getLabel()) ));
-    pdfs->add(*w->pdf("part_reco_pdf" ));
+    pdfs->add(*w->pdf( Form("part_reco_pdf_%s", cat->getLabel()) ));
     pdfs->add(*w->pdf("bs2kstkst_mc_pdf"  ));
     pdfs->add(*w->pdf("bd2kstkst_mc_pdf" ));
     pdfs->add(*w->pdf("bd2phikst_mc_pdf" ));
@@ -796,11 +1057,23 @@ void Bs2KstKst::SimultaneousMassFit::makeTotalPdf() {
   }
   w->import(*pdf);
 
-  defineParamSet("pdf");
-  defineYieldSet("pdf");
-  // this is to catch the constraint
-  ((RooArgSet*)w->set("pdf_yield_params"))->remove( *w->var("yield_ratio_bsobd_phikst") );
-  ((RooArgSet*)w->set("pdf_nonyield_params"))->add( *w->var("yield_ratio_bsobd_phikst") );
+  // make yield and parameter sets from the category sets
+  RooArgSet *params = new RooArgSet();
+  RooArgSet *yields = new RooArgSet();
+  RooArgSet *non_yields = new RooArgSet();
+  for (int i=0; i < cat->numTypes(); i++ ) {
+    cat->setIndex(i);
+    params->add( *w->set( Form("pdf_%s_params",cat->getLabel()) ) );
+    yields->add( *w->set( Form("pdf_%s_yield_params",cat->getLabel()) ) );
+    non_yields->add( *w->set( Form("pdf_%s_nonyield_params",cat->getLabel()) ) );
+  }
+  w->defineSet("pdf_params", *params);
+  w->defineSet("pdf_yield_params",*yields);
+  w->defineSet("pdf_nonyield_params",*non_yields);
+
+  delete params;
+  delete yields;
+  delete non_yields;
 
   delete pdf;
 

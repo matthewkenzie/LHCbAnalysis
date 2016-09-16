@@ -65,15 +65,15 @@ void Bs2KstKst::MultiDimCutOpt::makeInitialDatasets(){
   w->factory("bdtoutput[-1.,1.]");
   //w->factory("max_pion_PIDK[-999.,0.]");
   //w->factory("min_kaon_PIDK[0.,999.]");
-  w->factory("min_pion_ProbNNpiKp[0.,1.]");
-  w->factory("min_kaon_ProbNNk[0.,1.]");
+  w->factory("max_pion_V3ProbNNKpi_corr[0.,1.]");
+  w->factory("min_kaon_V3ProbNNKpi_corr[0.,1.]");
   w->factory("itype[-999,999]");
 
   RooArgSet *observables = new RooArgSet();
   observables->add(*w->var("B_s0_DTF_B_s0_M"));
   observables->add(*w->var("bdtoutput"));
-  observables->add(*w->var("min_pion_ProbNNpiKp"));
-  observables->add(*w->var("min_kaon_ProbNNk"));
+  observables->add(*w->var("max_pion_V3ProbNNKpi_corr"));
+  observables->add(*w->var("min_kaon_V3ProbNNKpi_corr"));
   //observables->add(*w->var("max_pion_PIDK"));
   //observables->add(*w->var("min_kaon_PIDK"));
   observables->add(*w->var("itype"));
@@ -464,9 +464,9 @@ double Bs2KstKst::MultiDimCutOpt::fitAndReduce(const double *cutvs) {
   RooMsgService::instance().setSilentMode(true);
 
   double bdtoutput_cut = cutvs[0];
-  double min_kaon_ProbNNk_cut = cutvs[1];
-  double min_pion_ProbNNpiKp_cut = cutvs[2];
-  TString cutString = Form(" ( (bdtoutput>%f) && (min_kaon_ProbNNk>%f) && (min_pion_ProbNNpiKp>%f) )",bdtoutput_cut,min_kaon_ProbNNk_cut,min_pion_ProbNNpiKp_cut);
+  double min_kaon_V3ProbNNKpi_corr_cut = cutvs[1];
+  double max_pion_V3ProbNNKpi_corr_cut = cutvs[2];
+  TString cutString = Form(" ( (bdtoutput>%f) && (min_kaon_V3ProbNNKpi_corr>%f) && (max_pion_V3ProbNNKpi_corr<%f) )",bdtoutput_cut,min_kaon_V3ProbNNKpi_corr_cut,max_pion_V3ProbNNKpi_corr_cut);
   //double min_kaon_PIDK_cut = cutvs[1];
   //double max_pion_PIDK_cut = cutvs[2];
   //TString cutString = Form(" ( (bdtoutput>%f) && (min_kaon_PIDK>%f) && (max_pion_PIDK<%f) )",bdtoutput_cut,min_kaon_PIDK_cut,max_pion_PIDK_cut);
@@ -595,9 +595,9 @@ void Bs2KstKst::MultiDimCutOpt::getEventEstimates(TTree *tree) {
 TCut Bs2KstKst::MultiDimCutOpt::getCut(double *cutvals) {
 
   double bdtoutput_cut = cutvals[0];
-  double min_kaon_ProbNNk_cut = cutvals[1];
-  double min_pion_ProbNNpiKp_cut = cutvals[2];
-  TString cutString = Form(" ( (bdtoutput>%f) && (min_kaon_ProbNNk>%f) && (min_pion_ProbNNpiKp>%f) )",bdtoutput_cut,min_kaon_ProbNNk_cut,min_pion_ProbNNpiKp_cut);
+  double min_kaon_V3ProbNNKpi_corr_cut = cutvals[1];
+  double max_pion_V3ProbNNKpi_corr_cut = cutvals[2];
+  TString cutString = Form(" ( (bdtoutput>%f) && (min_kaon_V3ProbNNKpi_corr>%f) && (max_pion_V3ProbNNKpi_corr<%f) )",bdtoutput_cut,min_kaon_V3ProbNNKpi_corr_cut,max_pion_V3ProbNNKpi_corr_cut);
 
   //double min_kaon_PIDK_cut = cutvals[1];
   //double min_pion_PIDK_cut = cutvals[2];
@@ -807,8 +807,8 @@ void Bs2KstKst::MultiDimCutOpt::runSimple(int type) {
 
   cout << "Suggested values: " << endl;
   cout << "\t" << "bdtoutput:     " << opts_vals[0] << endl;
-  cout << "\t" << "min_kaon_ProbNNk: " << opts_vals[1] << endl;
-  cout << "\t" << "min_pion_ProbNNpiKp: " << opts_vals[2] << endl;
+  cout << "\t" << "min_kaon_V3ProbNNKpi_corr: " << opts_vals[1] << endl;
+  cout << "\t" << "max_pion_V3ProbNNKpi_corr: " << opts_vals[2] << endl;
   //cout << "\t" << "min_kaon_DLLK: " << opts_vals[1] << endl;
   //cout << "\t" << "min_pion_DLLK: " << opts_vals[2] << endl;
 
@@ -838,7 +838,7 @@ void Bs2KstKst::MultiDimCutOpt::runSimple(int type) {
 
   // plot resulting decision
   //RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name("result_data_red"),Cut(Form("bdtoutput>%4.2f && min_kaon_PIDK>%5.3f && max_pion_PIDK<%5.3f",opts_vals[0],opts_vals[1],opts_vals[2])));
-  RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name("result_data_red"),Cut(Form("bdtoutput>%4.2f && min_kaon_ProbNNk>%5.3f && min_pion_ProbNNpiKp>%5.3f",opts_vals[0],opts_vals[1],opts_vals[2])));
+  RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name("result_data_red"),Cut(Form("bdtoutput>%4.2f && min_kaon_V3ProbNNKpi_corr>%5.3f && max_pion_V3ProbNNKpi_corr<%5.3f",opts_vals[0],opts_vals[1],opts_vals[2])));
   RooDataHist *binned = (RooDataHist*)data->binnedClone("result_data_hist");
   w->var("sig_mc_mean")->setConstant(false);
   w->pdf("pdf")->fitTo(*binned);
@@ -853,7 +853,7 @@ void Bs2KstKst::MultiDimCutOpt::drawAtCut(TString name, double bdt_cut, double k
   if (pion_cut>0) pion_cut*=-1;
 
   //RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name(Form("%s_data_red",name.Data())),Cut(Form("bdtoutput>%4.2f && min_kaon_PIDK>%5.3f && max_pion_PIDK<%5.3f",bdt_cut,kaon_cut,pion_cut)));
-  RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name(Form("%s_data_red",name.Data())),Cut(Form("bdtoutput>%4.2f && min_kaon_ProbNNk>%5.3f && min_pion_ProbNNpiKp>%5.3f",bdt_cut,kaon_cut,pion_cut)));
+  RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name(Form("%s_data_red",name.Data())),Cut(Form("bdtoutput>%4.2f && min_kaon_V3ProbNNKpi_corr>%5.3f && max_pion_V3ProbNNKpi_corr<%5.3f",bdt_cut,kaon_cut,pion_cut)));
   RooDataHist *binned = (RooDataHist*)data->binnedClone(Form("%s_data_hist",name.Data()));
   w->var("sig_mc_mean")->setConstant(false);
   w->pdf("pdf")->fitTo(*binned);

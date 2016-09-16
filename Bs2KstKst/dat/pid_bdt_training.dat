@@ -1,0 +1,9 @@
+# Bs2Kst0Kst0
+itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=nTuples/presel/Bs2Kst0Kst0_MC2011.root            tname=AnalysisTree
+itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=nTuples/presel/Bs2Kst0Kst0_MC2012.root            tname=AnalysisTree
+
+# Bd2RhoKst0
+itype=-77  sqrts=7  year=2011  name=Bd2RhoKst0_MC2011             fname=nTuples/presel/Bd2RhoKst0_MC2011.root             tname=AnalysisTree
+itype=-87  sqrts=8  year=2012  name=Bd2RhoKst0_MC2012             fname=nTuples/presel/Bd2RhoKst0_MC2012.root             tname=AnalysisTree
+
+

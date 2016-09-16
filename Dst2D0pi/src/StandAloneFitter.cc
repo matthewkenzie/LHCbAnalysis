@@ -27,7 +27,10 @@ Dst2D0pi::StandAloneFitter::StandAloneFitter(TString dfile, TString mcfile):
   haveFinalYields(false),
   nPrompt(-1),
   nSec(-1),
-  nBkg(-1)
+  nBkg(-1),
+  nPromptErr(-1),
+  nSecErr(-1),
+  nBkgErr(-1)
 {}
 
 Dst2D0pi::StandAloneFitter::~StandAloneFitter(){}
@@ -62,6 +65,9 @@ void Dst2D0pi::StandAloneFitter::run(bool makeDatasets, bool loadDatasets){
     // IP chi2 fit
     D0IPChi2Fit();
 
+    // D distance fit
+    //D0DistanceFit();
+
     // Integrate n_sig, n_prompt, n_sec in ip chi2 cut
     GetYieldsFromIPCut();
 
@@ -73,9 +79,9 @@ void Dst2D0pi::StandAloneFitter::run(bool makeDatasets, bool loadDatasets){
     cout << "\t nSigInWindow: " << nSigInWindow << endl;
     cout << "\t nBkgInWindow: " << nBkgInWindow << endl;
     cout << " --------- After IP chi2 Fit --------- " << endl;
-    cout << "\t nPrompt: " << nPrompt << endl;
-    cout << "\t nSec:    " << nSec << endl;
-    cout << "\t nBkg:    " << nBkg << endl;
+    cout << "\t nPrompt: " << nPrompt << " +/- " << nPromptErr << endl;
+    cout << "\t nSec:    " << nSec    << " +/- " << nSecErr    << endl;
+    cout << "\t nBkg:    " << nBkg    << " +/- " << nBkgErr    << endl;
     cout << " --------- After lifetime Fit --------- " << endl;
     cout << "\t nPrompt: " << w->var("n_prompt")->getVal() << endl;
     cout << "\t nSec:    " << w->function("n_sec")->getVal() << endl;
@@ -438,32 +444,44 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   assert( haveYields );
 
   // prompt
-  w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g1 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m[0.2,1.5], D0_LOGIPCHI2_prompt_s1[1,0.1,2.])" );
-  w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g2 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s2[1,0.1,20])" );
-  w->factory( "BifurGauss::D0_LOGIPCHI2_prompt_bf( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_sL[1.,0.1,5], D0_LOGIPCHI2_prompt_sR[1,0.1,5])" );
-  w->factory( "CBShape::D0_LOGIPCHI2_prompt_cb1( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s3[5.,0.,20], D0_LOGIPCHI2_prompt_alpha1[-1,-10.,0], D0_LOGIPCHI2_prompt_n[3.])" );
-  w->factory( "CBShape::D0_LOGIPCHI2_prompt_cb2( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s4[5.,0.,20], D0_LOGIPCHI2_prompt_alpha2[1,0.,10], D0_LOGIPCHI2_prompt_n[3.])" );
+  w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g1 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m[-0.5,2.5], D0_LOGIPCHI2_prompt_s1[1,0.1,2.])" );
+  w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g2 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s2[1,0.1,2.])" );
+  w->factory( "BifurGauss::D0_LOGIPCHI2_prompt_bf1( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_sL1[1.,0.1,3], D0_LOGIPCHI2_prompt_sR1[1,0.1,3])" );
+  w->factory( "BifurGauss::D0_LOGIPCHI2_prompt_bf2( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_sL2[1.,0.1,3], D0_LOGIPCHI2_prompt_sR2[1,0.1,3])" );
+  w->factory( "SUM:D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_prompt_f1[0.6,0.01,1.]*D0_LOGIPCHI2_prompt_bf1, D0_LOGIPCHI2_prompt_f2[0.2,0.01,1.]*D0_LOGIPCHI2_prompt_bf2, D0_LOGIPCHI2_prompt_g1 ) ");
+  //w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g2 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s2[1,0.1,2.])" );
+  //w->factory( "Gaussian::D0_LOGIPCHI2_prompt_g3 (D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s3[1,0.1,5.])" );
+  //w->factory( "CBShape::D0_LOGIPCHI2_prompt_cb1( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s4[1.,0.6,4], D0_LOGIPCHI2_alpha1[-1,-10.,0], D0_LOGIPCHI2_n1[3.,0.1,200.])" );
+  //w->factory( "CBShape::D0_LOGIPCHI2_prompt_cb2( D0_LOGIPCHI2, D0_LOGIPCHI2_prompt_m, D0_LOGIPCHI2_prompt_s5[1.,0.6,4], D0_LOGIPCHI2_alpha2[1,0.,10], D0_LOGIPCHI2_n2[3.,0.1,200.])" );
   //w->factory( "SUM::D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.2,0.,1.]*D0_LOGIPCHI2_prompt_g1, D0_LOGIPCHI2_f2[0.2,0.,1.]*D0_LOGIPCHI2_prompt_g2, D0_LOGIPCHI2_prompt_cb1)" );
   //w->factory( "SUM::D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.2,0.,1.]*D0_LOGIPCHI2_prompt_bf, D0_LOGIPCHI2_prompt_cb)" );
   //w->factory( "SUM::D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.2,0.,1.]*D0_LOGIPCHI2_prompt_g1, D0_LOGIPCHI2_f2[0.2,0.,0.8]*D0_LOGIPCHI2_prompt_cb1, D0_LOGIPCHI2_prompt_cb2)" );
-  w->factory( "SUM::D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.2,0.,1.]*D0_LOGIPCHI2_prompt_g1, D0_LOGIPCHI2_prompt_bf )" );
+  //w->factory( "SUM::D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.2,0.0,1.]*D0_LOGIPCHI2_prompt_cb2, D0_LOGIPCHI2_prompt_bf )" );
+  //w->factory( "SUM:D0_LOGIPCHI2_prompt_pdf( D0_LOGIPCHI2_f1[0.1,0.,1.]*D0_LOGIPCHI2_prompt_g1, D0_LOGIPCHI2_f2[0.1,0.,1.]*D0_LOGIPCHI2_prompt_g2, D0_LOGIPCHI2_prompt_bf ) ");
+
   // sec
-  w->factory( "alpha[1.,1.,1.]");
-  w->factory( "prod::D0_LOGIPCHI2_sec_s1( alpha , D0_LOGIPCHI2_prompt_s1 )" );
-  w->factory( "prod::D0_LOGIPCHI2_sec_s2( alpha , D0_LOGIPCHI2_prompt_s2 )" );
-  w->factory( "prod::D0_LOGIPCHI2_sec_s3( alpha , D0_LOGIPCHI2_prompt_s3 )" );
-  w->factory( "prod::D0_LOGIPCHI2_sec_s4( alpha , D0_LOGIPCHI2_prompt_s4 )" );
-  w->factory( "prod::D0_LOGIPCHI2_sec_sL( alpha , D0_LOGIPCHI2_prompt_sL )" );
-  w->factory( "prod::D0_LOGIPCHI2_sec_sR( alpha , D0_LOGIPCHI2_prompt_sR )" );
-  w->factory( "Gaussian::D0_LOGIPCHI2_sec_g1( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m[2.5,10], D0_LOGIPCHI2_sec_s1)" );
-  w->factory( "Gaussian::D0_LOGIPCHI2_sec_g2( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s2)" );
-  w->factory( "BifurGauss::D0_LOGIPCHI2_sec_bf( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_sL, D0_LOGIPCHI2_sec_sR)" );
-  w->factory( "CBShape::D0_LOGIPCHI2_sec_cb1( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s3, D0_LOGIPCHI2_sec_alpha1[-1,-10.,0], D0_LOGIPCHI2_sec_n[3.])" );
-  w->factory( "CBShape::D0_LOGIPCHI2_sec_cb2( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s4, D0_LOGIPCHI2_sec_alpha2[1,0.,10], D0_LOGIPCHI2_sec_n[3.])" );
+  //w->factory( "alpha[1.,0.5,5.0]");
+  //w->factory( "prod::D0_LOGIPCHI2_sec_s1( alpha , D0_LOGIPCHI2_prompt_s1 )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_s2( alpha , D0_LOGIPCHI2_prompt_s2 )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_s3( alpha , D0_LOGIPCHI2_prompt_s3 )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_s4( alpha , D0_LOGIPCHI2_prompt_s4 )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_s5( alpha , D0_LOGIPCHI2_prompt_s5 )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_sL( alpha , D0_LOGIPCHI2_prompt_sL )" );
+  //w->factory( "prod::D0_LOGIPCHI2_sec_sR( alpha , D0_LOGIPCHI2_prompt_sR )" );
+  //w->factory( "Gaussian::D0_LOGIPCHI2_sec_g1( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m[2.5,10], D0_LOGIPCHI2_sec_s1)" );
+  //w->factory( "Gaussian::D0_LOGIPCHI2_sec_g2( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s2)" );
+  //w->factory( "Gaussian::D0_LOGIPCHI2_sec_g3( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s3)" );
+  //w->factory( "BifurGauss::D0_LOGIPCHI2_sec_bf( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_sL, D0_LOGIPCHI2_sec_sR)" );
+  //w->factory( "CBShape::D0_LOGIPCHI2_sec_cb1( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s4, D0_LOGIPCHI2_alpha1, D0_LOGIPCHI2_n1)" );
+  //w->factory( "CBShape::D0_LOGIPCHI2_sec_cb2( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_s5, D0_LOGIPCHI2_alpha2, D0_LOGIPCHI2_n2)" );
   //w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_f2*D0_LOGIPCHI2_sec_g2, D0_LOGIPCHI2_sec_cb1)" );
   //w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_bf, D0_LOGIPCHI2_sec_cb)" );
   //w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_f2*D0_LOGIPCHI2_sec_cb1, D0_LOGIPCHI2_sec_cb2)" );
-  w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_sec_f[0.2,0.,1.]*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_sec_bf )" );
+  //w->factory( "SUM::D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_sec_f[0.2,0.0,1.]*D0_LOGIPCHI2_sec_cb2, D0_LOGIPCHI2_sec_bf )" );
+  //w->factory( "SUM:D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_f1*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_f2*D0_LOGIPCHI2_sec_g2, D0_LOGIPCHI2_sec_bf ) ");
+  w->factory( "Gaussian::D0_LOGIPCHI2_sec_g1 (D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m[-0.5,4.5], D0_LOGIPCHI2_sec_s1[1,0.1,10.])" );
+  w->factory( "BifurGauss::D0_LOGIPCHI2_sec_bf( D0_LOGIPCHI2, D0_LOGIPCHI2_sec_m, D0_LOGIPCHI2_sec_sL[1.,0.1,5], D0_LOGIPCHI2_sec_sR[1,0.1,5])" );
+  w->factory( "SUM:D0_LOGIPCHI2_sec_pdf( D0_LOGIPCHI2_sec_f1[0.6,0.01,1.]*D0_LOGIPCHI2_sec_g1, D0_LOGIPCHI2_sec_bf ) ");
   // bkg
   RooHistPdf *D0_LOGIPCHI2_bkg_pdf = new RooHistPdf("D0_LOGIPCHI2_bkg_pdf","",RooArgList(*w->var("D0_LOGIPCHI2")), *(RooDataHist*)w->data("D0_LOGIPCHI2_dh_sb_rb") );
   w->import( *D0_LOGIPCHI2_bkg_pdf );
@@ -475,9 +493,12 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   w->import( *D0_LOGIPCHI2_mc_dh );
   delete D0_LOGIPCHI2_mc_dh;
 
+  // fit the prompt and sec mc
   w->pdf("D0_LOGIPCHI2_prompt_pdf")->fitTo( *w->data("D0_LOGIPCHI2_dh_prompt_mc") ); // fit the prompt first to get good starting params
+  w->pdf("D0_LOGIPCHI2_sec_pdf")->fitTo( *w->data("D0_LOGIPCHI2_dh_sec_mc") );
 
-  w->pdf("D0_LOGIPCHI2_mc_pdf")->fitTo( *w->data("D0_LOGIPCHI2_mc_dh") );
+  // do the fit simultaneously
+  //w->pdf("D0_LOGIPCHI2_mc_pdf")->fitTo( *w->data("D0_LOGIPCHI2_mc_dh") );
 
   PlotComponent pc_prompt_mc( "D0_LOGIPCHI2_dh_prompt_mc", "Prompt MC" );
   pc_prompt_mc.setDefaultDataStyle();
@@ -497,32 +518,84 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   PlotComponent pc_sec_pdf( "D0_LOGIPCHI2_sec_pdf", "Secondary PDF" );
   pc_sec_pdf.setSolidLine( kRed );
 
-  vector<PlotComponent> mcPlotComps;
-  mcPlotComps.push_back(pc_prompt_mc);
-  mcPlotComps.push_back(pc_prompt_pdf);
-  mcPlotComps.push_back(pc_sec_mc);
-  mcPlotComps.push_back(pc_sec_pdf);
+  vector<PlotComponent> mcPromptComps;
+  mcPromptComps.push_back(pc_prompt_mc);
+  mcPromptComps.push_back(pc_prompt_pdf);
 
-  p->pTitle = "D0 log(IP #chi^{2}) MC Fit";
+  p->pTitle = "D0 log(IP #chi^{2}) Prompt MC Fit";
+  p->pDrawLog = true;
+  p->pRedPull = 3;
   p->pLogYMin = -99.;
   p->pLogYMax = -99.;
+  p->pResidType = 2;
+  p->plot( "D0_LOGIPCHI2", mcPromptComps, "mc_prompt_logipchi2" );
+
+  vector<PlotComponent> mcSecComps;
+  mcSecComps.push_back(pc_sec_mc);
+  mcSecComps.push_back(pc_sec_pdf);
+
+  p->pTitle = "D0 log(IP #chi^{2}) Secondary MC Fit";
+  p->pDrawLog = true;
+  p->pRedPull = 3;
+  p->pLogYMin = -99.;
+  p->pLogYMax = -99.;
+  p->pResidType = 2;
+  p->plot( "D0_LOGIPCHI2", mcSecComps, "mc_sec_logipchi2" );
+
+  vector<PlotComponent> mcPlotComps;
+  mcPlotComps.push_back(pc_sec_mc);
+  mcPlotComps.push_back(pc_sec_pdf);
+  mcPlotComps.push_back(pc_prompt_mc);
+  mcPlotComps.push_back(pc_prompt_pdf);
+
+  p->pTitle = "D0 log(IP #chi^{2}) MC Fit";
+  p->pDrawLog = true;
+  p->pRedPull = 3;
+  p->pLogYMin = -99.;
+  p->pLogYMax = -99.;
+  p->pResidType = 2;
   p->plot( "D0_LOGIPCHI2", mcPlotComps, "mc_logipchi2" );
 
+  // test prompt shape in data with low lifetime
+  //w->pdf("D0_LOGIPCHI2_prompt_pdf")->fitTo( *w->data("D0_LOGIPCHI2_dh_pmt") );
+
+  //PlotComponent pc_pmt_data( "D0_LOGIPCHI2_dh_pmt", "Prompt Data (0.25<t<0.30ps)" );
+  //pc_pmt_data.setDefaultDataStyle();
+  //pc_pmt_data.binning = 250;
+
+  //PlotComponent pc_pmt_data_pdf( "D0_LOGIPCHI2_prompt_pdf", "Prompt PDF" );
+  //pc_pmt_data_pdf.setSolidLine(kBlue);
+
+  //vector<PlotComponent> pmtPlotComps;
+  //pmtPlotComps.push_back(pc_pmt_data);
+  //pmtPlotComps.push_back(pc_pmt_data_pdf);
+
+  //p->pTitle = "D0 log(IP #chi^{2}) Prompt Fit";
+  //p->plot( "D0_LOGIPCHI2", pmtPlotComps, "pmt_logipchi2" );
+
   // can also test secondary shape in data with a high lifetime
-  w->pdf("D0_LOGIPCHI2_sec_pdf")->fitTo( *w->data("D0_LOGIPCHI2_dh_sec") );
+  //w->pdf("D0_LOGIPCHI2_sec_pdf")->fitTo( *w->data("D0_LOGIPCHI2_dh_sec") );
 
-  PlotComponent pc_sec_data( "D0_LOGIPCHI2_dh_sec", "Secondary Data (t>4ps)" );
-  pc_sec_data.setDefaultDataStyle();
+  //PlotComponent pc_sec_data( "D0_LOGIPCHI2_dh_sec", "Secondary Data (t>4ps)" );
+  //pc_sec_data.setDefaultDataStyle();
+  //pc_sec_data.binning = 250;
 
-  PlotComponent pc_sec_data_pdf( "D0_LOGIPCHI2_sec_pdf", "Secondary PDF" );
-  pc_sec_data_pdf.setSolidLine(kBlue);
+  //PlotComponent pc_sec_data_pdf( "D0_LOGIPCHI2_sec_pdf", "Secondary PDF" );
+  //pc_sec_data_pdf.setSolidLine(kBlue);
 
-  vector<PlotComponent> secPlotComps;
-  secPlotComps.push_back(pc_sec_data);
-  secPlotComps.push_back(pc_sec_data_pdf);
+  //vector<PlotComponent> secPlotComps;
+  //secPlotComps.push_back(pc_sec_data);
+  //secPlotComps.push_back(pc_sec_data_pdf);
 
-  p->pTitle = "D0 log(IP #chi^{2}) Secondary Fit";
-  p->plot( "D0_LOGIPCHI2", secPlotComps, "sec_logipchi2" );
+  //p->pTitle = "D0 log(IP #chi^{2}) Secondary Fit";
+  //p->plot( "D0_LOGIPCHI2", secPlotComps, "sec_logipchi2" );
+
+  // fix prompt and sec shape params
+  RooArgSet *promptParams = (RooArgSet*)w->pdf("D0_LOGIPCHI2_prompt_pdf")->getParameters( RooArgSet( *w->var("D0_LOGIPCHI2") ) );
+  promptParams->setAttribAll("Constant");
+
+  RooArgSet *secParams = (RooArgSet*)w->pdf("D0_LOGIPCHI2_sec_pdf")->getParameters( RooArgSet( *w->var("D0_LOGIPCHI2") ) );
+  secParams->setAttribAll("Constant");
 
   // the pdf
   w->var("n_bkg")->setVal( nBkgInWindow );
@@ -570,6 +643,64 @@ void Dst2D0pi::StandAloneFitter::D0IPChi2Fit() {
   isIPCHI2Fit = true;
 }
 
+void Dst2D0pi::StandAloneFitter::D0DistanceFit() {
+
+  assert( isMassFit );
+  assert( haveYields );
+
+  // prompt
+  w->factory( "GaussModel::gm1( D0_d, D0_d_mean[0.,-20.,70.], D0_d_sigma1[7,0,20] )" );
+  w->factory( "GaussModel::gm2( D0_d, D0_d_mean, D0_d_sigma2[7,0,50] )" );
+  w->factory( "GaussModel::gm3( D0_d, D0_d_mean, D0_d_sigma3[7,0,100] )" );
+  w->factory( "AddModel::D0_d_prompt_pdf( {gm1,gm2,gm3}, {f1[0.2,0.,1.], f2[0.2,0.,1.]} )" );
+  // sec
+  w->factory( "Decay::D0_d_sec_pdf( D0_d, D0_d_lamb[350.,0.,1000.], D0_d_prompt_pdf, RooDecay::SingleSided )" );
+  // bkg
+  RooHistPdf *D0_d_bkg_pdf = new RooHistPdf("D0_d_bkg_pdf","",RooArgList(*w->var("D0_d")), *(RooDataHist*)w->data("D0_d_dh_sb") );
+  w->import( *D0_d_bkg_pdf );
+
+  // pdf
+  w->var("n_bkg")->setVal( nBkgInWindow );
+  w->var("n_sig")->setVal( nSigInWindow );
+  w->var("n_bkg")->setConstant(true);
+  w->var("n_sig")->setConstant(true);
+  //w->factory(Form("n_prompt[5e3,10e2,%f]",0.995*w->var("n_sig")->getVal()));
+  //w->factory( "expr::n_sec( \"@0-@1\",n_sig,n_prompt )");
+
+  // fit
+  w->factory("SUM::D0_d_pdf( n_bkg*D0_d_bkg_pdf, n_prompt*D0_d_prompt_pdf, n_sec*D0_d_sec_pdf )");
+  w->pdf("D0_d_pdf")->fitTo( *w->data("D0_d_dh"), Extended() );
+
+  // plot
+  PlotComponent pc_data( "D0_d_dh", "Data" );
+  pc_data.setDefaultDataStyle();
+  pc_data.binning = 250;
+
+  PlotComponent pc_bkg( "D0_d_pdf:D0_d_bkg_pdf", "Combinatorial PDF" );
+  pc_bkg.setDashedLine( kRed );
+
+  PlotComponent pc_sec( "D0_d_pdf:D0_d_sec_pdf", "Secondary PDF" );
+  pc_sec.setDashedLine( kMagenta+2 );
+
+  PlotComponent pc_prompt( "D0_d_pdf:D0_d_prompt_pdf", "Prompt PDF" );
+  pc_prompt.setDashedLine( kGreen+2 );
+
+  PlotComponent pc_pdf ( "D0_d_pdf", "Total PDF" );
+  pc_pdf.setSolidLine( kBlue );
+
+  vector<PlotComponent> plotComps;
+  plotComps.push_back( pc_data );
+  plotComps.push_back( pc_bkg );
+  plotComps.push_back( pc_sec );
+  plotComps.push_back( pc_prompt );
+  plotComps.push_back( pc_pdf );
+
+  p->pTitle = "D0 Distance Fit";
+  p->pDrawLog = true;
+  p->pResidType = 2;
+  p->plot ( "D0_d", plotComps, "distanace" );
+}
+
 void Dst2D0pi::StandAloneFitter::GetYieldsFromIPCut() {
 
   assert( isIPCHI2Fit );
@@ -584,6 +715,11 @@ void Dst2D0pi::StandAloneFitter::GetYieldsFromIPCut() {
   nPrompt = prompt_integral->getVal() * w->var("n_prompt")->getVal();
   nSec = sec_integral->getVal() * w->function("n_sec")->getVal();
   nBkg = bkg_integral->getVal() * w->var("n_bkg")->getVal();
+
+  nPromptErr = prompt_integral->getVal() * w->var("n_prompt")->getError();
+  double secErr = w->function("n_sec")->getVal()*TMath::Sqrt( TMath::Power( w->var("n_prompt")->getError() / w->var("n_prompt")->getVal() , 2 ) + TMath::Power( w->var("n_sig")->getError() / w->var("n_sig")->getVal() , 2 ) );
+  nSecErr    = sec_integral->getVal() * secErr;
+  nBkgErr    = bkg_integral->getVal() * w->var("n_bkg")->getError();
 
   // cross check it
   RooAbsReal *ip_integral = w->pdf("D0_LOGIPCHI2_pdf")->createIntegral( *w->var("D0_LOGIPCHI2"), NormSet( *w->var("D0_LOGIPCHI2") ), Range( "IPCutWindow" ) );
@@ -676,18 +812,44 @@ void Dst2D0pi::StandAloneFitter::D0LifetimeFit() {
   w->var("n_sig")->setConstant(true);
   w->var("n_bkg")->setConstant(true);
 
+  // gaussian constrain the yields
+  //w->factory( Form("prompt_y[%8.6g, 0,10e8]",nPrompt) );
+  //w->factory( Form("sec_y[%8.6g, 0,10e5]", nSec) );
+  //w->factory( Form("bkg_y[%8.6g,0,10e5]" , nBkg) );
+
+  //w->factory( Form("Gaussian::prompt_y_constraint( prompt_y, %8.6g, %8.6g )",nPrompt, nPromptErr) );
+  //w->factory( Form("Gaussian::sec_y_constraint( sec_y, %8.6g, %8.6g )",nSec, 3.*nSecErr) );
+  //w->factory( Form("Gaussian::bkg_y_constraint( bkg_y, %8.6g, %8.6g )",nBkg, 3.*nBkgErr) );
+
   // roofit struggles with the normalisation in the range
+  //
+  // gaussian constrain JUST the fraction of prompt
+  double fracPrompt = nPrompt / (nPrompt + nSec + nBkg ) ;
+  double tot = nPrompt + nSec + nBkg;
+  double totErr = TMath::Sqrt( nPromptErr*nPromptErr + nSecErr*nSecErr + nBkgErr*nBkgErr );
+  double fracPromptErr = fracPrompt * TMath::Sqrt( TMath::Power( (nPromptErr/nPrompt),2 ) + TMath::Power( (totErr/tot),2 ) );
+
   w->factory( Form("fPrompt[%6.4f,0.,1.]", nPrompt/(nPrompt+nSec+nBkg)) );
-  w->factory( Form("fSec[%6.4f,0.,0.2]", nSec/(nPrompt+nSec+nBkg)) );
-  w->var("fPrompt")->setConstant(true);
-  w->var("fSec")->setConstant(true);
+  w->factory( Form("fSec[%6.4f,0.,0.1]", nSec/(nPrompt+nSec+nBkg)) );
+
+  w->factory( Form("Gaussian::fPromptConstraint( fPrompt, %6.4f, %6.4f )", fracPrompt, fracPromptErr) );
 
   // sum pdf
-  w->factory( "SUM::D0_t_pdf( fPrompt*D0_t_prompt_pdf, fSec*D0_t_sec_pdf, D0_t_bkg_pdf )" );
+  //w->factory( "SUM:D0_t_pdf_sum( prompt_y*D0_t_prompt_pdf, sec_y*D0_t_sec_pdf, bkg_y*D0_t_bkg_pdf )" );
+  //w->factory( "PROD:D0_t_pdf( D0_t_pdf_sum, prompt_y_constraint, sec_y_constraint, bkg_y_constraint )" );
+  w->factory( "SUM::D0_t_pdf_sum( fPrompt*D0_t_prompt_pdf, fSec*D0_t_sec_pdf, D0_t_bkg_pdf )" );
+  w->factory( "PROD::D0_t_pdf( D0_t_pdf_sum, fPromptConstraint )" );
   //w->factory( "SUM::D0_t_pdf( n_prompt*D0_t_prompt_pdf, n_sec*D0_t_sec_pdf, n_bkg*D0_t_bkg_pdf )" );
 
   // fit
-  w->pdf("D0_t_pdf")->fitTo( *w->data("D0_t_dh"), Range( "t_fit_range" ) );
+  //w->pdf("D0_t_pdf")->fitTo( *w->data("D0_t_dh"), Range( "t_fit_range" ) );
+  //
+  RooArgSet *constraints = new RooArgSet();
+  //constraints->add( *w->var("prompt_y") );
+  //constraints->add( *w->var("sec_y") );
+  //constraints->add( *w->var("bkg_y") );
+  constraints->add( *w->var("fPrompt") );
+  w->pdf( "D0_t_pdf")->fitTo( *w->data("D0_t_dh"), Range( "t_fit_range" ), Constrain( *constraints ) );
 
   PlotComponent pc_data_invis( "D0_t_dh", "Data" );
   pc_data_invis.setDefaultDataStyle();
@@ -723,5 +885,7 @@ void Dst2D0pi::StandAloneFitter::D0LifetimeFit() {
   p->pLogYMin = 1.;
   p->pLogYMax = 1.e7;
   p->plot( "D0_t", plotComps, "lifetime" );
+
+  cout << "fPrompt = " << fracPrompt << " +/- " << fracPromptErr << endl;
 
 }

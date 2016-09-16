@@ -76,6 +76,10 @@ FitterBase::FitterBase(TString wsname, TString name, bool _verbose, bool _debug)
   observables->add( *w->var("eventNumber") );
 	w->defineSet("observables",*observables);
 	delete observables;
+  // make categories
+  RooArgSet *categories = new RooArgSet();
+  w->defineSet("categories",*categories);
+  delete categories;
   // make constraints
   RooArgSet *constraints = new RooArgSet();
   w->defineSet("constraints",*constraints);
@@ -102,7 +106,13 @@ void FitterBase::loadCachedWorkspace(TString fname){
   delete w;
   // now load the cached version in its place
   TFile *cacheFile = TFile::Open(fname);
-  w = (RooWorkspace*)cacheFile->Get(wsname);
+  RooWorkspace *cacheWS = (RooWorkspace*)cacheFile->Get(wsname);
+  w = (RooWorkspace*)cacheWS->Clone(wsname);
+
+  cacheWS->pdf("pdf")->Print("v");
+  delete cacheWS;
+  cacheFile->Close();
+  delete cacheFile;
 }
 
 void FitterBase::loadCachedData(TString fname) {
@@ -125,6 +135,9 @@ void FitterBase::loadCachedData(TString fname) {
     if ( !dset ) error("meeh");
     w->import( *dset );
   }
+  delete cacheWS;
+  cacheFile->Close();
+  delete cacheFile;
 }
 
 void FitterBase::addObsVar(TString name, double min, double max){
@@ -230,6 +243,7 @@ void FitterBase::addCategory(TString name, vector<TString> cat_values) {
   if ( !w->cat(name) ){
     error( Form("Category %s did not get added properly",name.Data()) );
   }
+  ((RooArgSet*)w->set("categories"))->add(*w->cat(name));
 }
 
 void FitterBase::addCategory(TString name, TString cat1) {
@@ -374,6 +388,8 @@ void FitterBase::fillDatasets(TString fname, TString tname){
   ULong64_t eventNumber;
 	tree->SetBranchAddress("itype",&itype);
   tree->SetBranchAddress("eventNumber",&eventNumber);
+  if ( verbose || debug ) print("Added compulsory branch itype");
+  if ( verbose || debug ) print("Added compulsory branch eventNumber");
 
   // set branch addresses from tree into container for observables
   //RooRealVar *parg;
@@ -385,21 +401,27 @@ void FitterBase::fillDatasets(TString fname, TString tname){
   //delete iter;
   for (map<TString,double>::iterator it = obs_values_d.begin(); it != obs_values_d.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_d[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
   for (map<TString,float>::iterator it = obs_values_f.begin(); it != obs_values_f.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_f[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
   for (map<TString,int>::iterator it = obs_values_i.begin(); it != obs_values_i.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_i[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
   for (map<TString,short int>::iterator it = obs_values_s.begin(); it != obs_values_s.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_s[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
   for (map<TString,long int>::iterator it = obs_values_l.begin(); it != obs_values_l.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_l[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
   for (map<TString,bool>::iterator it = obs_values_b.begin(); it != obs_values_b.end(); it++) {
     tree->SetBranchAddress(it->first, &obs_values_b[it->first]);
+    if ( verbose || debug ) print("Added observable branch "+it->first);
   }
 
   // set branch address for cut values and requirements
@@ -1249,14 +1271,16 @@ void FitterBase::fit(TString pdf, TString data, bool constrained, double rangeLo
   }
 }
 
-void FitterBase::sfit(TString pdf_name, TString data_name, TString yields_name, TString nonyields_name) {
+void FitterBase::sfit(TString pdf_name, TString data_name, TString yields_name, TString nonyields_name, bool refit, bool loadSnapshot) {
 
   // check pdf, data and yields exist
   //
-  if ( !w->loadSnapshot(Form("%s_fit",pdf_name.Data())) ) {
-    error( Form("FitterBase::sfit() -- No snapshot %s_fit found. You must fit the pdf to the data before sweighting",pdf_name.Data()) );
+  if ( loadSnapshot ) {
+    if ( !w->loadSnapshot(Form("%s_fit",pdf_name.Data())) ) {
+      error( Form("FitterBase::sfit() -- No snapshot %s_fit found. You must fit the pdf to the data before sweighting",pdf_name.Data()) );
+    }
+    w->loadSnapshot(Form("%s_fit",pdf_name.Data()));
   }
-  w->loadSnapshot(Form("%s_fit",pdf_name.Data()));
   // pdf
   RooAbsPdf *pdf    = w->pdf(pdf_name);
   if ( !pdf ) {
@@ -1286,8 +1310,11 @@ void FitterBase::sfit(TString pdf_name, TString data_name, TString yields_name, 
 
   print("Performing sfit of pdf: "+pdf_name+" to data: "+data_name);
 
-  pdf->fitTo(*data, Extended()); // shouldn't need another fit as should have loaded snapshot but it doesn't work without it
+  if (refit) pdf->fitTo(*data, Extended()); // shouldn't need another fit as should have loaded snapshot but it doesn't work without it
   nonyields->setAttribAll("Constant");
+
+  ((RooArgSet*)w->set("observables"))->setAttribAll("Constant",false);
+  ((RooArgSet*)w->set("categories"))->setAttribAll("Constant",false);
 
   if ( verbose || debug ) {
     print("Will use these yields in splot:");
@@ -1298,18 +1325,30 @@ void FitterBase::sfit(TString pdf_name, TString data_name, TString yields_name, 
     debug ?
       nonyields->Print("v") :
       nonyields->Print()    ;
+    print("Using these observables:");
+    debug ?
+      w->set("observables")->Print("v") :
+      w->set("observables")->Print()    ;
+    print("Using these categories:");
+    debug ?
+      w->set("categories")->Print("v")  :
+      w->set("categories")->Print()     ;
   }
 
   //print("What's happening?");
   //TString a;
   //cin >> a;
+  //
+  // clone data so that SPlot can modify it
+  RooDataSet *data_wsweights = (RooDataSet*)data->Clone( Form("%s_wsweights",data->GetName()) );
 
-  RooStats::SPlot *sData = new RooStats::SPlot(Form("%s_sfit",data->GetName()),Form("%s sfit",data->GetTitle()), *data, pdf, RooArgList(*yields));
+  RooStats::SPlot *sData = new RooStats::SPlot(Form("%s_sfit",data->GetName()),Form("%s sfit",data->GetTitle()), *data_wsweights, pdf, RooArgList(*yields));
   w->import(*sData);
-  w->import(*data,Rename(Form("%s_wsweights",data->GetName())));
-  print("Created SPlot with name "+TString(sData->GetName()));
-  print("Renamed data with sweights to: "+data_name+"_wsweights");
+  w->import(*data_wsweights);
+  print("Created SPlot with name: "+TString(sData->GetName()));
+  print("Made data with sweights: "+data_name+"_wsweights");
   delete sData;
+  delete data_wsweights;
 }
 
 void FitterBase::sproject(TString data_name, TString var_name) {

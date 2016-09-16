@@ -13,6 +13,10 @@
 #include "RooPlot.h"
 #include "RooAbsData.h"
 #include "RooAbsPdf.h"
+#include "RooCategory.h"
+#include "RooLinkedList.h"
+#include "RooCmdArg.h"
+
 
 // mock class to trick cint
 class FitterUtils {
@@ -100,6 +104,8 @@ class PlotComponent {
     TString doption;
     bool invisible;
     bool noleg;
+    TString slice;
+    TString project;
 
     void setDefaultDataStyle();
     void setDashedLine(int color);
