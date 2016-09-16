@@ -20,7 +20,7 @@ Dst2D0pi::StandAlonePlotter::StandAlonePlotter( RooWorkspace *_w, TString _pName
   system(Form("mkdir -p plots/%s/png",pName.Data()));
   system(Form("mkdir -p plots/%s/C",pName.Data()));
 
-  gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  gROOT->ProcessLine(".x ~/lhcbStyle.C");
 }
 
 Dst2D0pi::StandAlonePlotter::~StandAlonePlotter(){}

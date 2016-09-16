@@ -37,7 +37,7 @@ void Dst2D0pi::StandAloneFitter::run(bool makeDatasets, bool loadDatasets){
   cout << "Fitter" << endl;
 
   SetSignalWindow( 1840, 1890 );
-  SetIPCut(1.);
+  SetIPCut(2.);
 
   // Make DataSets
   if ( !loadDatasets ) {
@@ -96,10 +96,10 @@ void Dst2D0pi::StandAloneFitter::MakeDataSets(){
   assert( ipCutSet );
 
   // open files
-  dataFile = new TFile(dataFileName);
+  dataFile = TFile::Open(dataFileName);
   dataTree = (TTree*)dataFile->Get("TeslaTuple/DecayTree");
 
-  mcFile = new TFile(mcFileName);
+  mcFile = TFile::Open(mcFileName);
   mcTree = (TTree*)mcFile->Get("MCTuple/DecayTree");
 
   assert( dataTree );
@@ -131,8 +131,8 @@ void Dst2D0pi::StandAloneFitter::MakeDataSets(){
   w->var("D0_M")->SetTitle("m(D0)");
   RooRealVar *D0_M = (RooRealVar*)w->var("D0_M");
 
-  w->factory( "D0_LOGIPCHI2[-10,15]" );
-  w->var("D0_LOGIPCHI2")->setBins(2500);
+  w->factory( "D0_LOGIPCHI2[-25,15]" );
+  w->var("D0_LOGIPCHI2")->setBins(2000);
   w->var("D0_LOGIPCHI2")->setUnit("");
   w->var("D0_LOGIPCHI2")->SetTitle("log(IP #chi^{2}) (D0)");
   RooRealVar *D0_LOGIPCHI2 = (RooRealVar*)w->var("D0_LOGIPCHI2");
@@ -223,7 +223,9 @@ void Dst2D0pi::StandAloneFitter::MakeDataSets(){
     else {
       D0_LOGIPCHI2_th1f_sb->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
       D0_d_th1f_sb->Fill( -1.*TMath::Sign(1., t_Dst_ENDVERTEX_Z - t_Dst_OWNPV_Z) * TMath::Sqrt( diffX*diffX + diffY*diffY + diffZ*diffZ ) );
-      D0_t_th1f_sb->Fill( t_D0_LTIME*1000. );
+      if ( TMath::Log( t_D0_MINIPCHI2 ) < ipCut ) {
+        D0_t_th1f_sb->Fill( t_D0_LTIME*1000. );
+      }
     }
 
   }
@@ -298,12 +300,16 @@ void Dst2D0pi::StandAloneFitter::MakeDataSets(){
     if ( t_Dst_MC_ISPROMPT == 1 ) {
       D0_LOGIPCHI2_th1f_prompt_mc->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
       D0_d_th1f_prompt_mc->Fill( -1.*TMath::Sign(1., t_Dst_ENDVERTEX_Z - t_Dst_OWNPV_Z) * TMath::Sqrt( diffX*diffX + diffY*diffY + diffZ*diffZ ) );
-      D0_t_th1f_prompt_mc->Fill( t_D0_LTIME*1000. );
+      if ( TMath::Log( t_D0_MINIPCHI2 ) < ipCut ) {
+        D0_t_th1f_prompt_mc->Fill( t_D0_LTIME*1000. );
+      }
     }
     if ( t_Dst_MC_ISPROMPT == 0 ) {
       D0_LOGIPCHI2_th1f_sec_mc->Fill( TMath::Log( t_D0_MINIPCHI2 ) );
       D0_d_th1f_sec_mc->Fill( -1.*TMath::Sign(1., t_Dst_ENDVERTEX_Z - t_Dst_OWNPV_Z) * TMath::Sqrt( diffX*diffX + diffY*diffY + diffZ*diffZ ) );
-      D0_t_th1f_sec_mc->Fill( t_D0_LTIME*1000. );
+      if ( TMath::Log( t_D0_MINIPCHI2 ) < ipCut ) {
+        D0_t_th1f_sec_mc->Fill( t_D0_LTIME*1000. );
+      }
     }
   }
 
