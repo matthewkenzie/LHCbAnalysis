@@ -1,5 +1,6 @@
 # require a certain cmake version
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
+SET(CMAKE_CXX_STANDARD 11)
 
 # declare the project name
 PROJECT(LHCbAnalysis)
@@ -33,17 +34,27 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(ROOT REQUIRED COMPONENTS MathCore MathMore RIO Hist Tree RooFit RooFitCore TMVA RooStats)
 
 # Get Boost
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_53")
-  set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/lib" )
-  set(ENV{Boost_ROOT} /afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt)
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  #set(BOOST_ROOT "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt" )
+  #set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/lib" )
+  #set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_53")
+  #set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/lib" )
+  #set(ENV{Boost_ROOT} /afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt)
+#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
-set(Boost_USE_STATIC_LIBS       OFF) # only find static libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
+#set(Boost_USE_STATIC_LIBS        OFF) # only find static libs
+#set(Boost_USE_MULTITHREADED      ON)
+#set(Boost_USE_STATIC_RUNTIME     ON)
 
-find_package(Boost 1.53 REQUIRED COMPONENTS program_options system filesystem REQUIRED)
+set(BOOST_ROOT "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt" )
+set(BOOST_INCLUDEDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59" )
+set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
+set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59")
+set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
+set(Boost_COMPILER "-gcc49")
+set(Boost_NO_SYSTEM_PATHS ON)
+SET(Boost_NO_BOOST_CMAKE ON CACHE BOOL "Enable fix for FindBoost.cmake")
+find_package(Boost REQUIRED COMPONENTS program_options system filesystem REQUIRED)
 
 # find Doxygen
 FIND_PACKAGE(Doxygen)
@@ -84,19 +95,20 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -O3 -g3")
 #
 ######################################
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-std=c++11 HAS_CPP11)
-check_cxx_compiler_flag(-std=c++0x HAS_CPP11_ALTERNATIVE)
-if (HAS_CPP11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-elseif (HAS_CPP11_ALTERNATIVE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-else()
-  message("No C++11 support.  Moving on.")
-endif()
+#include(CheckCXXCompilerFlag)
+#check_cxx_compiler_flag(-std=c++11 HAS_CPP11)
+#check_cxx_compiler_flag(-std=c++0x HAS_CPP11_ALTERNATIVE)
+#if (HAS_CPP11)
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#elseif (HAS_CPP11_ALTERNATIVE)
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#else()
+  #message("No C++11 support.  Moving on.")
+#endif()
 
 # set additional compiler flags
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-extensions"   )
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-extensions"   )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 ######################################
 #
@@ -152,6 +164,8 @@ list( APPEND CORE_LIB_SOURCES ${CUSTOM_ROOT_DICT}.cxx )
 # build core library
 #
 ######################################
+message( "Boost Libs: " ${Boost_LIBRARIES} )
+message( "ROOT  Libs: " ${ROOT_LIBRARIES} )
 add_library( ${PROJECT_NAME}Components SHARED ${CORE_LIB_SOURCES} )
 #set_target_properties( ${PROJECT_NAME}Components PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_SOVERSION} )
 # add the ROOT dictionary to the list of dependencies
