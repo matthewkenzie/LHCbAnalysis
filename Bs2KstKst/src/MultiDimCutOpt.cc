@@ -32,7 +32,11 @@ Bs2KstKst::MultiDimCutOpt::MultiDimCutOpt():
   run2011(false),
   run2012(false),
   misIdType(1),
+  fomType(0),
   n_reducs(0),
+  sigNorm(-999.),
+  bkgNorm(-999.),
+  misNorm(-999.),
   scanpoints1d(10),
   scanpoints2d(10)
 {
@@ -571,9 +575,9 @@ void Bs2KstKst::MultiDimCutOpt::getEventEstimates(TTree *tree) {
   //RooDataHist *binned = (RooDataHist*)data->binnedClone("full_data_hist");
   //w->var("sig_mc_mean")->setConstant(false);
   //w->pdf("pdf")->fitTo(*binned);
-  double cut_vals[3] = {-1.0,0.0,0.0};
+  double cut_vals[3] = {-1.0,0.0,1.0};
   w->Print("v");
-  plot(w->data("full_data"),w->pdf("pdf"),"full",cut_vals);
+  plot(w->data("full_data"),w->pdf("pdf"),"full"); // can pass cut vals if wanted
   w->var("B_s0_DTF_B_s0_M")->setRange("window",5300,5500);
   RooAbsReal *integral = w->pdf("bkg_pdf")->createIntegral(RooArgSet(*w->var("B_s0_DTF_B_s0_M")),NormSet(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Range("window"));
   cout << "INTEGRAL: " << integral->getVal() << " -- " << integral->getVal()*w->var("bkg_y")->getVal() << endl;
@@ -590,6 +594,10 @@ void Bs2KstKst::MultiDimCutOpt::getEventEstimates(TTree *tree) {
   bkgNorm = bkgEst / bkgTree;
   misNorm = misEst / misTree;
 
+  cout << "Event estimates: " << endl;
+  cout << "\tS: " << sigNorm << endl;
+  cout << "\tB: " << bkgNorm << endl;
+  cout << "\tM: " << misNorm << endl;
 }
 
 TCut Bs2KstKst::MultiDimCutOpt::getCut(double *cutvals) {
@@ -625,13 +633,13 @@ TCut Bs2KstKst::MultiDimCutOpt::getBkgSel(){
 
 TCut Bs2KstKst::MultiDimCutOpt::getSigSel(){
   if ( runAll || ( run2011 && run2012 ) ) {
-    return TCut("( (itype==-71 || itype==-81) )");
+    return TCut("( (itype==-70 || itype==-80) )");
   }
   if ( run2011 && !run2012 ) {
-    return TCut("( (itype==-71) )");
+    return TCut("( (itype==-70) )");
   }
   if ( run2012 && !run2011 ) {
-    return TCut("( (itype==-81) )");
+    return TCut("( (itype==-80) )");
   }
   cout << "ERROR -- This shouldn't be possible" << endl;
   exit(1);
@@ -675,9 +683,13 @@ double Bs2KstKst::MultiDimCutOpt::getFOM(double *cutvals) {
   TCut bkgSel = getBkgSel();
   TCut misSel = getMisSel();
 
-  double nSig = tree->GetEntries(cutString+sigSel) * sigNorm;
-  double nBkg = tree->GetEntries(cutString+bkgSel) * bkgNorm;
-  double nMis = tree->GetEntries(cutString+misSel) * misNorm;
+  int sigEvs = tree->GetEntries(cutString+sigSel);
+  int bkgEvs = tree->GetEntries(cutString+bkgSel);
+  int misEvs = tree->GetEntries(cutString+misSel);
+
+  double nSig = sigEvs * sigNorm;
+  double nBkg = bkgEvs * bkgNorm;
+  double nMis = misEvs * misNorm;
 
   double fom = -999.;
   double sigmaMis = 0.5;
@@ -688,6 +700,9 @@ double Bs2KstKst::MultiDimCutOpt::getFOM(double *cutvals) {
   else if (fomType==3)   fom = nSig/(TMath::Sqrt(nSig+nBkg+(1.+2.*sigmaMis*sigmaMis)*nMis));    // S/sqrt(S+B+M+2systM)
   else if (fomType==4)   fom = (nSig/(TMath::Sqrt(nSig+nBkg+nMis)) * (nSig/(nSig+nBkg+nMis)));  // S/sqrt(S+B+M) * Purity
   if (fom != fom) fom=0; // nan protect
+
+  //cout << sigEvs << " " << bkgEvs << " " << misEvs << endl;
+  //cout << nSig << " " << nBkg << " " << nMis << " " << fom << endl;
 
   cout << "Scan: " << Form("( %4.2f , %4.2f , %4.2f )",cutvals[0],cutvals[1],cutvals[2]) << " -- " << Form("%6.3f",fom) << endl;
   return fom;
@@ -741,6 +756,65 @@ Bs2KstKst::Scan2DResult Bs2KstKst::MultiDimCutOpt::scan2D( int varInd1, int varI
 
 }
 
+void Bs2KstKst::MultiDimCutOpt::runBDTOptOnly(int type) {
+
+  // figure of merit type:
+  // // 1 = S/sqrt(S+B)
+  // // 2 = S/sqrt(S+B+M)
+  // // 3 = S/sqrt(S+B+sigma*M)
+  fomType = type;
+
+  TFile *inFile = TFile::Open(infilename);
+  tree = (TTree*)inFile->Get("AnalysisTree");
+  TCanvas *canv = new TCanvas("opt","opt",800,600);
+
+  // fit data with no cuts and compare to tree values to get expected number of each type
+  getEventEstimates(tree);
+
+  double cut_vals[3] = { -1.0, 0., 1.};
+
+  // 1D scan and draw
+  Scan1DResult scan1dRes = scan1D( 0, -1., 1., scanpoints1d, cut_vals );
+  setAxes(scan1dRes.gr, "bdtoutput cut", "FOM");
+  canv->cd();
+  scan1dRes.gr->Draw("ALP");
+  canv->Update();
+  canv->Modified();
+
+  cout << "Suggested value: " << endl;
+  cout << "\t" << "bdtoutput:     " << scan1dRes.maxX << endl;
+
+  if ( runAll || ( run2011 && run2012 ) ) {
+    canv->Print(Form("plots/MultiDimCutOpt/pdf/scan%d_all.pdf",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/png/scan%d_all.png",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/C/scan%d_all.C",fomType));
+  }
+  if ( run2011 && !run2012 ) {
+    canv->Print(Form("plots/MultiDimCutOpt/pdf/scan%d_2011.pdf",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/png/scan%d_2011.png",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/C/scan%d_2011.C",fomType));
+  }
+  if ( run2012 && !run2011 ) {
+    canv->Print(Form("plots/MultiDimCutOpt/pdf/scan%d_2012.pdf",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/png/scan%d_2012.png",fomType));
+    canv->Print(Form("plots/MultiDimCutOpt/C/scan%d_2012.C",fomType));
+  }
+
+  scan1dRes.gr->SetName(Form("FirstScan1D%d",fomType));
+  outFile->cd();
+  scan1dRes.gr->Write();
+
+  // plot resulting decision
+  RooDataSet *data = (RooDataSet*)w->data("full_data")->reduce(SelectVars(RooArgSet(*w->var("B_s0_DTF_B_s0_M"))),Name("result_data_red"),Cut(Form("bdtoutput>%4.2f",scan1dRes.maxX)));
+  RooDataHist *binned = (RooDataHist*)data->binnedClone("result_data_hist");
+  w->var("sig_mc_mean")->setConstant(false);
+  w->pdf("pdf")->fitTo(*binned);
+  plot(binned,w->pdf("pdf"),Form("res%d",fomType));
+
+  inFile->Close();
+
+}
+
 void Bs2KstKst::MultiDimCutOpt::runSimple(int type) {
 
   // figure of merit type:
@@ -757,7 +831,7 @@ void Bs2KstKst::MultiDimCutOpt::runSimple(int type) {
   // fit data with no cuts and compare to tree values to get expected number of each type
   getEventEstimates(tree);
 
-  double cut_vals[3] = { 0.0, 0., 0.};
+  double cut_vals[3] = { -1.0, 0., 1.};
 
   // 1D scan and draw
   Scan1DResult scan1dRes = scan1D( 0, -1., 1., scanpoints1d, cut_vals );

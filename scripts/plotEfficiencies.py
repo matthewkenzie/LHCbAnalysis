@@ -2,7 +2,25 @@
 
 import os
 import sys
+
+from argparse import ArgumentParser
+parser = ArgumentParser()
+parser.add_argument("files", metavar='FIL', type=str, nargs="+", help="List of the inputs files to scan for efficiencies")
+parser.add_argument("-c","--canv",default="1200:800",help="Canvas size")
+parser.add_argument("-x","--xskip",default="",help="Comma seperated list of items to skip in x e.g. \'BDTNoPID,AddPIDVars\'")
+parser.add_argument("-y","--yskip",default="",help="Comma seperated list of items to skip in y e.g. \'Bd2JpsiKst,Data\'")
+parser.add_argument("-i","--interactive",default=False,action="store_true",help="Run interactively")
+args = parser.parse_args()
+#from optparse import OptionParser
+#parser = OptionParser()
+#parser.add_option("-c","--canv",default="1200:800",help="Canvas size")
+#parser.add_option("-x","--xskip",default="",help="Comma seperated list of items to skip in x e.g. \'BDTNoPID,AddPIDVars\'")
+#parser.add_option("-y","--yskip",default="",help="Comma seperated list of items to skip in y e.g. \'Bd2JpsiKst,Data\'")
+#(opts,args) = parser.parse_args()
+
 import ROOT as r
+
+if not args.interactive: r.gROOT.SetBatch()
 
 os.system('mkdir -p plots/Efficiencies/pdf')
 os.system('mkdir -p plots/Efficiencies/png')
@@ -12,11 +30,17 @@ r.gStyle.SetGridWidth(3)
 r.gStyle.SetGridStyle(1)
 r.gStyle.SetPalette(1)
 
-infiles = sys.argv[1:]
+infiles = args.files
 canvs=[]
 
 xlabels = []
 ylabels = []
+
+xskip = [ x for x in args.xskip.split(",") ]
+yskip = [ y for y in args.yskip.split(",") ]
+
+canv_x = int(args.canv.split(":")[0])
+canv_y = int(args.canv.split(":")[1])
 
 def fillDict(hName, isEff=False, skipStart=True):
   theDict = {}
@@ -26,12 +50,13 @@ def fillDict(hName, isEff=False, skipStart=True):
     for xbin in range(1,hist.GetNbinsX()+1):
       analyser_label = hist.GetXaxis().GetBinLabel(xbin)
       if skipStart and analyser_label=='Start': continue
-      if 'BDTReader' in analyser_label: continue
+      if any(skip in analyser_label for skip in xskip): continue
       if analyser_label not in theDict.keys():
         theDict[analyser_label] = {}
         if analyser_label not in xlabels: xlabels.append(analyser_label)
       for ybin in range(1,hist.GetNbinsY()+1):
         dataset_label = hist.GetYaxis().GetBinLabel(ybin)
+        if any(skip in dataset_label for skip in yskip): continue
         if dataset_label not in theDict[analyser_label].keys():
           bin2d = hist.FindBin(xbin-1,ybin-1)
           theDict[analyser_label][dataset_label] = hist.GetBinContent(bin2d)
@@ -86,6 +111,7 @@ def convertDictToTH2(theDict, name, title=""):
     th2f.GetXaxis().SetBinLabel(xbin+1,tidyLabelX(xlabel))
     for ybin, ylabel in enumerate(ylabels):
       th2f.GetYaxis().SetBinLabel(ybin+1,tidyLabel(ylabel))
+      th2f.GetYaxis().SetLabelSize(0.05)
       bin2d = th2f.FindBin(xbin,ybin)
       th2f.SetBinContent(bin2d, theDict[xlabel][ylabel])
 
@@ -102,6 +128,27 @@ def tidyLabel(label):
   new_label = new_label.replace('MagUp','MU')
   new_label = new_label.replace('LowMass','(LM)')
   new_label = new_label.replace('HighMass','(HM)')
+
+  if label == 'Bd2Kst0Kst0_MC2011': new_label = 'B_{d}^{0}#rightarrow K^{*0}K^{*0} (2011)'
+  if label == 'Bd2Kst0Kst0_MC2012': new_label = 'B_{d}^{0}#rightarrow K^{*0}K^{*0} (2012)'
+  if label == 'Bd2PhiKst0_MC2011': new_label = 'B_{d}^{0}#rightarrow #phi^{0}K^{*0} (2011)'
+  if label == 'Bd2PhiKst0_MC2012': new_label = 'B_{d}^{0}#rightarrow #phi^{0}K^{*0} (2012)'
+  if label == 'Bs2PhiKst0_MC2011': new_label = 'B_{s}^{0}#rightarrow #phi^{0}K^{*0} (2011)'
+  if label == 'Bs2PhiKst0_MC2012': new_label = 'B_{s}^{0}#rightarrow #phi^{0}K^{*0} (2012)'
+  if label == 'Bd2RhoKst0_MC2011': new_label = 'B_{d}^{0}#rightarrow #rho^{0}K^{*0} (2011)'
+  if label == 'Bd2RhoKst0_MC2012': new_label = 'B_{d}^{0}#rightarrow #rho^{0}K^{*0} (2012)'
+  if label == 'Bs2Kst0Kst0_MC2011': new_label = 'B_{s}^{0}#rightarrow K^{*0}K^{*0} (2011)'
+  if label == 'Bs2Kst0Kst0_MC2012': new_label = 'B_{s}^{0}#rightarrow K^{*0}K^{*0} (2012)'
+  if label == 'Bs2Kst0Kst01430_MC2011': new_label = 'B_{s}^{0}#rightarrow K^{*0}(1430)K^{*0} (2011)'
+  if label == 'Bs2Kst0Kst01430_MC2012': new_label = 'B_{s}^{0}#rightarrow K^{*0}(1430)K^{*0} (2012)'
+  if label == 'Bs2Kst01430Kst01430_MC2011': new_label = 'B_{s}^{0}#rightarrow K^{*0}(1430)K^{*0}(1430) (2011)'
+  if label == 'Bs2Kst01430Kst01430_MC2012': new_label = 'B_{s}^{0}#rightarrow K^{*0}(1430)K^{*0}(1430) (2012)'
+  if label == 'Bs2KpiKpi_PhaseSpace_MC2011': new_label = 'B_{s}^{0}#rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+}) (2011)'
+  if label == 'Bs2KpiKpi_PhaseSpace_MC2012': new_label = 'B_{s}^{0}#rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+}) (2012)'
+  if label == 'Lb2pKpipi_MC2011': new_label = '#Lambda_{b}^{0}#rightarrow pK^{-}#pi^{+}#pi^{-} (2011)'
+  if label == 'Lb2pKpipi_MC2012': new_label = '#Lambda_{b}^{0}#rightarrow pK^{-}#pi^{+}#pi^{-} (2012)'
+  if label == 'Lb2ppipipi_MC2011': new_label = '#Lambda_{b}^{0}#rightarrow p#pi^{-}#pi^{+}#pi^{-} (2011)'
+  if label == 'Lb2ppipipi_MC2012': new_label = '#Lambda_{b}^{0}#rightarrow p#pi^{-}#pi^{+}#pi^{-} (2012)'
   return new_label
 
 def tidyLabelX(label):
@@ -111,12 +158,14 @@ def tidyLabelX(label):
   if 'BDTReader' in label:           new_label = 'BDT Cut'
   if 'PreSelection' in label:        new_label = 'Pre-selection'
   if 'TruthMatching' in label:       new_label = 'Truth Matching'
-  if 'PIDSelection' in label:        new_label = 'PID Cut'
+  if 'PIDSelection' in label:        new_label = 'PID Cuts'
+  if 'BDTCut' in label:              new_label = 'BDT Cut'
+  if 'PIDCut' in label:              new_label = 'PID Cut'
   return new_label
 
 def draw(th2f, name, textformat='', col=False):
 
-  canvs.append(r.TCanvas(name,name,1200,700))
+  canvs.append(r.TCanvas(name,name,canv_x,canv_y))
   canvs[-1].SetLeftMargin(0.3)
   if th2f.GetTitle() != "":
     canvs[-1].SetTopMargin(0.1)
@@ -138,8 +187,10 @@ def draw(th2f, name, textformat='', col=False):
 
   th2f.SetStats(0)
   th2f.GetZaxis().SetTitle("Efficiency (%)")
-  th2f.GetZaxis().SetTitleOffset(0.7)
-  th2f.GetZaxis().SetTitleSize(0.06)
+  th2f.GetZaxis().SetTitleOffset(0.8)
+  th2f.GetZaxis().SetTitleSize(0.05)
+  th2f.GetZaxis().SetLabelSize(0.05)
+  if col: th2f.GetZaxis().SetRangeUser(0.,100.)
   if col: th2f.Draw("TEXTcolz")
   else: th2f.Draw("TEXT")
 
@@ -186,7 +237,7 @@ passHist = convertDictToTH2(passDict,'hPass', 'Passing events')
 failHist = convertDictToTH2(failDict,'hFail', 'Failed events')
 procDict = convertDictToTH2(procDict,'hProc', 'Processed events')
 xlabels.append('Total')
-effHist  = convertDictToTH2(effDict,'hEff', 'Selection efficiency')
+effHist  = convertDictToTH2(effDict,'hEff', '')
 effHist.Scale(100.)
 
 draw(passHist,'pass','g')
@@ -194,4 +245,4 @@ draw(failHist,'fail','g')
 draw(procDict,'proc','g')
 draw(effHist, 'eff','5.1f%%',True)
 
-raw_input('Done\n')
+if args.interactive: raw_input('Done\n')

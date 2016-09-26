@@ -123,7 +123,7 @@ void Bs2KstKst::AddPIDVarsAndDatasets::Term() {
     w->import( *(ds->second) );
   }
 
-  w->writeToFile("root/MultiDimCutDatasets.root");
+  w->writeToFile("root/MultiDimCutOpt/MultiDimCutDatasets.root");
   delete w;
 
 }

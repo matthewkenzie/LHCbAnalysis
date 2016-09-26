@@ -87,6 +87,8 @@ void addSWeightToTree() {
   int        itype;
   bool       pass_bdt;
   bool       pass_pid;
+  bool       pass_rhokst;
+  bool       pass_massveto;
   bool       pass_multcand;
   bool       B_s0_L0HadronDecision_TOS;
   bool       B_s0_L0Global_TIS;
@@ -102,6 +104,8 @@ void addSWeightToTree() {
   tree->SetBranchAddress(  "itype"                       , &itype                       );
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
+  tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
+  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
@@ -113,7 +117,7 @@ void addSWeightToTree() {
 
     sweight = -999.;
 
-    if ( (itype==71 || itype==81) && pass_bdt && pass_pid && pass_multcand ) {
+    if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand ) {
 
       if ( itype==71 ) {
         if ( B_s0_L0HadronDecision_TOS )                        {
@@ -150,7 +154,7 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
 
   TH1F *h = new TH1F( var, var, bins, xmin, xmax );
 
-  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && pass_multcand)", "goff" );
+  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -178,7 +182,7 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
 
   TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
 
-  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && pass_multcand)", "goff" );
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;

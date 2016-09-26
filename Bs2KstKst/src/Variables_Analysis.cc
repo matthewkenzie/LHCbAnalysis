@@ -2770,6 +2770,17 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("bdtoutput"                             , &bdtoutput                               , "bdtoutput/F"                           );
   tree->Branch("pidbdtoutput"                          , &pidbdtoutput                            , "pidbdtoutput/F"                        );
 
+  tree->Branch("B_s0_M_KpPimPimPip"                    , &B_s0_M_KpPimPimPip                      , "B_s0_M_KpPimPimPip/D"                  );
+  tree->Branch("B_s0_M_PipPimKmPip"                    , &B_s0_M_PipPimKmPip                      , "B_s0_M_PipPimKmPip/D"                  );
+  tree->Branch("B_s0_M_KpKmKmPip"                      , &B_s0_M_KpKmKmPip                        , "B_s0_M_KpKmKmPip/D"                    );
+  tree->Branch("B_s0_M_KpPimKmKp"                      , &B_s0_M_KpPimKmKp                        , "B_s0_M_KpPimKmKp/D"                    );
+  tree->Branch("M_KpKmPip"                             , &M_KpKmPip                               , "M_KpKmPip/D"                           );
+  tree->Branch("M_KpKmPim"                             , &M_KpKmPim                               , "M_KpKmPim/D"                           );
+  tree->Branch("M_KpPipPim"                            , &M_KpPipPim                              , "M_KpPipPim/D"                          );
+  tree->Branch("M_KmPipPim"                            , &M_KmPipPim                              , "M_KmPipPim/D"                          );
+  tree->Branch("M_KpKm"                                , &M_KpKm                                  , "M_KpKm/D"                              );
+  tree->Branch("M_PipPim"                              , &M_PipPim                                , "M_PipPim/D"                            );
+
   tree->Branch("Piplus_ProbNNKpi"                      , &Piplus_ProbNNKpi                        , "Piplus_ProbNNKpi/D"                    );
   tree->Branch("Piminus_ProbNNKpi"                     , &Piminus_ProbNNKpi                       , "Piminus_ProbNNKpi/D"                   );
   tree->Branch("Piplus_ProbNNpiKp"                     , &Piplus_ProbNNpiKp                       , "Piplus_ProbNNpiKp/D"                   );
@@ -2809,6 +2820,8 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
 
   tree->Branch("pass_bdt"                              , &pass_bdt                                , "pass_bdt/O"                            );
   tree->Branch("pass_pid"                              , &pass_pid                                , "pass_pid/O"                            );
+  tree->Branch("pass_rhokst"                           , &pass_rhokst                             , "pass_rhokst/O"                         );
+  tree->Branch("pass_massveto"                         , &pass_massveto                           , "pass_massveto/O"                       );
 
   tree->Branch("B_s0_DTF_B_s0_CosTheta1"               , &B_s0_DTF_B_s0_CosTheta1                 , "B_s0_DTF_B_s0_CosTheta1/D"             );
   tree->Branch("B_s0_DTF_B_s0_CosTheta2"               , &B_s0_DTF_B_s0_CosTheta2                 , "B_s0_DTF_B_s0_CosTheta2/D"             );

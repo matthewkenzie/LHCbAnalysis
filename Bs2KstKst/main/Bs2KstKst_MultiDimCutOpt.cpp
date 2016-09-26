@@ -23,6 +23,7 @@ int scanPoints2D;
 int misIdType;
 int fomType;
 string runType;
+bool bdtOnly;
 bool interactive;
 
 void parseOptions(int argc, char **argv) {
@@ -55,6 +56,7 @@ void parseOptions(int argc, char **argv) {
                                                                                                   "  all:  everything (default)   \n"
                                                                                                   "  2011: just 2011              \n"
                                                                                                   "  2012: just 2012              \n")
+    ("bdtOnly,b",   po::bool_switch(&bdtOnly)->default_value(false),                              "Run the BDT optimisation only")
     ("interactive,I", po::bool_switch(&interactive)->default_value(false),                        "Run in interactive mode")
     ;
 
@@ -115,7 +117,8 @@ int main(int argc, char **argv) {
   if ( ! makeCache ) {
     cutOpt->setScanPoints1D( scanPoints1D );
     cutOpt->setScanPoints2D( scanPoints2D );
-    cutOpt->runSimple( fomType );
+    if ( bdtOnly ) cutOpt->runBDTOptOnly( fomType );
+    else           cutOpt->runSimple( fomType );
   }
 
   cutOpt->save();

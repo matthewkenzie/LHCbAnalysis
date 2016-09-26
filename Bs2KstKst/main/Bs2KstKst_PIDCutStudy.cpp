@@ -46,6 +46,8 @@ void drawDist( TTree *tree, TString name, TString var, TString rhokst_mc, TStrin
   leg->AddEntry( h_rhokst, "B_{s}^{0} #rightarrow #rho^{0}K^{*0}", "L" );
   leg->AddEntry( h_bkg, "Background", "L" );
 
+  h_kstkst->GetYaxis()->SetRangeUser(0.0001, 1.05* TMath::Max( TMath::Max( h_kstkst->GetMaximum(),h_rhokst->GetMaximum()), h_bkg->GetMaximum()));
+
   TCanvas *c = new TCanvas();
   h_kstkst->Draw("HIST");
   h_rhokst->Draw("HISTsame");
@@ -149,7 +151,7 @@ void drawRoc( TTree *tree, TString xtitle, TString var, TString sig_cut, TString
     leg = new TLegend(0.6,0.7,0.9,0.9);
   }
   else {
-    leg = new TLegend(0.2,0.7,0.5,0.9);
+    leg = new TLegend(0.2,0.2,0.5,0.5);
   }
   leg->SetFillColor(0);
   leg->AddEntry(sigEff,"B_{s}^{0} #rightarrow K^{*0}K^{*0} MC","LEP");
@@ -161,17 +163,20 @@ void drawRoc( TTree *tree, TString xtitle, TString var, TString sig_cut, TString
   line->SetLineWidth( 2 );
   line->SetLineStyle( kDashed );
 
-  TCanvas *c = new TCanvas("c","c",800,1200);
-  c->Divide(1,2);
-  c->cd(1);
+  TCanvas *c1 = new TCanvas("c1","c1",800,600);
+  c1->cd();
   h_dum->Draw("AXIS");
   for ( int i=0; i<specVals.size(); i++ ) line->DrawLine( specVals[i], 0., specVals[i], 1.05 );
   sigEff->Draw("PEsame");
   bkgEff->Draw("PEsame");
   effRat->Draw("PEsame");
   leg->Draw("same");
+  c1->Update();
+  c1->Modified();
+  c1->Print(Form("plots/PIDStudy/pdf/eff_%s.pdf",xtitle.Data()));
 
-  c->cd(2);
+  TCanvas *c2 = new TCanvas("c2","c2",800,600);
+  c2->cd();
   TH1F *dumRoc = new TH1F("dumRoc","",100,0,1);
   dumRoc->GetXaxis()->SetTitle( "K^{*0}K^{*0} Effciency" );
   dumRoc->GetYaxis()->SetTitle( "#rho^{0}K^{*0} Rejection" );
@@ -208,9 +213,9 @@ void drawRoc( TTree *tree, TString xtitle, TString var, TString sig_cut, TString
   leg2->AddEntry(roc,"ROC Curve","L");
   leg2->Draw("same");
 
-  c->Update();
-  c->Modified();
-  c->Print(Form("plots/PIDStudy/pdf/eff_%s.pdf",xtitle.Data()));
+  c2->Update();
+  c2->Modified();
+  c2->Print(Form("plots/PIDStudy/pdf/eff_%s_roc.pdf",xtitle.Data()));
 
   delete h_dum;
   delete sigEff;
@@ -218,7 +223,8 @@ void drawRoc( TTree *tree, TString xtitle, TString var, TString sig_cut, TString
   delete effRat;
   delete roc;
   delete dumRoc;
-  delete c;
+  delete c1;
+  delete c2;
 }
 
 int main() {
@@ -227,9 +233,10 @@ int main() {
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
   TH1::SetDefaultSumw2();
 
-  TFile *tf = TFile::Open("root/AnalysisOutPIDCorr.root");
+  TFile *tf = TFile::Open("root/AnalysisOut.root");
   TTree *tree = (TTree*)tf->Get("AnalysisTree");
 
+  TString pt_cut = " && (Kplus_P<100000 && Kminus_P<100000 && Piplus_P<100000 && Piminus_P<100000)";
   TString rhokst_mc = "(itype==-77 || itype==-87)";
   TString kstkst_mc = "(itype==-70 || itype==-80)";
   TString bkg = "(itype==71 || itype==81) && (B_s0_DTF_B_s0_M>5600 && B_s0_DTF_B_s0_M<5800)";
@@ -238,22 +245,22 @@ int main() {
   //drawDist( tree, "Kplus_V3ProbNNk_corr"   , "Kplus_V3ProbNNk_corr"   , rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
   //drawDist( tree, "Kminus_V3ProbNNpi_corr" , "Kminus_V3ProbNNpi_corr" , rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
   //drawDist( tree, "Kplus_V3ProbNNpi_corr"  , "Kplus_V3ProbNNpi_corr"  , rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
-  drawDist( tree, "Kminus_V3ProbNNKpi_corr", "Kminus_V3ProbNNKpi_corr", rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
-  drawDist( tree, "Kplus_V3ProbNNKpi_corr" , "Kplus_V3ProbNNKpi_corr" , rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
-  drawDist( tree, "min_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
-  drawDist( tree, "max_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", rhokst_mc, kstkst_mc, bkg, 100, 0, 1, true );
+  //drawDist( tree, "Kminus_V3ProbNNKpi_corr", "Kminus_V3ProbNNKpi_corr", rhokst_mc+pt_cut, kstkst_mc+pt_cut, bkg+pt_cut, 100, 0, 1, true );
+  //drawDist( tree, "Kplus_V3ProbNNKpi_corr" , "Kplus_V3ProbNNKpi_corr" , rhokst_mc+pt_cut, kstkst_mc+pt_cut, bkg+pt_cut, 100, 0, 1, true );
+  drawDist( tree, "min_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", rhokst_mc+pt_cut, kstkst_mc+pt_cut, bkg+pt_cut, 100, 0, 1, true );
+  //drawDist( tree, "max_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", rhokst_mc+pt_cut, kstkst_mc+pt_cut, bkg+pt_cut, 100, 0, 1, true );
 
   //drawRoc( tree, "Kminus_V3ProbNNk_corr"   , "Kminus_V3ProbNNk_corr"  , kstkst_mc, rhokst_mc, 50, 0, 1 );
   //drawRoc( tree, "Kplus_V3ProbNNk_corr"    , "Kplus_V3ProbNNk_corr"   , kstkst_mc, rhokst_mc, 50, 0, 1 );
   //drawRoc( tree, "Kminus_V3ProbNNpi_corr"  , "Kminus_V3ProbNNpi_corr" , kstkst_mc, rhokst_mc, 50, 0, 1 , "<");
   //drawRoc( tree, "Kplus_V3ProbNNpi_corr"   , "Kplus_V3ProbNNpi_corr"  , kstkst_mc, rhokst_mc, 50, 0, 1 , "<");
-  drawRoc( tree, "Kminus_V3ProbNNKpi_corr" , "Kminus_V3ProbNNKpi_corr", kstkst_mc, rhokst_mc, 50, 0, 1 );
-  drawRoc( tree, "Kplus_V3ProbNNKpi_corr"  , "Kplus_V3ProbNNKpi_corr" , kstkst_mc, rhokst_mc, 50, 0, 1 );
+  //drawRoc( tree, "Kminus_V3ProbNNKpi_corr" , "Kminus_V3ProbNNKpi_corr", kstkst_mc+pt_cut, rhokst_mc+pt_cut, 50, 0, 1 );
+  //drawRoc( tree, "Kplus_V3ProbNNKpi_corr"  , "Kplus_V3ProbNNKpi_corr" , kstkst_mc+pt_cut, rhokst_mc+pt_cut, 50, 0, 1 );
 
   //drawRoc( tree, "min_kaon_V3ProbNNk_corr", "min_kaon_V3ProbNNk_corr", kstkst_mc, rhokst_mc, 50, 0, 1 );
   //drawRoc( tree, "max_kaon_V3ProbNNpi_corr", "max_kaon_V3ProbNNpi_corr", kstkst_mc, rhokst_mc, 50, 0, 1, "<", "L" );
-  drawRoc( tree, "max_kaon_V3ProbNNKpi_corr", "max_kaon_V3ProbNNKpi_corr", kstkst_mc, rhokst_mc, 50, 0, 1 );
-  drawRoc( tree, "min_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", kstkst_mc, rhokst_mc, 50, 0, 1 );
+  //drawRoc( tree, "max_kaon_V3ProbNNKpi_corr", "max_kaon_V3ProbNNKpi_corr", kstkst_mc+pt_cut, rhokst_mc+pt_cut, 50, 0, 1 );
+  drawRoc( tree, "min_kaon_V3ProbNNKpi_corr", "min_kaon_V3ProbNNKpi_corr", kstkst_mc+pt_cut, rhokst_mc+pt_cut, 50, 0, 1, ">", "L" );
 
 
   return 0;
