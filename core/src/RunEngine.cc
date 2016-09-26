@@ -145,7 +145,7 @@ void RunEngine::run() {
 
       // print progress
       int update_schedule = 1000; // will update 1000 times
-      if ( arg.batchmode ) update_schedule = 10000;
+      if ( arg.batchmode ) update_schedule = 1000;
       int ndigits = int( TMath::Log10( double((lEntry-fEntry)/double( update_schedule )) ) )+1;
       ndigits = ndigits > 0 ? ndigits : 1;
       int nearest = int (TMath::Power( 10, ndigits-1 ) );

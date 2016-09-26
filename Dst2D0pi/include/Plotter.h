@@ -36,8 +36,6 @@ namespace Dst2D0pi {
 
       const Variables_Analysis *v;
 
-      bool split;
-
   };
 
 }
