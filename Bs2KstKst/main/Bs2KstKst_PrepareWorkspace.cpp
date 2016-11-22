@@ -64,7 +64,8 @@ void flagMultCands( TString fname, TString tname ) {
   for ( int ev=0; ev<tree->GetEntries(); ev++ ) {
     tree->GetEntry(ev);
     if ( ev%10000==0 ) cout << ev << "/" << tree->GetEntries() << endl;
-    if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
+    //if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
+    if ( itype>0 && pass_bdt && pass_pid && (!pass_massveto) && totCandidates > 1 ) {
       multCandEventNumbers[eventNumber] = totCandidates;
     }
   }
@@ -157,6 +158,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   bool      pass_multcand;
   bool      B_s0_L0HadronDecision_TOS;
   bool      B_s0_L0Global_TIS;
+  double    B_s0_DTF_KST1_M;
+  double    B_s0_DTF_KST2_M;
 
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "year"                        , &year                        );
@@ -169,6 +172,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
+  tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
+  tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
 
   RooWorkspace *w = new RooWorkspace("w","w");
   defineDatasets( w );
@@ -181,6 +186,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
 
     // cut events outside the mass window
     if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
+    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
+    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
 
     // set workspace values
     w->var("B_s0_DTF_B_s0_M")->setVal( B_s0_DTF_B_s0_M );
@@ -223,7 +230,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
     }
 
     // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS
-    if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
+    //if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
+    if ( pass_bdt && pass_pid && pass_multcand && !pass_massveto) {
       // Data 2011
       if ( itype == 71 ) {
         w->data("Data")->add( *w->set("observables") );

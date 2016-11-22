@@ -92,6 +92,8 @@ void addSWeightToTree() {
   bool       pass_multcand;
   bool       B_s0_L0HadronDecision_TOS;
   bool       B_s0_L0Global_TIS;
+  double    B_s0_DTF_KST1_M;
+  double    B_s0_DTF_KST2_M;
 
   double     sweight;
 
@@ -109,6 +111,8 @@ void addSWeightToTree() {
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
+  tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
+  tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
 
   // loop tree
   for ( int ev=0; ev<tree->GetEntries(); ev++) {
@@ -117,7 +121,14 @@ void addSWeightToTree() {
 
     sweight = -999.;
 
-    if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand ) {
+    // cut events outside the mass window
+    if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
+    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
+    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
+
+    // rho kst cuts nothing
+    //if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand ) {
+    if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand ) {
 
       if ( itype==71 ) {
         if ( B_s0_L0HadronDecision_TOS )                        {
@@ -154,7 +165,8 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
 
   TH1F *h = new TH1F( var, var, bins, xmin, xmax );
 
-  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
+  //tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
+  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand) && (B_s0_DTF_KST1_M>=700 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=700 && B_s0_DTF_KST2_M<=1600)", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -182,7 +194,8 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
 
   TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
 
-  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
+  //tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand) && (B_s0_DTF_KST1_M>=700 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=700 && B_s0_DTF_KST2_M<=1600)", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -214,6 +227,7 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
   gPad->SetTheta(30);
   gPad->SetTopMargin(0.);
   gPad->SetBottomMargin(0.08);
+  gPad->SetRightMargin(0.08);
 
   h->Draw("LEGO2FBBB");
   c->Update();
@@ -247,10 +261,10 @@ void makeSWPlots() {
 
   draw( tree, "B_s0_DTF_B_s0_M"         , 100, 5000  , 5800 , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
   draw( tree, "B_s0_DTF_B_s0_MERR"      , 100, 0     , 100  , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
-  draw( tree, "B_s0_DTF_KST1_M"         , 90 , 800   , 1700 , "m(K^{-}#pi^{+})",             "MeV"  );
-  draw( tree, "B_s0_DTF_KST2_M"         , 90 , 800   , 1700 , "m(K^{-}#pi^{+})",             "MeV"  );
-  draw( tree, "B_s0_DTF_B_s0_CosTheta1" , 50 , -1    , -1   , "cos(#theta_{1})",             ""     );
-  draw( tree, "B_s0_DTF_B_s0_CosTheta2" , 50 , -1    , -1   , "cos(#theta_{2})",             ""     );
+  draw( tree, "B_s0_DTF_KST1_M"         , 90 , 800   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
+  draw( tree, "B_s0_DTF_KST2_M"         , 90 , 800   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
+  draw( tree, "B_s0_DTF_B_s0_CosTheta1" , 40 , -1.    , 1.   , "cos(#theta_{1})",             ""     );
+  draw( tree, "B_s0_DTF_B_s0_CosTheta2" , 40 , -1.    , 1.   , "cos(#theta_{2})",             ""     );
   draw( tree, "B_s0_DTF_B_s0_Phi1"      , 63 , -3.15 , 3.15 , "#Phi",                        "rad"  );
   draw( tree, "B_s0_DTF_TAU"            , 50 ,  0    ,  10  , "t",                           "fs"   );
   draw( tree, "B_s0_DTF_TAUERR"         , 50 ,  0    ,  0.1 , "#sigma_{t}",                  "fs"   );
@@ -258,7 +272,7 @@ void makeSWPlots() {
   draw( tree, "B_s0_TAGOMEGA_OS"        , 50 ,  0    ,  0.5 , "TAG OS OMEGA",                ""     );
   draw( tree, "B_s0_SS_nnetKaon_DEC"    , 3  , -1    ,  2   , "TAG SS Kaon DEC",             ""     );
   draw( tree, "B_s0_SS_nnetKaon_PROB"   , 50 ,  0    ,  0.5 , "TAG SS Kaon PROB",            ""     );
-  draw2D( tree, "B_s0_DTF_KST1_M", "B_s0_DTF_KST2_M", 45, 800, 1700, 45, 800, 1700, "m(K^{-}#pi^{+})", "m(K^{+}#pi^{-})", "MeV", "MeV" );
+  draw2D( tree, "B_s0_DTF_KST1_M", "B_s0_DTF_KST2_M", 45, 800, 1600, 45, 800, 1600, "m(K^{-}#pi^{+})", "m(K^{+}#pi^{-})", "MeV", "MeV" );
 
   tf->Close();
 
@@ -266,7 +280,7 @@ void makeSWPlots() {
 
 int main() {
 
-  addSWeightToTree();
+  //addSWeightToTree();
   makeSWPlots();
 
   return 0;
