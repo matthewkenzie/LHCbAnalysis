@@ -1415,6 +1415,8 @@ namespace Bs2KstKst {
 
       Double_t             Piplus_ProbNNKpi                        ;
       Double_t             Piminus_ProbNNKpi                       ;
+      Double_t             Piplus_ProbNNpiK                        ;
+      Double_t             Piminus_ProbNNpiK                       ;
       Double_t             Piplus_ProbNNpiKp                       ;
       Double_t             Piminus_ProbNNpiKp                      ;
       Double_t             Piplus_MC12TuneV2_ProbNNpiKp            ;
@@ -1424,17 +1426,30 @@ namespace Bs2KstKst {
 
       Double_t             Kplus_ProbNNKpi                         ;
       Double_t             Kminus_ProbNNKpi                        ;
+      Double_t             Kplus_ProbNNpiK                         ;
+      Double_t             Kminus_ProbNNpiK                        ;
       Double_t             Kplus_MC12TuneV2_ProbNNKpi              ;
       Double_t             Kminus_MC12TuneV2_ProbNNKpi             ;
       Double_t             Kplus_MC12TuneV3_ProbNNKpi              ;
       Double_t             Kminus_MC12TuneV3_ProbNNKpi             ;
 
       Double_t             min_kaon_ProbNNk                        ;
+      Double_t             max_kaon_ProbNNk                        ;
+      Double_t             min_kaon_ProbNNpi                       ;
+      Double_t             max_kaon_ProbNNpi                       ;
       Double_t             min_kaon_ProbNNKpi                      ;
       Double_t             max_kaon_ProbNNKpi                      ;
-      Double_t             min_pion_ProbNNpiKp                     ;
+      Double_t             min_kaon_ProbNNpiK                      ;
+      Double_t             max_kaon_ProbNNpiK                      ;
+      Double_t             min_pion_ProbNNk                        ;
+      Double_t             max_pion_ProbNNk                        ;
+      Double_t             min_pion_ProbNNpi                       ;
+      Double_t             max_pion_ProbNNpi                       ;
       Double_t             min_pion_ProbNNKpi                      ;
       Double_t             max_pion_ProbNNKpi                      ;
+      Double_t             min_pion_ProbNNpiK                      ;
+      Double_t             max_pion_ProbNNpiK                      ;
+      Double_t             min_pion_ProbNNpiKp                     ;
       Double_t             min_kaon_MC12TuneV2_ProbNNk             ;
       Double_t             min_pion_MC12TuneV2_ProbNNpiKp          ;
       Double_t             min_kaon_MC12TuneV3_ProbNNk             ;
@@ -1444,10 +1459,27 @@ namespace Bs2KstKst {
       Double_t             Kminus_V3ProbNNKpi_corr                 ;
       Double_t             Piplus_V3ProbNNKpi_corr                 ;
       Double_t             Piminus_V3ProbNNKpi_corr                ;
+      Double_t             Kplus_V3ProbNNpiK_corr                  ;
+      Double_t             Kminus_V3ProbNNpiK_corr                 ;
+      Double_t             Piplus_V3ProbNNpiK_corr                 ;
+      Double_t             Piminus_V3ProbNNpiK_corr                ;
+
+      Double_t             min_kaon_V3ProbNNpi_corr                ;
+      Double_t             max_kaon_V3ProbNNpi_corr                ;
+      Double_t             min_pion_V3ProbNNpi_corr                ;
+      Double_t             max_pion_V3ProbNNpi_corr                ;
+      Double_t             min_kaon_V3ProbNNk_corr                 ;
+      Double_t             max_kaon_V3ProbNNk_corr                 ;
+      Double_t             min_pion_V3ProbNNk_corr                 ;
+      Double_t             max_pion_V3ProbNNk_corr                 ;
       Double_t             min_kaon_V3ProbNNKpi_corr               ;
       Double_t             max_kaon_V3ProbNNKpi_corr               ;
       Double_t             min_pion_V3ProbNNKpi_corr               ;
       Double_t             max_pion_V3ProbNNKpi_corr               ;
+      Double_t             min_kaon_V3ProbNNpiK_corr               ;
+      Double_t             max_kaon_V3ProbNNpiK_corr               ;
+      Double_t             min_pion_V3ProbNNpiK_corr               ;
+      Double_t             max_pion_V3ProbNNpiK_corr               ;
 
       Bool_t               pass_bdt                                ;
       Bool_t               pass_pid                                ;

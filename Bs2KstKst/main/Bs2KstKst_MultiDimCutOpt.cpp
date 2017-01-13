@@ -34,8 +34,8 @@ void parseOptions(int argc, char **argv) {
   desc.add_options()
     ("help,h",                "Print help and exit")
     ("infile,i",     po::value<string>(&infname)->default_value("root/AnalysisOut.root"),         "Name of input file")
-    ("outfile,o",    po::value<string>(&outfname)->default_value("root/MultiDimCutOptOut.root"),  "Name of output file")
-    ("cachecfile,c", po::value<string>(&cachefile)->default_value("root/MultiDimCutOptIn.root"),  "Name of cache file")
+    ("outfile,o",    po::value<string>(&outfname)->default_value("root/MultiDimCutOpt/MultiDimCutOptOut.root"),  "Name of output file")
+    ("cachecfile,c", po::value<string>(&cachefile)->default_value("root/MultiDimCutOpt/MultiDimCutOptIn.root"),  "Name of cache file")
     ("loadCache,l",  po::bool_switch(&loadFromCachce)->default_value(false),                      "Load from cache")
     ("makeCache",    po::bool_switch(&makeCache)->default_value(false),                           "Make cache file")
     ("scanPoints1D", po::value<int>(&scanPoints1D)->default_value(10),                            "Number of 1D scan points")
@@ -108,8 +108,8 @@ int main(int argc, char **argv) {
     cutOpt->loadWorkspace();
   }
   else {
-    cutOpt->makeInitialDatasets();
-    //cutOpt->loadDatasetsFromFile( "root/MultiDimCutDatasets.root" );
+    //cutOpt->makeInitialDatasets();
+    cutOpt->loadDatasetsFromFile( "root/MultiDimCutOpt/MultiDimCutDatasets.root" );
     cutOpt->makePDFs();
     cutOpt->plotShapes();
   }
