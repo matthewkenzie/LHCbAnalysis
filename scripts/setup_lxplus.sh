@@ -4,6 +4,6 @@
 #export PYTHONPATH=/afs/cern.ch/sw/lcg/external/Python/2.7.3/x86_64-slc6-gcc47-opt/bin:$PWD:$PYTHONPATH
 #export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/Python/2.7.3/x86_64-slc6-gcc47-opt/lib:$PWD:$LD_LIBRARY_PATH
 #export BOOSTPATH=/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt:$BOOSTPATH
-SetupDaVinci
+SetupDaVinci v41r2p1
 export CC=/afs/cern.ch/sw/lcg/releases/LCG_84/gcc/4.9.3/x86_64-slc6/bin/gcc
 export CXX=/afs/cern.ch/sw/lcg/releases/LCG_84/gcc/4.9.3/x86_64-slc6/bin/g++ 
