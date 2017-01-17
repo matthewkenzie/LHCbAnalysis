@@ -2770,10 +2770,23 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("bdtoutput"                             , &bdtoutput                               , "bdtoutput/F"                           );
   tree->Branch("pidbdtoutput"                          , &pidbdtoutput                            , "pidbdtoutput/F"                        );
 
+  tree->Branch("B_s0_M_KpPimPimPip"                    , &B_s0_M_KpPimPimPip                      , "B_s0_M_KpPimPimPip/D"                  );
+  tree->Branch("B_s0_M_PipPimKmPip"                    , &B_s0_M_PipPimKmPip                      , "B_s0_M_PipPimKmPip/D"                  );
+  tree->Branch("B_s0_M_KpKmKmPip"                      , &B_s0_M_KpKmKmPip                        , "B_s0_M_KpKmKmPip/D"                    );
+  tree->Branch("B_s0_M_KpPimKmKp"                      , &B_s0_M_KpPimKmKp                        , "B_s0_M_KpPimKmKp/D"                    );
+  tree->Branch("M_KpKmPip"                             , &M_KpKmPip                               , "M_KpKmPip/D"                           );
+  tree->Branch("M_KpKmPim"                             , &M_KpKmPim                               , "M_KpKmPim/D"                           );
+  tree->Branch("M_KpPipPim"                            , &M_KpPipPim                              , "M_KpPipPim/D"                          );
+  tree->Branch("M_KmPipPim"                            , &M_KmPipPim                              , "M_KmPipPim/D"                          );
+  tree->Branch("M_KpKm"                                , &M_KpKm                                  , "M_KpKm/D"                              );
+  tree->Branch("M_PipPim"                              , &M_PipPim                                , "M_PipPim/D"                            );
+
   tree->Branch("Piplus_ProbNNKpi"                      , &Piplus_ProbNNKpi                        , "Piplus_ProbNNKpi/D"                    );
   tree->Branch("Piminus_ProbNNKpi"                     , &Piminus_ProbNNKpi                       , "Piminus_ProbNNKpi/D"                   );
   tree->Branch("Piplus_ProbNNpiKp"                     , &Piplus_ProbNNpiKp                       , "Piplus_ProbNNpiKp/D"                   );
   tree->Branch("Piminus_ProbNNpiKp"                    , &Piminus_ProbNNpiKp                      , "Piminus_ProbNNpiKp/D"                  );
+  tree->Branch("Piplus_ProbNNpiK"                      , &Piplus_ProbNNpiK                        , "Piplus_ProbNNpiK/D"                    );
+  tree->Branch("Piminus_ProbNNpiK"                     , &Piminus_ProbNNpiK                       , "Piminus_ProbNNpiK/D"                   );
   tree->Branch("Piplus_MC12TuneV2_ProbNNpiKp"          , &Piplus_MC12TuneV2_ProbNNpiKp            , "Piplus_MC12TuneV2_ProbNNpiKp/D"        );
   tree->Branch("Piminus_MC12TuneV2_ProbNNpiKp"         , &Piminus_MC12TuneV2_ProbNNpiKp           , "Piminus_MC12TuneV2_ProbNNpiKp/D"       );
   tree->Branch("Piplus_MC12TuneV3_ProbNNpiKp"          , &Piplus_MC12TuneV3_ProbNNpiKp            , "Piplus_MC12TuneV3_ProbNNpiKp/D"        );
@@ -2781,16 +2794,29 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
 
   tree->Branch("Kplus_ProbNNKpi"                       , &Kplus_ProbNNKpi                         , "Kplus_ProbNNKpi/D"                     );
   tree->Branch("Kminus_ProbNNKpi"                      , &Kminus_ProbNNKpi                        , "Kminus_ProbNNKpi/D"                    );
+  tree->Branch("Kplus_ProbNNpiK"                       , &Kplus_ProbNNpiK                         , "Kplus_ProbNNpiK/D"                     );
+  tree->Branch("Kminus_ProbNNpiK"                      , &Kminus_ProbNNpiK                        , "Kminus_ProbNNpiK/D"                    );
   tree->Branch("Kplus_MC12TuneV2_ProbNNKpi"            , &Kplus_MC12TuneV2_ProbNNKpi              , "Kplus_MC12TuneV2_ProbNNKpi/D"          );
   tree->Branch("Kminus_MC12TuneV2_ProbNNKpi"           , &Kminus_MC12TuneV2_ProbNNKpi             , "Kminus_MC12TuneV2_ProbNNKpi/D"         );
   tree->Branch("Kplus_MC12TuneV3_ProbNNKpi"            , &Kplus_MC12TuneV3_ProbNNKpi              , "Kplus_MC12TuneV3_ProbNNKpi/D"          );
   tree->Branch("Kminus_MC12TuneV3_ProbNNKpi"           , &Kminus_MC12TuneV3_ProbNNKpi             , "Kminus_MC12TuneV3_ProbNNKpi/D"         );
 
   tree->Branch("min_kaon_ProbNNk"                      , &min_kaon_ProbNNk                        , "min_kaon_ProbNNk/D"                    );
+  tree->Branch("max_kaon_ProbNNk"                      , &max_kaon_ProbNNk                        , "max_kaon_ProbNNk/D"                    );
+  tree->Branch("min_kaon_ProbNNpi"                     , &min_kaon_ProbNNpi                       , "min_kaon_ProbNNpi/D"                   );
+  tree->Branch("max_kaon_ProbNNpi"                     , &max_kaon_ProbNNpi                       , "max_kaon_ProbNNpi/D"                   );
   tree->Branch("min_kaon_ProbNNKpi"                    , &min_kaon_ProbNNKpi                      , "min_kaon_ProbNNKpi/D"                  );
   tree->Branch("max_kaon_ProbNNKpi"                    , &max_kaon_ProbNNKpi                      , "max_kaon_ProbNNKpi/D"                  );
+  tree->Branch("min_kaon_ProbNNpiK"                    , &min_kaon_ProbNNpiK                      , "min_kaon_ProbNNpiK/D"                  );
+  tree->Branch("max_kaon_ProbNNpiK"                    , &max_kaon_ProbNNpiK                      , "max_kaon_ProbNNpiK/D"                  );
+  tree->Branch("min_pion_ProbNNk"                      , &min_pion_ProbNNk                        , "min_pion_ProbNNk/D"                    );
+  tree->Branch("max_pion_ProbNNk"                      , &max_pion_ProbNNk                        , "max_pion_ProbNNk/D"                    );
+  tree->Branch("min_pion_ProbNNpi"                     , &min_pion_ProbNNpi                       , "min_pion_ProbNNpi/D"                   );
+  tree->Branch("max_pion_ProbNNpi"                     , &max_pion_ProbNNpi                       , "max_pion_ProbNNpi/D"                   );
   tree->Branch("min_pion_ProbNNKpi"                    , &min_pion_ProbNNKpi                      , "min_pion_ProbNNKpi/D"                  );
   tree->Branch("max_pion_ProbNNKpi"                    , &max_pion_ProbNNKpi                      , "max_pion_ProbNNKpi/D"                  );
+  tree->Branch("min_pion_ProbNNpiK"                    , &min_pion_ProbNNpiK                      , "min_pion_ProbNNpiK/D"                  );
+  tree->Branch("max_pion_ProbNNpiK"                    , &max_pion_ProbNNpiK                      , "max_pion_ProbNNpiK/D"                  );
   tree->Branch("min_pion_ProbNNpiKp"                   , &min_pion_ProbNNpiKp                     , "min_pion_ProbNNpiKp/D"                 );
   tree->Branch("min_kaon_MC12TuneV2_ProbNNk"           , &min_kaon_MC12TuneV2_ProbNNk             , "min_kaon_MC12TuneV2_ProbNNk/D"         );
   tree->Branch("min_pion_MC12TuneV2_ProbNNpiKp"        , &min_pion_MC12TuneV2_ProbNNpiKp          , "min_pion_MC12TuneV2_ProbNNpiKp/D"      );
@@ -2802,13 +2828,35 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("Piplus_V3ProbNNKpi_corr"               , &Piplus_V3ProbNNKpi_corr                 , "Piplus_V3ProbNNKpi_corr/D"             );
   tree->Branch("Piminus_V3ProbNNKpi_corr"              , &Piminus_V3ProbNNKpi_corr                , "Piminus_V3ProbNNKpi_corr/D"            );
 
+  tree->Branch("Kplus_V3ProbNNpiK_corr"                , &Kplus_V3ProbNNpiK_corr                  , "Kplus_V3ProbNNpiK_corr/D"              );
+  tree->Branch("Kminus_V3ProbNNpiK_corr"               , &Kminus_V3ProbNNpiK_corr                 , "Kminus_V3ProbNNpiK_corr/D"             );
+  tree->Branch("Piplus_V3ProbNNpiK_corr"               , &Piplus_V3ProbNNpiK_corr                 , "Piplus_V3ProbNNpiK_corr/D"             );
+  tree->Branch("Piminus_V3ProbNNpiK_corr"              , &Piminus_V3ProbNNpiK_corr                , "Piminus_V3ProbNNpiK_corr/D"            );
+
+  tree->Branch("min_kaon_V3ProbNNk_corr"               , &min_kaon_V3ProbNNk_corr                 , "min_kaon_V3ProbNNk_corr/D"             );
+  tree->Branch("max_kaon_V3ProbNNk_corr"               , &max_kaon_V3ProbNNk_corr                 , "max_kaon_V3ProbNNk_corr/D"             );
+  tree->Branch("min_pion_V3ProbNNk_corr"               , &min_pion_V3ProbNNk_corr                 , "min_pion_V3ProbNNk_corr/D"             );
+  tree->Branch("max_pion_V3ProbNNk_corr"               , &max_pion_V3ProbNNk_corr                 , "max_pion_V3ProbNNk_corr/D"             );
+
+  tree->Branch("min_kaon_V3ProbNNpi_corr"              , &min_kaon_V3ProbNNpi_corr                , "min_kaon_V3ProbNNpi_corr/D"            );
+  tree->Branch("max_kaon_V3ProbNNpi_corr"              , &max_kaon_V3ProbNNpi_corr                , "max_kaon_V3ProbNNpi_corr/D"            );
+  tree->Branch("min_pion_V3ProbNNpi_corr"              , &min_pion_V3ProbNNpi_corr                , "min_pion_V3ProbNNpi_corr/D"            );
+  tree->Branch("max_pion_V3ProbNNpi_corr"              , &max_pion_V3ProbNNpi_corr                , "max_pion_V3ProbNNpi_corr/D"            );
+
   tree->Branch("min_kaon_V3ProbNNKpi_corr"             , &min_kaon_V3ProbNNKpi_corr               , "min_kaon_V3ProbNNKpi_corr/D"           );
   tree->Branch("max_kaon_V3ProbNNKpi_corr"             , &max_kaon_V3ProbNNKpi_corr               , "max_kaon_V3ProbNNKpi_corr/D"           );
   tree->Branch("min_pion_V3ProbNNKpi_corr"             , &min_pion_V3ProbNNKpi_corr               , "min_pion_V3ProbNNKpi_corr/D"           );
   tree->Branch("max_pion_V3ProbNNKpi_corr"             , &max_pion_V3ProbNNKpi_corr               , "max_pion_V3ProbNNKpi_corr/D"           );
 
+  tree->Branch("min_kaon_V3ProbNNpiK_corr"             , &min_kaon_V3ProbNNpiK_corr               , "min_kaon_V3ProbNNpiK_corr/D"           );
+  tree->Branch("max_kaon_V3ProbNNpiK_corr"             , &max_kaon_V3ProbNNpiK_corr               , "max_kaon_V3ProbNNpiK_corr/D"           );
+  tree->Branch("min_pion_V3ProbNNpiK_corr"             , &min_pion_V3ProbNNpiK_corr               , "min_pion_V3ProbNNpiK_corr/D"           );
+  tree->Branch("max_pion_V3ProbNNpiK_corr"             , &max_pion_V3ProbNNpiK_corr               , "max_pion_V3ProbNNpiK_corr/D"           );
+
   tree->Branch("pass_bdt"                              , &pass_bdt                                , "pass_bdt/O"                            );
   tree->Branch("pass_pid"                              , &pass_pid                                , "pass_pid/O"                            );
+  tree->Branch("pass_rhokst"                           , &pass_rhokst                             , "pass_rhokst/O"                         );
+  tree->Branch("pass_massveto"                         , &pass_massveto                           , "pass_massveto/O"                       );
 
   tree->Branch("B_s0_DTF_B_s0_CosTheta1"               , &B_s0_DTF_B_s0_CosTheta1                 , "B_s0_DTF_B_s0_CosTheta1/D"             );
   tree->Branch("B_s0_DTF_B_s0_CosTheta2"               , &B_s0_DTF_B_s0_CosTheta2                 , "B_s0_DTF_B_s0_CosTheta2/D"             );

@@ -44,12 +44,16 @@ void flagMultCands( TString fname, TString tname ) {
   int        itype;
   bool       pass_bdt;
   bool       pass_pid;
+  bool       pass_rhokst;
+  bool       pass_massveto;
   UInt_t     nCandidate;
   ULong64_t  totCandidates;
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "itype"                       , &itype                       );
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
+  tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
+  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
   tree->SetBranchAddress(  "totCandidates"               , &totCandidates               );
   tree->SetBranchAddress(  "nCandidate"                  , &nCandidate                  );
 
@@ -60,7 +64,8 @@ void flagMultCands( TString fname, TString tname ) {
   for ( int ev=0; ev<tree->GetEntries(); ev++ ) {
     tree->GetEntry(ev);
     if ( ev%10000==0 ) cout << ev << "/" << tree->GetEntries() << endl;
-    if ( itype>0 && pass_bdt && pass_pid && totCandidates > 1 ) {
+    //if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
+    if ( itype>0 && pass_bdt && pass_pid && (!pass_massveto) && totCandidates > 1 ) {
       multCandEventNumbers[eventNumber] = totCandidates;
     }
   }
@@ -148,9 +153,13 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   int       itype;
   bool      pass_bdt;
   bool      pass_pid;
+  bool      pass_rhokst;
+  bool      pass_massveto;
   bool      pass_multcand;
   bool      B_s0_L0HadronDecision_TOS;
   bool      B_s0_L0Global_TIS;
+  double    B_s0_DTF_KST1_M;
+  double    B_s0_DTF_KST2_M;
 
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "year"                        , &year                        );
@@ -158,9 +167,13 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   tree->SetBranchAddress(  "itype"                       , &itype                       );
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
+  tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
+  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
+  tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
+  tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
 
   RooWorkspace *w = new RooWorkspace("w","w");
   defineDatasets( w );
@@ -173,6 +186,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
 
     // cut events outside the mass window
     if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
+    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
+    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
 
     // set workspace values
     w->var("B_s0_DTF_B_s0_M")->setVal( B_s0_DTF_B_s0_M );
@@ -201,9 +216,22 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
     else if ( itype == -79 || itype == -89 ) {
         w->data("Lb2ppipipi")->add( *w->set("observables") );
     }
+    // Bd2PhiKst MC
+    else if ( itype == -75 || itype == -85 ) {
+      w->data("Bd2PhiKst")->add( *w->set("observables") );
+    }
+    // Bs2PhiKst MC
+    else if ( itype == -76 || itype == -86 ) {
+      w->data("Bs2PhiKst")->add( *w->set("observables") );
+    }
+    // Bd2RhoKst MC
+    else if ( itype == -77 || itype == -87 ) {
+      w->data("Bd2RhoKst")->add( *w->set("observables") );
+    }
 
-    // FROM HERE BDT AND PID REQUIREMENT
-    if ( pass_bdt && pass_pid && pass_multcand ) {
+    // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS
+    //if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
+    if ( pass_bdt && pass_pid && pass_multcand && !pass_massveto) {
       // Data 2011
       if ( itype == 71 ) {
         w->data("Data")->add( *w->set("observables") );
@@ -245,18 +273,6 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
       // Bd2KstKst MC
       else if ( itype == -74 || itype == -84 ) {
         w->data("Bd2KstKst")->add( *w->set("observables") );
-      }
-      // Bd2PhiKst MC
-      else if ( itype == -75 || itype == -85 ) {
-        w->data("Bd2PhiKst")->add( *w->set("observables") );
-      }
-      // Bs2PhiKst MC
-      else if ( itype == -76 || itype == -86 ) {
-        w->data("Bs2PhiKst")->add( *w->set("observables") );
-      }
-      // Bd2RhoKst MC
-      else if ( itype == -77 || itype == -87 ) {
-        w->data("Bd2RhoKst")->add( *w->set("observables") );
       }
     }
   }
@@ -529,7 +545,7 @@ void makePartRecoPdf( RooWorkspace *w ) {
     //defineParamSet( w, Form("part_reco_pdf_%s",cat->getLabel()) );
   //}
   // same shape for each cat
-  w->factory( "ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5226], part_reco_c[-10.0,-50.,-10.], part_reco_p[0.4,0.,1.] )");
+  w->factory( "ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5226], part_reco_c[-10.0,-50.,-2.], part_reco_p[0.4,0.,1.] )");
   defineParamSet( w, "part_reco_pdf" );
 }
 
@@ -552,7 +568,7 @@ void makeTotalPdf( RooWorkspace *w ) {
   w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.113, 0.0287 )" );
   // constrain the bd->rhokst / bd->phikst ratio
   w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.,1.]" );
-  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.390, 0.130 )" );
+  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.390, 0.130 )" ); // PDG err is 0.130 (relax this for eff)
 
   // make a yield for each category
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
@@ -568,7 +584,7 @@ void makeTotalPdf( RooWorkspace *w ) {
     //w->factory( Form("bs2phikst_y_%s[10,5000]", cat->getLabel()));
     // add bd2rhokst yield as constrained ratio
     w->factory( Form("prod::bd2rhokst_y_%s( yield_ratio_bd2rhokst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
-    //w->factory( Form("bd2rhokst_y_%s[0,10e4]", cat->getLabel()));
+    //w->factory( Form("bd2rhokst_y_%s[5,250]", cat->getLabel()));
     w->factory( Form("lb2pkpipi_y_%s[0,4000]", cat->getLabel()));
     w->factory( Form("lb2ppipipi_y_%s[0,4000]", cat->getLabel()));
   }
@@ -653,7 +669,7 @@ int main() {
 
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
 
-  //flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
+  flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
   fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFitWorkspace.root" );
 
   TFile *tf = TFile::Open("root/MassFitWorkspace.root");

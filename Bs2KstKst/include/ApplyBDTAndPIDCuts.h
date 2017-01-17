@@ -1,6 +1,9 @@
 #ifndef Bs2KstKst_ApplyBDTAndPIDCuts_h
 #define Bs2KstKst_ApplyBDTAndPIDCuts_h
 
+#include <vector>
+#include <map>
+
 #include "RooWorkspace.h"
 #include "RooArgSet.h"
 #include "RooDataSet.h"

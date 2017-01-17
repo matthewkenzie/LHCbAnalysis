@@ -154,10 +154,10 @@ void PlotterBase::drawHistograms(){
     vector<TH1F*> histContainer;
     TLegend *legend;
     if (hist->legPos=="L") {
-      legend = new TLegend(0.2,0.6,0.45,0.89);
+      legend = new TLegend(0.2,0.7,0.4,0.89);
     }
     else if (hist->legPos=="R") {
-      legend = new TLegend(0.6,0.6,0.85,0.89);
+      legend = new TLegend(0.7,0.7,0.9,0.89);
     }
     else {
       cerr << "ERROR -- VariablesPlotter::drawHistograms() -- Unrecognised legPos option: " << hist->legPos << endl;
@@ -234,7 +234,7 @@ void PlotterBase::drawHistograms(){
     histContainer[0]->GetYaxis()->SetTitle("Events"+ext);
     if (normalise) histContainer[0]->GetYaxis()->SetTitle("Probability"+ext);
     histContainer[0]->GetXaxis()->SetTitleOffset(0.8);
-    histContainer[0]->GetYaxis()->SetTitleOffset(0.7);
+    histContainer[0]->GetYaxis()->SetTitleOffset(0.9);
 
     int canvWidth = 800;
     int canvHeight = 600;
@@ -245,6 +245,7 @@ void PlotterBase::drawHistograms(){
     double nomPadLow = 0.;
     if (residContainer.size()>0) nomPadLow = 0.4;
     TPad *pad = new TPad("p_nom","p_nom",0.,nomPadLow,1.,1.);
+    pad->SetLeftMargin(0.18);
     pad->cd();
     histContainer[0]->Draw(drawOpts[0].plotOpt);
     for (unsigned int i=1; i<histContainer.size(); i++){
@@ -259,6 +260,7 @@ void PlotterBase::drawHistograms(){
     // resid plot second
     if (residContainer.size()>0) {
       TPad *resPad = new TPad("p_res","p_res",0.,0.0,1.,nomPadLow);
+      resPad->SetLeftMargin(0.18);
       resPad->SetTopMargin(0.01);
       resPad->SetBottomMargin(0.25);
       resPad->cd();

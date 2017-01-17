@@ -50,6 +50,7 @@ namespace Bs2KstKst {
       void plotShapes();
 
       void run();
+      void runBDTOptOnly(int type=0);
       void runSimple(int type=0);
 
       void save();

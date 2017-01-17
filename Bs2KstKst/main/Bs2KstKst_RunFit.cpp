@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "TFile.h"
 #include "TCanvas.h"
@@ -10,6 +11,7 @@
 #include "TMath.h"
 #include "TLegend.h"
 #include "TPaveText.h"
+#include "TMatrixDSym.h"
 
 #include "RooWorkspace.h"
 #include "RooPlot.h"
@@ -107,6 +109,7 @@ void RunDataFit( RooWorkspace *w ) {
 
   // constrained
   RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst"),*w->var("yield_ratio_bd2rhokst_o_bd2phikst")) ), Extended(), Save() );
+  //RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst")) ), Extended(), Save() );
   RooArgSet *parameters = w->pdf("constrained_pdf")->getParameters(w->set("observables"));
   w->saveSnapshot("constrained_pdf_fit",*parameters);
   fr->SetName("constrained_pdf_fr");
@@ -233,26 +236,67 @@ void CalcSWeights( RooWorkspace *w ) {
 
 }
 
+void PrintFitResult( RooWorkspace *w ) {
+
+  TString fr_fname = "plots/MassFit/fitres.tex";
+  cout << "Saving fit result to file: " << fr_fname << endl;
+  RooFitResult *fr = (RooFitResult*)w->obj("constrained_pdf_fr");
+  RooArgList res = fr->floatParsFinal();
+  TMatrixDSym corrMat = fr->correlationMatrix();
+
+  // print fit res parameters
+  ofstream fr_file;
+  fr_file.open( fr_fname.Data() );
+
+  RooRealVar *parg;
+  TIterator *iter = res.createIterator();
+  fr_file << "\\hline" << endl;
+  fr_file << Form("%-40s &  %9s  &       %9s  \\\\","Parameter","Value","Error") << endl;
+  fr_file << "\\hline" << endl;
+  while ( (parg = (RooRealVar*)iter->Next() ) ) {
+    fr_file << Form("%-40s & $%9.4f$ &  $\\pm %9.4f$ \\\\",parg->GetName(), parg->getVal(), parg->getError() ) << endl;
+  }
+  fr_file << "\\hline" << endl;
+
+  fr_file.close();
+
+  // print corr mat
+  //cout << Form("%2s  ","");
+  //for ( int i=0; i<corrMat.GetNcols(); i++ ) {
+    //cout << Form("%5s  ","");
+  //}
+  //cout << endl;
+
+  //for ( int j=0; j<corrMat.GetNrows(); j++ ) {
+    //cout << Form("%2d  ",j);
+    //for ( int i=0; i<corrMat.GetNcols(); i++ ) {
+      //cout << Form("%5.3f  ",corrMat[i][j]);
+    //}
+    //cout << endl;
+  //}
+}
+
 int main() {
 
-  //gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
-  //system("mkdir -p plots/MassFit/png");
-  //system("mkdir -p plots/MassFit/pdf");
-  //system("mkdir -p plots/MassFit/C");
+  gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  system("mkdir -p plots/MassFit/png");
+  system("mkdir -p plots/MassFit/pdf");
+  system("mkdir -p plots/MassFit/C");
 
-  //TFile *inf = TFile::Open("root/MassFitWorkspaceWithPDFs.root");
-  //RooWorkspace *w = (RooWorkspace*)inf->Get("w");
-  //RunMCFits( w );
-  //RunDataFit( w );
-  //w->writeToFile("root/MassFitResult.root");
-  //inf->Close();
+  TFile *inf = TFile::Open("root/MassFitWorkspaceWithPDFs.root");
+  RooWorkspace *w = (RooWorkspace*)inf->Get("w");
+  RunMCFits( w );
+  RunDataFit( w );
+  w->writeToFile("root/MassFitResult.root");
+  inf->Close();
 
   TFile *tf = TFile::Open("root/MassFitResult.root");
   RooWorkspace *ws = (RooWorkspace*)tf->Get("w");
   MassFitPlotter *plotter = new MassFitPlotter( ws, "MassFit" );
   PlotMCFitResults( plotter );
   PlotDataFitResult( ws, plotter );
-  //CalcSWeights( ws );
+  CalcSWeights( ws );
+  PrintFitResult( ws );
   tf->Close();
   //
 

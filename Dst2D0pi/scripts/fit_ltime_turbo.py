@@ -161,6 +161,12 @@ w.pdf('dst_mass').fitTo(data)
 w.pdf('d0_mass').fitTo(data)
 w.pdf('d0_t').fitTo(data,r.RooFit.Range(0.25,5.))
 
+mytauval = w.var('d0_tau').getVal()
+mytauerr = w.var('d0_tau').getError()
+
+w.var('d0_tau').setVal(0.4101)
+w.var('d0_tau').setConstant(True)
+
 # make plots
 # 1.) Dst_M
 plot_dst_m = w.var('Dst_M').frame()
@@ -226,7 +232,7 @@ drawPlot(plot_d0_t,'D0_t','t(D^{0}) [ps]')
 
 
 print '-------- RESULT ----------'
-print 't = (%5.3f +/- %5.3f)ps'%(w.var('d0_tau').getVal(), w.var('d0_tau').getError())
+print 't = (%5.3f +/- %5.3f)ps'%(mytauval, mytauerr)
 print '--------------------------'
 
 raw_input()
