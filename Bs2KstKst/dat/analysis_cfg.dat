@@ -12,53 +12,53 @@
 ####################################################################################################
 
 # Bs2Kst0Kst0
-itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=nTuples/presel/Bs2Kst0Kst0_MC2011_corr.root            tname=AnalysisTree
-itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=nTuples/presel/Bs2Kst0Kst0_MC2012_corr.root            tname=AnalysisTree
+itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst0Kst0_MC2011.root            tname=AnalysisTree
+itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst0Kst0_MC2012.root            tname=AnalysisTree
 
 # Bs2Kst0Kst01430
-itype=-71  sqrts=7  year=2011  name=Bs2Kst0Kst01430_MC2011        fname=nTuples/presel/Bs2Kst0Kst01430_MC2011_corr.root        tname=AnalysisTree
-itype=-81  sqrts=8  year=2012  name=Bs2Kst0Kst01430_MC2012        fname=nTuples/presel/Bs2Kst0Kst01430_MC2012_corr.root        tname=AnalysisTree
+itype=-71  sqrts=7  year=2011  name=Bs2Kst0Kst01430_MC2011        fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst0Kst01430_MC2011.root        tname=AnalysisTree
+itype=-81  sqrts=8  year=2012  name=Bs2Kst0Kst01430_MC2012        fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst0Kst01430_MC2012.root        tname=AnalysisTree
 
 ## Bs2Kst01430Kst01430
-itype=-72  sqrts=7  year=2011  name=Bs2Kst01430Kst01430_MC2011    fname=nTuples/presel/Bs2Kst01430Kst01430_MC2011_corr.root    tname=AnalysisTree
-itype=-82  sqrts=8  year=2012  name=Bs2Kst01430Kst01430_MC2012    fname=nTuples/presel/Bs2Kst01430Kst01430_MC2012_corr.root    tname=AnalysisTree
+itype=-72  sqrts=7  year=2011  name=Bs2Kst01430Kst01430_MC2011    fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst01430Kst01430_MC2011.root    tname=AnalysisTree
+itype=-82  sqrts=8  year=2012  name=Bs2Kst01430Kst01430_MC2012    fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2Kst01430Kst01430_MC2012.root    tname=AnalysisTree
 
 ## Bs2KpiKpi_PhaseSpace
-itype=-73  sqrts=7  year=2011  name=Bs2KpiKpi_PhaseSpace_MC2011   fname=nTuples/presel/Bs2KpiKpi_PhaseSpace_MC2011_corr.root   tname=AnalysisTree
-itype=-83  sqrts=8  year=2012  name=Bs2KpiKpi_PhaseSpace_MC2012   fname=nTuples/presel/Bs2KpiKpi_PhaseSpace_MC2012_corr.root   tname=AnalysisTree
+itype=-73  sqrts=7  year=2011  name=Bs2KpiKpi_PhaseSpace_MC2011   fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2KpiKpi_PhaseSpace_MC2011.root   tname=AnalysisTree
+itype=-83  sqrts=8  year=2012  name=Bs2KpiKpi_PhaseSpace_MC2012   fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2KpiKpi_PhaseSpace_MC2012.root   tname=AnalysisTree
 
 # Bd2Kst0Kst0
-itype=-74  sqrts=7  year=2011  name=Bd2Kst0Kst0_MC2011            fname=nTuples/presel/Bd2Kst0Kst0_MC2011_corr.root            tname=AnalysisTree
-itype=-84  sqrts=8  year=2012  name=Bd2Kst0Kst0_MC2012            fname=nTuples/presel/Bd2Kst0Kst0_MC2012_corr.root            tname=AnalysisTree
+itype=-74  sqrts=7  year=2011  name=Bd2Kst0Kst0_MC2011            fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2Kst0Kst0_MC2011.root            tname=AnalysisTree
+itype=-84  sqrts=8  year=2012  name=Bd2Kst0Kst0_MC2012            fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2Kst0Kst0_MC2012.root            tname=AnalysisTree
 
 # Bd2PhiKst0
-itype=-75  sqrts=7  year=2011  name=Bd2PhiKst0_MC2011             fname=nTuples/presel/Bd2PhiKst0_MC2011_corr.root             tname=AnalysisTree
-itype=-85  sqrts=8  year=2012  name=Bd2PhiKst0_MC2012             fname=nTuples/presel/Bd2PhiKst0_MC2012_corr.root             tname=AnalysisTree
+itype=-75  sqrts=7  year=2011  name=Bd2PhiKst0_MC2011             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2PhiKst0_MC2011.root             tname=AnalysisTree
+itype=-85  sqrts=8  year=2012  name=Bd2PhiKst0_MC2012             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2PhiKst0_MC2012.root             tname=AnalysisTree
 
 # Bs2PhiKst0
-itype=-76  sqrts=7  year=2011  name=Bs2PhiKst0_MC2011             fname=nTuples/presel/Bs2PhiKst0_MC2011_corr.root             tname=AnalysisTree
-itype=-86  sqrts=8  year=2012  name=Bs2PhiKst0_MC2012             fname=nTuples/presel/Bs2PhiKst0_MC2012_corr.root             tname=AnalysisTree
+itype=-76  sqrts=7  year=2011  name=Bs2PhiKst0_MC2011             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2PhiKst0_MC2011.root             tname=AnalysisTree
+itype=-86  sqrts=8  year=2012  name=Bs2PhiKst0_MC2012             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bs2PhiKst0_MC2012.root             tname=AnalysisTree
 
 # Bd2RhoKst0
-itype=-77  sqrts=7  year=2011  name=Bd2RhoKst0_MC2011             fname=nTuples/presel/Bd2RhoKst0_MC2011_corr.root             tname=AnalysisTree
-itype=-87  sqrts=8  year=2012  name=Bd2RhoKst0_MC2012             fname=nTuples/presel/Bd2RhoKst0_MC2012_corr.root             tname=AnalysisTree
+itype=-77  sqrts=7  year=2011  name=Bd2RhoKst0_MC2011             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2RhoKst0_MC2011.root             tname=AnalysisTree
+itype=-87  sqrts=8  year=2012  name=Bd2RhoKst0_MC2012             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2RhoKst0_MC2012.root             tname=AnalysisTree
 
 # Lb2pKpipi
-itype=-78  sqrts=7  year=2011  name=Lb2pKpipi_MC2011              fname=nTuples/presel/Lb2pKpipi_MC2011_corr.root              tname=AnalysisTree
-itype=-88  sqrts=8  year=2012  name=Lb2pKpipi_MC2012              fname=nTuples/presel/Lb2pKpipi_MC2012_corr.root              tname=AnalysisTree
+itype=-78  sqrts=7  year=2011  name=Lb2pKpipi_MC2011              fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Lb2pKpipi_MC2011.root              tname=AnalysisTree
+itype=-88  sqrts=8  year=2012  name=Lb2pKpipi_MC2012              fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Lb2pKpipi_MC2012.root              tname=AnalysisTree
 
 # Lb2ppipipi
-itype=-79  sqrts=7  year=2011  name=Lb2ppipipi_MC2011             fname=nTuples/presel/Lb2ppipipi_MC2011_corr.root             tname=AnalysisTree
-itype=-89  sqrts=8  year=2012  name=Lb2ppipipi_MC2012             fname=nTuples/presel/Lb2ppipipi_MC2012_corr.root             tname=AnalysisTree
+itype=-79  sqrts=7  year=2011  name=Lb2ppipipi_MC2011             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Lb2ppipipi_MC2011.root             tname=AnalysisTree
+itype=-89  sqrts=8  year=2012  name=Lb2ppipipi_MC2012             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Lb2ppipipi_MC2012.root             tname=AnalysisTree
 
 # Bd2JpsiKst
-#itype=-710 sqrts=7  year=2011  name=Bd2JpsiKst_MC2011             fname=nTuples/presel/Bd2JpsiKst_MC2011_corr.root             tname=AnalysisTree
-#itype=-810 sqrts=8  year=2012  name=Bd2JpsiKst_MC2012             fname=nTuples/presel/Bd2JpsiKst_MC2012_corr.root             tname=AnalysisTree
+#itype=-710 sqrts=7  year=2011  name=Bd2JpsiKst_MC2011             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2JpsiKst_MC2011.root             tname=AnalysisTree
+#itype=-810 sqrts=8  year=2012  name=Bd2JpsiKst_MC2012             fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Bd2JpsiKst_MC2012.root             tname=AnalysisTree
 
 # Data
-itype=71   sqrts=7  year=2011 	name=Data2011                     fname=nTuples/presel/Data2011_hadd.root                 tname=AnalysisTree
-itype=81   sqrts=8  year=2012 	name=Data2012                     fname=nTuples/presel/Data2012_hadd.root                 tname=AnalysisTree
+itype=71   sqrts=7  year=2011 	name=Data2011                     fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Data2011_hadd.root                 tname=AnalysisTree
+itype=81   sqrts=8  year=2012 	name=Data2012                     fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/Data2012_hadd.root                 tname=AnalysisTree
 
 # Data Bd2JpsiKst
-#itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011           fname=nTuples/presel/DataBd2JpsiKst2011_hadd.root       tname=AnalysisTree
-#itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012           fname=nTuples/presel/DataBd2JpsiKst2012_hadd.root       tname=AnalysisTree
+#itype=72   sqrts=7  year=2011   name=DataBd2JpsiKst2011           fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/DataBd2JpsiKst2011_hadd.root       tname=AnalysisTree
+#itype=82   sqrts=8  year=2012   name=DataBd2JpsiKst2012           fname=/Users/matt/cernbox/Bs2KstKst/nTuples/presel/DataBd2JpsiKst2012_hadd.root       tname=AnalysisTree

@@ -15,6 +15,7 @@
 #include "TFile.h"
 #include "TString.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TMVA/Factory.h"
 #include "TMVA/Reader.h"
 
@@ -68,6 +69,7 @@ class TMVAWrapperBase : public Analyser {
     TString outfilename;
     int numberOfBDTs;
     bool doBDTCycling;
+    bool makeCorrelationPlots; // in dev
 
     TString factoryOptions;
     TString trainingOptions;
@@ -76,8 +78,11 @@ class TMVAWrapperBase : public Analyser {
     std::vector<TString> varNames;
     std::map<TString,double> varMap;
     std::map<TString,float> readVarMap;
+    std::vector<TString> spectatorNames;
+    std::vector<TString> allVarNames; // includes spectators
 
     void addVar(TString var);
+    void addSpectator(TString var);
     void setVal(TString var, double value);
 
   private:
@@ -109,12 +114,15 @@ class TMVAWrapperBase : public Analyser {
     TString methodName;
 
     void createTrainingHistograms();
-    void makePlot(TString cat, int b, TString type);
+    void makePlot(TString cat, int b, TString var);
+    void make2dPlot(TString cat, int b, TString var1, TString var2);
     TString getHistName(TString cat, int b, TString var, TString ext="");
+    TString getHist2dName(TString cat, int b, TString var, TString var2, TString ext="");
     void setHistStyle(TH1F *sigTrain, TH1F *bkgTrain, TH1F *sigTest, TH1F* bkgTest);
     double getMaximum(TH1F *sigTrain, TH1F *bkgTrain, TH1F *sigTest, TH1F* bkgTest);
     TString types[4];
     std::map<TString, TH1F*> histStore;
+    std::map<TString, TH2F*> corHistStore;
 
 };
 

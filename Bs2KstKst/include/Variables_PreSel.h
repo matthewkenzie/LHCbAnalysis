@@ -1808,6 +1808,15 @@ namespace Bs2KstKst {
       Double_t             B_s0_DTF_B_s0_ETA                       ;
       Double_t             B_s0_DTF_Kst_ETA                        ;
       Double_t             B_s0_DTF_Kstb_ETA                       ;
+
+      Double_t             Kplus_ProbNNk_corr                      ;
+      Double_t             Kplus_ProbNNpi_corr                     ;
+      Double_t             Kminus_ProbNNk_corr                     ;
+      Double_t             Kminus_ProbNNpi_corr                    ;
+      Double_t             Piplus_ProbNNk_corr                     ;
+      Double_t             Piplus_ProbNNpi_corr                    ;
+      Double_t             Piminus_ProbNNk_corr                    ;
+      Double_t             Piminus_ProbNNpi_corr                   ;
   };
 
 }

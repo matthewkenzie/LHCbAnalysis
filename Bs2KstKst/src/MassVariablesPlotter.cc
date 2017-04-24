@@ -12,7 +12,8 @@ Bs2KstKst::MassVariablesPlotter::MassVariablesPlotter(TString _name, const Varia
 {
   normalise = true;
   normalisation = 1.;
-  outfilename = Form("root/%sOut.root",_name.Data());
+  system(Form("mkdir -p root/%s",_name.Data()));
+  outfilename = Form("root/%s/%sOut.root",_name.Data(),_name.Data());
 }
 
 Bs2KstKst::MassVariablesPlotter::~MassVariablesPlotter(){}

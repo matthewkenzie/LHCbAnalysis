@@ -103,12 +103,21 @@ bool Bs2KstKst::PreSelection::AnalyseEvent(){
   if ( v->Piplus_isMuon              ) return false;                            // not in stripping
   if ( v->Piminus_isMuon             ) return false;                            // not in stripping
   // -----------------------------------------------------------------------
+  // sanity cuts (to protect PID calib)
+  if ( v->Kplus_ProbNNk    < 0 ) return false;
+  if ( v->Kminus_ProbNNk   < 0 ) return false;
+  if ( v->Piplus_ProbNNk   < 0 ) return false;
+  if ( v->Piminus_ProbNNk  < 0 ) return false;
+  if ( v->Kplus_ProbNNpi   < 0 ) return false;
+  if ( v->Kminus_ProbNNpi  < 0 ) return false;
+  if ( v->Piplus_ProbNNpi  < 0 ) return false;
+  if ( v->Piminus_ProbNNpi < 0 ) return false;
 
 	// MC only
-	//if ( l->itype < 0 ) {
-	//}
+	//if ( v->itype < 0 ) {
+  //}
 	// Data only
-	//if ( l->itype > 0 ) {
+	//if ( v->itype > 0 ) {
 	//}
 
 	return true;

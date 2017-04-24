@@ -64,6 +64,7 @@ void Bs2KstKst::BDTNoPID::setInputVariables() {
 }
 
 void Bs2KstKst::BDTNoPID::setSpectatorVariables(){
+  addSpectator("B_s0_DTF_B_s0_M");
   return;
 }
 
@@ -72,6 +73,9 @@ bool Bs2KstKst::BDTNoPID::setEventValuesAndEvaluate() {
   TString year = v->year;
 
   // setup values
+  // spectator
+  setVal("B_s0_DTF_B_s0_M", v->B_s0_DTF_B_s0_M);
+
   //
   // PT
   setVal("B_s0_DTF_B_s0_PT",v->B_s0_DTF_B_s0_PT);

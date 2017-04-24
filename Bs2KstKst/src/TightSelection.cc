@@ -41,19 +41,19 @@ bool Bs2KstKst::TightSelection::AnalyseEvent(){
   if ( v->itype > 0 ) {
 
     // B_s0 Cuts
-    if ( v->B_s0_DIRA_OWNPV < 0.9995 ) return false;
+    if ( v->B_s0_DIRA_OWNPV < 0.999 ) return false;
     if ( (v->B_s0_ENDVERTEX_CHI2 / v->B_s0_ENDVERTEX_NDOF ) > 9 ) return false;
     if ( v->B_s0_TAU < 0 ) return false;
     ////// mass window
-    if ( v->B_s0_MM < 5366.3-150. || v->B_s0_MM > 5366.3+150. ) return false;
+    if ( v->B_s0_DTF_B_s0_M < 5000. || v->B_s0_DTF_B_s0_M > 5800. ) return false;
 
     //// Kst cuts
     if ( (v->Kst_ENDVERTEX_CHI2  / v->Kst_ENDVERTEX_NDOF  )  > 9 ) return false;
     if ( (v->Kstb_ENDVERTEX_CHI2 / v->Kstb_ENDVERTEX_NDOF ) > 9 )  return false;
-    if ( v->Kst_PT  < 1200 ) return false;
-    if ( v->Kstb_PT < 1200 ) return false;
-    if ( v->Kst_MM  < 896.-80. || v->Kst_MM  > 896.+80. ) return false;
-    if ( v->Kstb_MM < 896.-80. || v->Kstb_MM > 896.+80. ) return false;
+    //if ( v->Kst_PT  < 1200 ) return false;
+    //if ( v->Kstb_PT < 1200 ) return false;
+    if ( v->B_s0_DTF_KST1_M  < 896.-100. || v->B_s0_DTF_KST1_M  > 896.+100. ) return false;
+    if ( v->B_s0_DTF_KST2_M < 896.-100. || v->B_s0_DTF_KST2_M > 896.+100. ) return false;
 
     //// 3-body mass
     //if ( v->M_KKPiPlus < 2200 || v->M_KKPiMinus < 2200 ) return false;

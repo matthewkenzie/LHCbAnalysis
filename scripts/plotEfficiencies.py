@@ -7,9 +7,10 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument("files", metavar='FIL', type=str, nargs="+", help="List of the inputs files to scan for efficiencies")
 parser.add_argument("-c","--canv",default="1200:800",help="Canvas size")
-parser.add_argument("-x","--xskip",default="",help="Comma seperated list of items to skip in x e.g. \'BDTNoPID,AddPIDVars\'")
-parser.add_argument("-y","--yskip",default="",help="Comma seperated list of items to skip in y e.g. \'Bd2JpsiKst,Data\'")
+parser.add_argument("-x","--xskip",default=" ",help="Comma seperated list of items to skip in x e.g. \'BDTNoPID,AddPIDVars\'")
+parser.add_argument("-y","--yskip",default=" ",help="Comma seperated list of items to skip in y e.g. \'Bd2JpsiKst,Data\'")
 parser.add_argument("-i","--interactive",default=False,action="store_true",help="Run interactively")
+parser.add_argument("-v","--verbose",default=False,action="store_true",help="Run in verbose mode")
 args = parser.parse_args()
 #from optparse import OptionParser
 #parser = OptionParser()
@@ -31,6 +32,8 @@ r.gStyle.SetGridStyle(1)
 r.gStyle.SetPalette(1)
 
 infiles = args.files
+if args.verbose:
+    print infiles
 canvs=[]
 
 xlabels = []
@@ -214,24 +217,37 @@ def draw(th2f, name, textformat='', col=False):
 
 def makeEffDict( passDict, failDict ):
   effDict = {}
+  effErrsDict = {}
   for analyser, sampleDict in passDict.iteritems():
-    print analyser
     effDict[analyser] = {}
+    effErrsDict[analyser] = {}
     for sample, evs in sampleDict.iteritems():
-      effDict[analyser][sample] = float( passDict[analyser][sample] ) / float( passDict[analyser][sample] + failDict[analyser][sample] )
+      k = float( passDict[analyser][sample] )
+      N = float( passDict[analyser][sample] + failDict[analyser][sample] )
+      effDict[analyser][sample] = k/N
+      effErrsDict[analyser][sample] = (1./N) * ( k*(1.-(k/N)) )**0.5
 
     effDict['Total'] = {}
+    effErrsDict['Total'] = {}
     for ylabel in ylabels:
       effDict['Total'][ylabel] = float( passDict[xlabels[-1]][ylabel] ) / float( passDict[xlabels[0]][ylabel] + failDict[xlabels[0]][ylabel] )
+      effErrsDict['Total'][ylabel] = float( passDict[xlabels[-1]][ylabel] ) / float( passDict[xlabels[0]][ylabel] + failDict[xlabels[0]][ylabel] )
 
-  return effDict
+  return (effDict, effErrsDict)
 
 # __main__
 passDict = fillDict('hPass')
 failDict = fillDict('hFail')
 procDict = fillDict('hProc')
-effDict  = makeEffDict( passDict, failDict )
-#effDict  = fillDict('hEff',True)
+if args.verbose:
+    printDict(passDict)
+    printDict(failDict)
+
+# calc efficiencies
+effDict, effErrsDict  = makeEffDict( passDict, failDict )
+if args.verbose:
+    printDict(effDict)
+    printDict(effErrsDict)
 
 passHist = convertDictToTH2(passDict,'hPass', 'Passing events')
 failHist = convertDictToTH2(failDict,'hFail', 'Failed events')
@@ -239,10 +255,13 @@ procDict = convertDictToTH2(procDict,'hProc', 'Processed events')
 xlabels.append('Total')
 effHist  = convertDictToTH2(effDict,'hEff', '')
 effHist.Scale(100.)
+effErrHist = convertDictToTH2(effErrsDict, 'hEffErrs','')
+effErrHist.Scale(100.)
 
 draw(passHist,'pass','g')
 draw(failHist,'fail','g')
 draw(procDict,'proc','g')
 draw(effHist, 'eff','5.1f%%',True)
+draw(effErrHist,'efferr','5.1f%%',True)
 
 if args.interactive: raw_input('Done\n')

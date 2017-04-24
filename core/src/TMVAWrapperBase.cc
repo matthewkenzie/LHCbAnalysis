@@ -3,6 +3,7 @@
 #include "TColor.h"
 #include "TCanvas.h"
 #include "TROOT.h"
+#include "TStyle.h"
 #include "TLegend.h"
 #include "TPad.h"
 #include "TLine.h"
@@ -18,12 +19,14 @@ TMVAWrapperBase::TMVAWrapperBase(TString _name, const Variables *_v, mode _rMode
   outfilename(Form("root/%sOut.root",_name.Data())),
   numberOfBDTs(-1),
   doBDTCycling(false),
+  makeCorrelationPlots(false),
   factoryOptions(""),
   trainingOptions("")
 {
   if (!doBDTCycling) numberOfBDTs=1;
   TH1::SetDefaultSumw2();
   gROOT->ProcessLine(".x ~/bin/lhcbStyle.C");
+  gStyle->SetPalette(1);
   system(Form("mkdir -p plots/%s/pdf",_name.Data()));
   system(Form("mkdir -p plots/%s/png",_name.Data()));
   system(Form("mkdir -p plots/%s/C",_name.Data()));
@@ -95,6 +98,10 @@ void TMVAWrapperBase::initMVAFactories() {
 
   checkInit();
 
+  // combine training variables and spectators into one easy to use list
+  allVarNames.insert( allVarNames.end(), varNames.begin(), varNames.end() );
+  allVarNames.insert( allVarNames.end(), spectatorNames.begin(), spectatorNames.end() );
+
   // TRAINING MODE
   if ( rMode == kTrain || rMode == kPlot ) {
     outFile = TFile::Open(outfilename,"RECREATE");
@@ -104,7 +111,8 @@ void TMVAWrapperBase::initMVAFactories() {
     trainingTree->Branch("relBDT",     &relBDT);
     trainingTree->Branch("isSigEvent", &isSigEvent);
     trainingTree->Branch("eventCat",   &eventCat);
-    for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++) {
+    // variables + spectators
+    for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++) {
       trainingTree->Branch(*var, &readVarMap[*var]);
     }
 
@@ -312,8 +320,15 @@ void TMVAWrapperBase::addVar(TString var){
  readVarMap[var] = -99999.;
 }
 
+void TMVAWrapperBase::addSpectator(TString var){
+  spectatorNames.push_back(var);
+  cout << Form("%-30s","TMVAWrapperBase::addSpectator()") << " Spectator " << var << " added" << endl;
+  // initilise reading map
+  readVarMap[var] = -99999.;
+}
+
 void TMVAWrapperBase::setVal(TString var, double value){
-  if ( find(varNames.begin(), varNames.end(), var)==varNames.end() ) {
+  if ( find(allVarNames.begin(), allVarNames.end(), var)==allVarNames.end() ) {
     cerr << "ERROR -- TMVAWrapperBase::setVal() -- variable " << var << " not in varNames" << endl;
     exit(1);
   }
@@ -340,6 +355,15 @@ TString TMVAWrapperBase::getHistName(TString cat, int b, TString var, TString ex
   }
   else {
     return TString(Form("%s_%d_%s%s",cat.Data(),b,var.Data(),ext.Data()));
+  }
+}
+
+TString TMVAWrapperBase::getHist2dName(TString cat, int b, TString var, TString var2, TString ext) {
+  if ( b==-1) { // b=-1 gets the sum
+    return TString(Form("%s_%s%s_%s%s",cat.Data(),var.Data(),ext.Data(),var2.Data(),ext.Data()));
+  }
+  else {
+    return TString(Form("%s_%d_%s%s_%s%s",cat.Data(),b,var.Data(),ext.Data(),var2.Data(),ext.Data()));
   }
 }
 
@@ -391,11 +415,16 @@ void TMVAWrapperBase::createTrainingHistograms() {
   for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++) {
     // loop BDTs
     for (int b=0; b<numberOfBDTs; b++) {
-      // loop variables
-      for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++) {
+      // loop variables + spectators to setup histograms
+      for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++) {
         for (int i=0; i<4; i++) {
           TString histName = getHistName(*cat, b, *var, types[i]);
           histStore[histName] = new TH1F(histName,histName,50,trainingTree->GetMinimum(var->Data()),trainingTree->GetMaximum(var->Data()));
+          // loop again for 2D histograms
+          for (vector<TString>::iterator var2=allVarNames.begin(); var2!=allVarNames.end(); var2++ ) {
+            TString hist2dName = getHist2dName(*cat, b, *var, *var2, types[i]);
+            corHistStore[hist2dName] = new TH2F(hist2dName,hist2dName,50,trainingTree->GetMinimum(var->Data()), trainingTree->GetMaximum(var->Data()), 50, trainingTree->GetMinimum(var2->Data()), trainingTree->GetMaximum(var2->Data()));
+          }
         }
       }
       // do bdtoutput
@@ -406,6 +435,11 @@ void TMVAWrapperBase::createTrainingHistograms() {
       for (int i=0; i<4; i++) {
         TString histName = getHistName(*cat, b, "bdtoutput", types[i]);
         histStore[histName] = new TH1F(histName,histName,100,-1.,1.);
+        // correlation
+        for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++){
+          TString hist2dName = getHist2dName(*cat,b,"bdtoutput",*var,types[i]);
+          corHistStore[hist2dName] = new TH2F(hist2dName,hist2dName,100,-1,1,50,trainingTree->GetMinimum(var->Data()),trainingTree->GetMaximum(var->Data()) );
+        }
       }
     }
   }
@@ -430,13 +464,21 @@ void TMVAWrapperBase::createTrainingHistograms() {
         if ( isTest )  type = types[3];
         if ( isTrain ) type = types[1];
       }
-      for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++){
+      for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++){
         TString histName = getHistName(eventCat, b, *var, type);
         histStore[histName]->Fill(readVarMap[*var]);
+        for (vector<TString>::iterator var2=allVarNames.begin(); var2!=allVarNames.end(); var2++){
+          TString hist2dName = getHist2dName(eventCat, b, *var, *var2, type);
+          corHistStore[hist2dName]->Fill(readVarMap[*var],readVarMap[*var2]);
+        }
       }
       TString histName = getHistName(eventCat, b, "bdtoutput", type);
       bdtval = readerContainer[eventCat][b]->EvaluateMVA( Form("BDT%dmethod",b) );
       histStore[histName]->Fill(bdtval);
+      for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++){
+        TString hist2dName = getHist2dName(eventCat, b, "bdtoutput", *var, type);
+        corHistStore[hist2dName]->Fill(bdtval,readVarMap[*var]);
+      }
       bdtoutBranches[b]->Fill();
     }
   }
@@ -460,18 +502,56 @@ void TMVAWrapperBase::createTrainingHistograms() {
   for (map<TString,TH1F*>::iterator it=histStore.begin(); it!=histStore.end(); it++){
     it->second->Write();
   }
+  // new directory in outfile for correlations
+  TDirectory *dir2d = outFile->mkdir(Form("%s_CorrelationHists",name.Data()));
+  dir2d->cd();
+  for ( map<TString,TH2F*>::iterator it=corHistStore.begin(); it!=corHistStore.end(); it++){
+    it->second->Write();
+  }
   // make plots
   for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
     for (int b=0; b<numberOfBDTs; b++) {
-      for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++){
+      for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++){
         makePlot(*cat,b,*var);
+        for (vector<TString>::iterator var2=allVarNames.begin(); var2!=allVarNames.end(); var2++){
+          if (makeCorrelationPlots) make2dPlot(*cat,b,*var,*var2);
+        }
       }
       makePlot(*cat,b,"bdtoutput");
+      for (vector<TString>::iterator var=allVarNames.begin(); var!=allVarNames.end(); var++){
+        if (makeCorrelationPlots) make2dPlot(*cat,b,"bdtoutput",*var);
+      }
     }
     // and the sums
     makePlot(*cat,-1,"bdtoutput");
   }
   histStore.clear();
+}
+
+void TMVAWrapperBase::make2dPlot(TString cat, int b, TString var1, TString var2) {
+
+  // main histograms
+  TH2F *sigTrain = corHistStore[getHist2dName(cat,b,var1,var2,types[0])];
+  TH2F *bkgTrain = corHistStore[getHist2dName(cat,b,var1,var2,types[1])];
+  TH2F *sigTest = corHistStore[getHist2dName(cat,b,var1,var2,types[2])];
+  TH2F *bkgTest = corHistStore[getHist2dName(cat,b,var1,var2,types[3])];
+
+  // canvas
+  TCanvas *canv = new TCanvas("c","c",1600,1600);
+  canv->Divide(2,2);
+  // iterate through (sigTrain, bkgTrain, sigTest, bkgTest)
+  for ( int i=0; i<4; i++ ){
+    canv->cd(i+1);
+    corHistStore[getHist2dName(cat,b,var1,var2,types[i])]->Draw("colz");
+  }
+  canv->Update();
+  canv->Modified();
+  TString canvName = Form("%s_%d_%s_%s",cat.Data(),b,var1.Data(),var2.Data());
+  if ( b==-1 ) canvName = Form("%s_%s_%s",cat.Data(),var1.Data(),var2.Data());
+  canv->Print(Form("plots/%s/pdf/%s.pdf",name.Data(),canvName.Data()));
+  canv->Print(Form("plots/%s/png/%s.png",name.Data(),canvName.Data()));
+  canv->Print(Form("plots/%s/C/%s.C",name.Data(),canvName.Data()));
+  delete canv;
 }
 
 void TMVAWrapperBase::makePlot(TString cat, int b, TString var) {

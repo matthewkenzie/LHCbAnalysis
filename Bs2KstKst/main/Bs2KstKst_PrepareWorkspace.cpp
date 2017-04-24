@@ -398,7 +398,7 @@ void defineParamSet( RooWorkspace *w,  TString pdf ) {
 // Bs2KstKst MC
 void makeBs2KstKstPdf( RooWorkspace *w ) {
 
-  w->factory("bs2kstkst_l[-5,-20,0]" );
+  w->factory("bs2kstkst_l[-5,-20,-1]" );
   w->factory("bs2kstkst_zeta[0.]" );
   w->factory("bs2kstkst_fb[0.]" );
   w->factory("bs2kstkst_sigma[15,10,100]" );
@@ -451,7 +451,7 @@ void makeBd2PhiKstPdf( RooWorkspace *w ) {
   w->factory("bd2phikst_l[-5,-20,-1]" );
   w->factory("bd2phikst_zeta[0.]" );
   w->factory("bd2phikst_fb[0.]" );
-  w->factory("bd2phikst_sigma[15,10,100]" );
+  w->factory("bd2phikst_sigma[18,10,25]" );
   w->factory("bd2phikst_mu[5200,5270]" );
   w->factory("bd2phikst_a[2.5,0,10]" );
   w->factory("bd2phikst_n[2.5,0,10]" );
@@ -522,8 +522,8 @@ void makeBd2RhoKstPdf( RooWorkspace *w ) {
 // Lb2pKpipi MC
 void makeLb2pKpipiPdf( RooWorkspace *w ) {
   w->factory("lb2pkpipi_mean[5450,5550]");
-  w->factory("CBShape::lb2pkpipi_mc_cb1( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma1[10,0,200], lb2pkpipi_alpha1[0.04,0.,10.], lb2pkpipi_n1[0.1,0.,100.])");
-  w->factory("CBShape::lb2pkpipi_mc_cb2( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma2[10,0,200], lb2pkpipi_alpha2[-0.04,-10.,0.], lb2pkpipi_n2[0.1,0.,100.])");
+  w->factory("CBShape::lb2pkpipi_mc_cb1( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma1[10,1,40], lb2pkpipi_alpha1[0.04,0.01,5.], lb2pkpipi_n1[0.1,0.01,200.])");
+  w->factory("CBShape::lb2pkpipi_mc_cb2( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma2[10,1,200], lb2pkpipi_alpha2[-0.04,-10.,-0.01], lb2pkpipi_n2[0.1,0.01,100.])");
   w->factory("SUM::lb2pkpipi_mc_pdf( lb2pkpipi_f1[0.4,0.,1.]*lb2pkpipi_mc_cb1, lb2pkpipi_mc_cb2 )");
   defineParamSet( w, "lb2pkpipi_mc_pdf");
 }
@@ -531,7 +531,7 @@ void makeLb2pKpipiPdf( RooWorkspace *w ) {
 // Lb2ppipipi MC
 void makeLb2ppipipiPdf( RooWorkspace *w ) {
   w->factory("lb2ppipipi_mean[5450,5600]");
-  w->factory("CBShape::lb2ppipipi_mc_pdf( B_s0_DTF_B_s0_M, lb2ppipipi_mean, lb2ppipipi_sigma[10,0,200], lb2ppipipi_alpha[0.04,0.,10.], lb2ppipipi_n[5.,0.,10.])");
+  w->factory("CBShape::lb2ppipipi_mc_pdf( B_s0_DTF_B_s0_M, lb2ppipipi_mean, lb2ppipipi_sigma[10,1,200], lb2ppipipi_alpha[0.04,0.01,10.], lb2ppipipi_n[5.,0.01,20.])");
   defineParamSet( w, "lb2ppipipi_mc_pdf");
 }
 
@@ -564,29 +564,32 @@ void makeCombinatorialPdf( RooWorkspace *w ) {
 void makeTotalPdf( RooWorkspace *w ) {
 
   // constrain the bs->phikst / bd->phikst ratio
-  w->factory( "yield_ratio_bs2phikst_o_bd2phikst[0.,1.]" );
-  w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.113, 0.0287 )" );
-  // constrain the bd->rhokst / bd->phikst ratio
-  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.,1.]" );
-  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.390, 0.130 )" ); // PDG err is 0.130 (relax this for eff)
+  // the BR ratio is (0.113 +/- 0.0287) and also include fs/fd = (0.259 +/- 0.015): TOTAL = (0.029 +/- 0.008)
+  w->factory( "yield_ratio_bs2phikst_o_bd2phikst[0.029,0.,0.5]" );
+  //w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.113, 0.0287 )" );
+  w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.029, 0.008 )" );
+  // constrain the bd->rhokst / bd->phikst ratio (0.39 +/- 0.13) and also include the relative efficiencies (0.24 +/- 0.02): TOTAL = (0.094,0.032)
+  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.094,0.,1.]" );
+  //w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.39, 0.13 )" );
+  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.094, 0.032 )" );
 
   // make a yield for each category
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
   for ( int i=0; i < cat->numTypes(); i++ ) {
     cat->setIndex(i);
-    w->factory( Form("bkg_y_%s[200,400e3]",       cat->getLabel()));
-    w->factory( Form("part_reco_y_%s[100,200e3]", cat->getLabel()));
-    w->factory( Form("bs2kstkst_y_%s[0,20e3]", cat->getLabel()));
-    w->factory( Form("bd2kstkst_y_%s[0,3000]", cat->getLabel()));
-    w->factory( Form("bd2phikst_y_%s[10,5000]", cat->getLabel()));
+    w->factory( Form("bkg_y_%s[200,5000]",       cat->getLabel()));
+    w->factory( Form("part_reco_y_%s[100,2000]", cat->getLabel()));
+    w->factory( Form("bs2kstkst_y_%s[1000,5000]", cat->getLabel()));
+    w->factory( Form("bd2kstkst_y_%s[100,1000]", cat->getLabel()));
+    w->factory( Form("bd2phikst_y_%s[1,1000]", cat->getLabel()));
     // add bs2phikst yield as constrained ratio
     w->factory( Form("prod::bs2phikst_y_%s( yield_ratio_bs2phikst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
     //w->factory( Form("bs2phikst_y_%s[10,5000]", cat->getLabel()));
     // add bd2rhokst yield as constrained ratio
     w->factory( Form("prod::bd2rhokst_y_%s( yield_ratio_bd2rhokst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
     //w->factory( Form("bd2rhokst_y_%s[5,250]", cat->getLabel()));
-    w->factory( Form("lb2pkpipi_y_%s[0,4000]", cat->getLabel()));
-    w->factory( Form("lb2ppipipi_y_%s[0,4000]", cat->getLabel()));
+    w->factory( Form("lb2pkpipi_y_%s[0,200]", cat->getLabel()));
+    w->factory( Form("lb2ppipipi_y_%s[0,200]", cat->getLabel()));
   }
 
   // construct the pdf for each category
@@ -668,15 +671,16 @@ void constructPdfs( RooWorkspace *w, TString outfname ) {
 int main() {
 
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  system("mkdir -p root/MassFit");
 
   flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
-  fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFitWorkspace.root" );
+  fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFit/MassFitWorkspace.root" );
 
-  TFile *tf = TFile::Open("root/MassFitWorkspace.root");
+  TFile *tf = TFile::Open("root/MassFit/MassFitWorkspace.root");
   RooWorkspace *w = (RooWorkspace*)tf->Get("w");
   drawData( w );
 
-  constructPdfs( w, "root/MassFitWorkspaceWithPDFs.root" );
+  constructPdfs( w, "root/MassFit/MassFitWorkspaceWithPDFs.root" );
 
   w->Print("v");
   return 0;

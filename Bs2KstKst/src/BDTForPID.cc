@@ -49,34 +49,14 @@ void Bs2KstKst::BDTForPID::setTrainingOptions(){
 }
 
 void Bs2KstKst::BDTForPID::setInputVariables() {
-  //addVar("B_s0_DTF_B_s0_PT");
-  //addVar("B_s0_DTF_KST1_PT");
-  //addVar("B_s0_DTF_KST2_PT");
-  //addVar("max_track_PT");
-  //addVar("min_track_PT");
-  //addVar("B_s0_ETA");
-  //addVar("Kst_ETA");
-  //addVar("Kstb_ETA");
-  //addVar("max_track_ETA");
-  //addVar("min_track_ETA");
-  //addVar("B_s0_DIRA_OWNPV");
-  //addVar("B_s0_ENDVERTEX_CHI2");
   addVar("Kplus_PT");
   addVar("Kminus_PT");
-  //addVar("Piplus_PT");
-  //addVar("Piminus_PT");
   addVar("Kplus_ETA");
   addVar("Kminus_ETA");
-  //addVar("Piplus_ETA");
-  //addVar("Piminus_ETA");
-  //addVar("Kplus_V3ProbNNKpi_corr");
-  //addVar("Kminus_V3ProbNNKpi_corr");
-  //addVar("Piplus_V3ProbNNKpi_corr");
-  //addVar("Piminus_V3ProbNNKpi_corr");
-  addVar("Kplus_V3ProbNNk_corr");
-  addVar("Kminus_V3ProbNNk_corr");
-  addVar("Kplus_V3ProbNNpi_corr");
-  addVar("Kminus_V3ProbNNpi_corr");
+  addVar("Kplus_ProbNNKpi");
+  addVar("Kminus_ProbNNKpi");
+  addVar("Piplus_ProbNNpiK");
+  addVar("Piminus_ProbNNpiK");
 }
 
 void Bs2KstKst::BDTForPID::setSpectatorVariables(){
@@ -91,20 +71,12 @@ bool Bs2KstKst::BDTForPID::setEventValuesAndEvaluate() {
   //
   setVal("Kplus_PT", v->Kplus_PT);
   setVal("Kminus_PT", v->Kminus_PT);
-  //setVal("Piplus_PT", v->Piplus_PT);
-  //setVal("Piminus_PT", v->Piminus_PT);
   setVal("Kplus_ETA" , v->Kplus_ETA);
   setVal("Kminus_ETA", v->Kminus_ETA);
-  //setVal("Piplus_ETA", v->Piplus_ETA);
-  //setVal("Piminus_ETA", v->Piminus_ETA);
-  //setVal("Kplus_V3ProbNNKpi_corr"  , v->Kplus_V3ProbNNk_corr   * (1. - v->Kplus_V3ProbNNpi_corr   ) );
-  //setVal("Kminus_V3ProbNNKpi_corr" , v->Kminus_V3ProbNNk_corr  * (1. - v->Kminus_V3ProbNNpi_corr  ) );
-  //setVal("Piplus_V3ProbNNKpi_corr" , v->Piplus_V3ProbNNk_corr  * (1. - v->Piplus_V3ProbNNpi_corr  ) );
-  //setVal("Piminus_V3ProbNNKpi_corr", v->Piminus_V3ProbNNk_corr * (1. - v->Piminus_V3ProbNNpi_corr ) );
-  setVal("Kplus_V3ProbNNk_corr", v->Kplus_V3ProbNNk_corr);
-  setVal("Kminus_V3ProbNNk_corr", v->Kminus_V3ProbNNk_corr);
-  setVal("Kplus_V3ProbNNpi_corr", v->Kplus_V3ProbNNpi_corr);
-  setVal("Kminus_V3ProbNNpi_corr", v->Kminus_V3ProbNNpi_corr);
+  setVal("Kplus_ProbNNKpi"  , v->Kplus_ProbNNKpi );
+  setVal("Kminus_ProbNNKpi" , v->Kminus_ProbNNKpi );
+  setVal("Piplus_ProbNNpiK" , v->Piplus_ProbNNpiK );
+  setVal("Piminus_ProbNNpiK", v->Piminus_ProbNNpiK );
 
   // TRAINING
   if ( rMode == kTrain || rMode == kPlot ) {

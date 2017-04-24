@@ -30,8 +30,6 @@ bool Bs2KstKst::ApplyBDTAndPIDCuts::AnalyseEvent() {
   // Exectute actions
   //
 
-  // WILL NEED TO MODIFY TO PID COR VARS
-
   v->pass_bdt = false;
 
   if ( v->year == "2011" ) {
@@ -46,38 +44,41 @@ bool Bs2KstKst::ApplyBDTAndPIDCuts::AnalyseEvent() {
 
   v->pass_pid = true;
 
-  //if ( v->Kplus_ProbNNk<0.2 ) v->pass_pid = false;
-  //if ( v->Kplus_ProbNNk*(1.-v->Kplus_ProbNNpi)<0.3 ) v->pass_pid = false;
-  //if ( v->Kminus_ProbNNk<0.2 ) v->pass_pid = false;
-  //if ( v->Kminus_ProbNNk*(1.-v->Kminus_ProbNNpi)<0.3 ) v->pass_pid = false;
-  //if ( v->Piplus_ProbNNpi<0.2 ) v->pass_pid = false;
-  //if ( v->Piplus_ProbNNpi*(1.-v->Piplus_ProbNNk)<0.3 ) v->pass_pid = false;
-  //if ( v->Piminus_ProbNNpi<0.2 ) v->pass_pid = false;
-  //if ( v->Piminus_ProbNNpi*(1.-v->Piminus_ProbNNk)<0.3 ) v->pass_pid = false;
-
-  if ( v->Kplus_V3ProbNNk_corr<0.2 ) v->pass_pid = false;
-  if ( v->Kplus_V3ProbNNk_corr*(1.-v->Kplus_V3ProbNNpi_corr)<0.3 ) v->pass_pid = false;
-  if ( v->Kminus_V3ProbNNk_corr<0.2 ) v->pass_pid = false;
-  if ( v->Kminus_V3ProbNNk_corr*(1.-v->Kminus_V3ProbNNpi_corr)<0.3 ) v->pass_pid = false;
-  if ( v->Piplus_V3ProbNNpi_corr<0.2 ) v->pass_pid = false;
-  if ( v->Piplus_V3ProbNNpi_corr*(1.-v->Piplus_V3ProbNNk_corr)<0.3 ) v->pass_pid = false;
-  if ( v->Piminus_V3ProbNNpi_corr<0.2 ) v->pass_pid = false;
-  if ( v->Piminus_V3ProbNNpi_corr*(1.-v->Piminus_V3ProbNNk_corr)<0.3 ) v->pass_pid = false;
+  if ( v->min_kaon_ProbNNk < 0.2 )   v->pass_pid = false;
+  if ( v->min_pion_ProbNNpi < 0.2 )  v->pass_pid = false;
+  if ( v->min_kaon_ProbNNKpi < 0.3 ) v->pass_pid = false;
+  if ( v->min_pion_ProbNNpiK < 0.3 ) v->pass_pid = false;
 
   // the special case for RhoKst mass veto
   v->pass_rhokst = false;
 
   vector< pair<TString,double> > ProbNNk;
-  ProbNNk.push_back( make_pair("Kplus", v->Kplus_V3ProbNNk_corr) );
-  ProbNNk.push_back( make_pair("Kminus", v->Kminus_V3ProbNNk_corr) );
-  ProbNNk.push_back( make_pair("Piplus", v->Piplus_V3ProbNNk_corr) );
-  ProbNNk.push_back( make_pair("Piminus", v->Piminus_V3ProbNNk_corr) );
+  if ( v->itype < 0 ) { // MC
+    ProbNNk.push_back( make_pair("Kplus", v->Kplus_ProbNNk_corr) );
+    ProbNNk.push_back( make_pair("Kminus", v->Kminus_ProbNNk_corr) );
+    ProbNNk.push_back( make_pair("Piplus", v->Piplus_ProbNNk_corr) );
+    ProbNNk.push_back( make_pair("Piminus", v->Piminus_ProbNNk_corr) );
+  }
+  else { // Data
+    ProbNNk.push_back( make_pair("Kplus", v->Kplus_ProbNNk) );
+    ProbNNk.push_back( make_pair("Kminus", v->Kminus_ProbNNk) );
+    ProbNNk.push_back( make_pair("Piplus", v->Piplus_ProbNNk) );
+    ProbNNk.push_back( make_pair("Piminus", v->Piminus_ProbNNk) );
+  }
 
   map<TString,double> ProbNNpi;
-  ProbNNpi["Kplus"]   = v->Kplus_V3ProbNNpi_corr;
-  ProbNNpi["Kminus"]  = v->Kminus_V3ProbNNpi_corr;
-  ProbNNpi["Piplus"]  = v->Piplus_V3ProbNNpi_corr;
-  ProbNNpi["Piminus"] = v->Piminus_V3ProbNNpi_corr;
+  if ( v->itype < 0 ) { // MC
+    ProbNNpi["Kplus"]   = v->Kplus_V3ProbNNpi_corr;
+    ProbNNpi["Kminus"]  = v->Kminus_V3ProbNNpi_corr;
+    ProbNNpi["Piplus"]  = v->Piplus_V3ProbNNpi_corr;
+    ProbNNpi["Piminus"] = v->Piminus_V3ProbNNpi_corr;
+  }
+  else { // Data
+    ProbNNpi["Kplus"]   = v->Kplus_ProbNNpi;
+    ProbNNpi["Kminus"]  = v->Kminus_ProbNNpi;
+    ProbNNpi["Piplus"]  = v->Piplus_ProbNNpi;
+    ProbNNpi["Piminus"] = v->Piminus_ProbNNpi;
+  }
 
   sort( ProbNNk.begin(), ProbNNk.end(), &sortFunc );
 

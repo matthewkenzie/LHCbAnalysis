@@ -232,7 +232,7 @@ void CalcSWeights( RooWorkspace *w ) {
 
   }
 
-  w->writeToFile("root/MassFitResultWSWeights.root");
+  w->writeToFile("root/MassFit/MassFitResultWSWeights.root");
 
 }
 
@@ -283,14 +283,14 @@ int main() {
   system("mkdir -p plots/MassFit/pdf");
   system("mkdir -p plots/MassFit/C");
 
-  TFile *inf = TFile::Open("root/MassFitWorkspaceWithPDFs.root");
+  TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs.root");
   RooWorkspace *w = (RooWorkspace*)inf->Get("w");
   RunMCFits( w );
   RunDataFit( w );
-  w->writeToFile("root/MassFitResult.root");
+  w->writeToFile("root/MassFit/MassFitResult.root");
   inf->Close();
 
-  TFile *tf = TFile::Open("root/MassFitResult.root");
+  TFile *tf = TFile::Open("root/MassFit/MassFitResult.root");
   RooWorkspace *ws = (RooWorkspace*)tf->Get("w");
   MassFitPlotter *plotter = new MassFitPlotter( ws, "MassFit" );
   PlotMCFitResults( plotter );

@@ -20,9 +20,9 @@ void Bs2KstKst::TightSelectionPlotter::defineHistograms(){
 
   // add these histograms
   //
-  addHist("B_s0_MM", "m(K^{+}#pi^{-}K^{-}#pi^{+}) (MeV)", 100, 5300,5450, "R");
-  addHist("Kst_MM", "m(K^{-}#pi^{+}) (MeV)", 50, 850, 950, "R");
-  addHist("Kstb_MM", "m(K^{+}#pi^{-}) (MeV)", 50, 850, 950, "R");
+  addHist("B_s0_DTF_B_s0_M", "m(K^{+}#pi^{-}K^{-}#pi^{+}) (MeV)", 100, 5000,5800, "R");
+  addHist("B_s0_DTF_KST1_M", "m(K^{-}#pi^{+}) (MeV)", 50, 750, 1050, "R");
+  addHist("B_s0_DTF_KST2_M", "m(K^{+}#pi^{-}) (MeV)", 50, 750, 1050, "R");
 
   addHist("ln_B_s0_PT", "p_{T}(K^{+}#pi^{-}K^{-}#pi^{+}) (MeV)", 50, 6, 11, "L");
   addHist("ln_Kst_PT", "p_{T}(K^{-}#pi^{+}) (MeV)", 50, 6, 11, "L");
@@ -90,9 +90,9 @@ void Bs2KstKst::TightSelectionPlotter::defineDrawingConfig(){
 bool Bs2KstKst::TightSelectionPlotter::fillHistograms(){
 
   // fill hists now
-  fillHist("B_s0_MM",           v->B_s0_MM);
-  fillHist("Kst_MM",            v->Kst_MM);
-  fillHist("Kstb_MM",           v->Kstb_MM);
+  fillHist("B_s0_DTF_B_s0_M",           v->B_s0_MM);
+  fillHist("B_s0_DTF_KST1_M",            v->Kst_MM);
+  fillHist("B_s0_DTF_KST2_M",           v->Kstb_MM);
 
   fillHist("ln_B_s0_PT",        TMath::Log(v->B_s0_PT));
   fillHist("ln_Kst_PT",         TMath::Log(v->Kst_PT));

@@ -36,6 +36,8 @@ map< ULong64_t, pair<double,double> > getMapFromDataSet( RooDataSet *data ) {
 
     resMap[eventNumber] = make_pair( mass, weight );
 
+    cout << Form("%-20llu  %10.4f  %6.4f",eventNumber,mass,weight) << endl;
+
   }
 
   return resMap;
@@ -53,14 +55,14 @@ double getSWeight( map< ULong64_t, pair<double,double> > &resMap, ULong64_t even
     return -999.;
   }
   double sweight = resMap[eventNumber].second;
-  //cout << "Got sweight " << resMap[eventNumber].second << " for event " << eventNumber << endl;
+  cout << "Got sweight " << resMap[eventNumber].second << " for event " << eventNumber << endl;
   return sweight;
 
 }
 
 void addSWeightToTree() {
 
-  TFile *tf = TFile::Open("root/MassFitResultWSWeights.root");
+  TFile *tf = TFile::Open("root/MassFit/MassFitResultWSWeights.root");
   RooWorkspace *w = (RooWorkspace*)tf->Get("w");
 
   RooDataSet *Data2011HadronTOS = (RooDataSet*)w->data("Data2011HadronTOS_sw");
@@ -81,10 +83,12 @@ void addSWeightToTree() {
   // update the file
   TFile *tFile = new TFile("root/AnalysisOutWSWeights.root","UPDATE");
   TTree *tree = (TTree*)tFile->Get("AnalysisTree");
+  TH1D *sweights = new TH1D("sweights","sweights",100,-5,5.);
 
   ULong64_t  eventNumber;
   double     B_s0_DTF_B_s0_M;
   int        itype;
+  TString    *year;
   bool       pass_bdt;
   bool       pass_pid;
   bool       pass_rhokst;
@@ -92,18 +96,24 @@ void addSWeightToTree() {
   bool       pass_multcand;
   bool       B_s0_L0HadronDecision_TOS;
   bool       B_s0_L0Global_TIS;
-  double    B_s0_DTF_KST1_M;
-  double    B_s0_DTF_KST2_M;
+  double     B_s0_DTF_KST1_M;
+  double     B_s0_DTF_KST2_M;
 
   double     sweight;
+  int        category;
+  bool       pass_all;
 
   // declare new branch
   TBranch *bpt = tree->Branch( "sweight",  &sweight, "sweight/D" );
+  // add some other useful branches
+  TBranch *bpt_category = tree->Branch( "category", &category, "category/I" );
+  TBranch *bpt_pass_all = tree->Branch( "pass_all", &pass_all, "pass_all/O" );
 
   // set address of old branches
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "B_s0_DTF_B_s0_M"             , &B_s0_DTF_B_s0_M             );
   tree->SetBranchAddress(  "itype"                       , &itype                       );
+  tree->SetBranchAddress(  "year"                        , &year                        );
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
   tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
@@ -118,45 +128,64 @@ void addSWeightToTree() {
   for ( int ev=0; ev<tree->GetEntries(); ev++) {
 
     tree->GetEntry(ev);
+    if ( ev%10000==0 ) cout << ev << " / " << tree->GetEntries() << endl;
+
 
     sweight = -999.;
+    pass_all = false;
+    category = -1;
 
-    // cut events outside the mass window
-    if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
-    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
-    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
+    if ( pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600 && B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600 && B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800 ) {
+      pass_all = true;
+    }
 
-    // rho kst cuts nothing
-    //if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand ) {
-    if ( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand ) {
-
-      if ( itype==71 ) {
-        if ( B_s0_L0HadronDecision_TOS )                        {
-          sweight = getSWeight( res2011HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
-        }
-        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   {
-          sweight = getSWeight( res2011GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
-        }
-
+    if ( *year == TString("2011") ) {
+      if ( B_s0_L0HadronDecision_TOS ) category = 0;
+      else if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS) category = 1;
+      else {
+        cout << "Shouldn't happen" << endl;
+        assert(0);
       }
-      if ( itype==81 ) {
-        if ( B_s0_L0HadronDecision_TOS )                        {
-          sweight = getSWeight( res2012HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
-        }
-        if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS)   {
-          sweight = getSWeight( res2012GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
-        }
+    }
+    else if ( *year == TString("2012") ) {
+      if ( B_s0_L0HadronDecision_TOS ) category = 2;
+      else if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS) category = 3;
+      else {
+        cout << "Shouldn't happen" << endl;
+        assert(0);
+      }
+    }
+    else {
+      cout << "Shouldn't happen" << endl;
+      assert(0);
+    }
+
+    // now we put the sweights in
+    if ( (itype==71 || itype==81) && pass_all ) {
+
+      if ( category==0 ) sweight = getSWeight( res2011HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
+      else if ( category==1 ) sweight = getSWeight( res2011GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+      else if ( category==2 ) sweight = getSWeight( res2012HadronTOS, eventNumber, B_s0_DTF_B_s0_M );
+      else if ( category==3 ) sweight = getSWeight( res2012GlobalTIS, eventNumber, B_s0_DTF_B_s0_M );
+      else {
+        cout << "Shouldn't happen" << endl;
+        assert(0);
       }
     }
 
-    if ( ev%10000==0 ) cout << ev << " / " << tree->GetEntries() << endl;
+    // fill sweights test histogram
+    sweights->Fill(sweight);
 
+    // fill our new branches
     // notice NOT tree->Fill()
+    bpt_category->Fill();
+    bpt_pass_all->Fill();
     bpt->Fill();
 
   }
   //tree->Print();
   tree->Write();
+  sweights->Write();
   delete tFile;
 
 }
@@ -166,7 +195,7 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
   TH1F *h = new TH1F( var, var, bins, xmin, xmax );
 
   //tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
-  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand) && (B_s0_DTF_KST1_M>=700 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=700 && B_s0_DTF_KST2_M<=1600)", "goff" );
+  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -195,7 +224,7 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
   TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
 
   //tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand)", "goff" );
-  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand) && (B_s0_DTF_KST1_M>=700 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=700 && B_s0_DTF_KST2_M<=1600)", "goff" );
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -261,8 +290,8 @@ void makeSWPlots() {
 
   draw( tree, "B_s0_DTF_B_s0_M"         , 100, 5000  , 5800 , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
   draw( tree, "B_s0_DTF_B_s0_MERR"      , 100, 0     , 100  , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
-  draw( tree, "B_s0_DTF_KST1_M"         , 90 , 800   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
-  draw( tree, "B_s0_DTF_KST2_M"         , 90 , 800   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
+  draw( tree, "B_s0_DTF_KST1_M"         , 90 , 750   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
+  draw( tree, "B_s0_DTF_KST2_M"         , 90 , 750   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
   draw( tree, "B_s0_DTF_B_s0_CosTheta1" , 40 , -1.    , 1.   , "cos(#theta_{1})",             ""     );
   draw( tree, "B_s0_DTF_B_s0_CosTheta2" , 40 , -1.    , 1.   , "cos(#theta_{2})",             ""     );
   draw( tree, "B_s0_DTF_B_s0_Phi1"      , 63 , -3.15 , 3.15 , "#Phi",                        "rad"  );
@@ -272,7 +301,7 @@ void makeSWPlots() {
   draw( tree, "B_s0_TAGOMEGA_OS"        , 50 ,  0    ,  0.5 , "TAG OS OMEGA",                ""     );
   draw( tree, "B_s0_SS_nnetKaon_DEC"    , 3  , -1    ,  2   , "TAG SS Kaon DEC",             ""     );
   draw( tree, "B_s0_SS_nnetKaon_PROB"   , 50 ,  0    ,  0.5 , "TAG SS Kaon PROB",            ""     );
-  draw2D( tree, "B_s0_DTF_KST1_M", "B_s0_DTF_KST2_M", 45, 800, 1600, 45, 800, 1600, "m(K^{-}#pi^{+})", "m(K^{+}#pi^{-})", "MeV", "MeV" );
+  draw2D( tree, "B_s0_DTF_KST1_M", "B_s0_DTF_KST2_M", 45, 750, 1600, 45, 750, 1600, "m(K^{-}#pi^{+})", "m(K^{+}#pi^{-})", "MeV", "MeV" );
 
   tf->Close();
 
@@ -280,7 +309,7 @@ void makeSWPlots() {
 
 int main() {
 
-  //addSWeightToTree();
+  addSWeightToTree();
   makeSWPlots();
 
   return 0;
