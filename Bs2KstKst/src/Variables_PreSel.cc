@@ -3582,13 +3582,13 @@ void Bs2KstKst::Variables_PreSel::setOutputBranches(TTree *tree) {
   tree->Branch("B_s0_DTF_Kst_ETA"                      , &B_s0_DTF_Kst_ETA                        , "B_s0_DTF_Kst_ETA/D"                    );
   tree->Branch("B_s0_DTF_Kstb_ETA"                     , &B_s0_DTF_Kstb_ETA                       , "B_s0_DTF_Kstb_ETA/D"                   );
 
-  tree->Branch("Kplus_ProbNNk_corr"                    , &Kplus_ProbNNk_corr                      , "Kplus_ProbNNk_corr"                    );
-  tree->Branch("Kplus_ProbNNpi_corr"                   , &Kplus_ProbNNpi_corr                     , "Kplus_ProbNNpi_corr"                   );
-  tree->Branch("Kminus_ProbNNk_corr"                   , &Kminus_ProbNNk_corr                     , "Kminus_ProbNNk_corr"                   );
-  tree->Branch("Kminus_ProbNNpi_corr"                  , &Kminus_ProbNNpi_corr                    , "Kminus_ProbNNpi_corr"                  );
-  tree->Branch("Piplus_ProbNNk_corr"                   , &Piplus_ProbNNk_corr                     , "Piplus_ProbNNk_corr"                   );
-  tree->Branch("Piplus_ProbNNpi_corr"                  , &Piplus_ProbNNpi_corr                    , "Piplus_ProbNNpi_corr"                  );
-  tree->Branch("Piminus_ProbNNk_corr"                  , &Piminus_ProbNNk_corr                    , "Piminus_ProbNNk_corr"                  );
-  tree->Branch("Piminus_ProbNNpi_corr"                 , &Piminus_ProbNNpi_corr                   , "Piminus_ProbNNpi_corr"                 );
+  tree->Branch("Kplus_ProbNNk_corr"                    , &Kplus_ProbNNk_corr                      , "Kplus_ProbNNk_corr/D"                  );
+  tree->Branch("Kplus_ProbNNpi_corr"                   , &Kplus_ProbNNpi_corr                     , "Kplus_ProbNNpi_corr/D"                 );
+  tree->Branch("Kminus_ProbNNk_corr"                   , &Kminus_ProbNNk_corr                     , "Kminus_ProbNNk_corr/D"                 );
+  tree->Branch("Kminus_ProbNNpi_corr"                  , &Kminus_ProbNNpi_corr                    , "Kminus_ProbNNpi_corr/D"                );
+  tree->Branch("Piplus_ProbNNk_corr"                   , &Piplus_ProbNNk_corr                     , "Piplus_ProbNNk_corr/D"                 );
+  tree->Branch("Piplus_ProbNNpi_corr"                  , &Piplus_ProbNNpi_corr                    , "Piplus_ProbNNpi_corr/D"                );
+  tree->Branch("Piminus_ProbNNk_corr"                  , &Piminus_ProbNNk_corr                    , "Piminus_ProbNNk_corr/D"                );
+  tree->Branch("Piminus_ProbNNpi_corr"                 , &Piminus_ProbNNpi_corr                   , "Piminus_ProbNNpi_corr/D"               );
 }
 

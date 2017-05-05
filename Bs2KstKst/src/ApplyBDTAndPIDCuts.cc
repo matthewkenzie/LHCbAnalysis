@@ -68,10 +68,10 @@ bool Bs2KstKst::ApplyBDTAndPIDCuts::AnalyseEvent() {
 
   map<TString,double> ProbNNpi;
   if ( v->itype < 0 ) { // MC
-    ProbNNpi["Kplus"]   = v->Kplus_V3ProbNNpi_corr;
-    ProbNNpi["Kminus"]  = v->Kminus_V3ProbNNpi_corr;
-    ProbNNpi["Piplus"]  = v->Piplus_V3ProbNNpi_corr;
-    ProbNNpi["Piminus"] = v->Piminus_V3ProbNNpi_corr;
+    ProbNNpi["Kplus"]   = v->Kplus_ProbNNpi_corr;
+    ProbNNpi["Kminus"]  = v->Kminus_ProbNNpi_corr;
+    ProbNNpi["Piplus"]  = v->Piplus_ProbNNpi_corr;
+    ProbNNpi["Piminus"] = v->Piminus_ProbNNpi_corr;
   }
   else { // Data
     ProbNNpi["Kplus"]   = v->Kplus_ProbNNpi;
