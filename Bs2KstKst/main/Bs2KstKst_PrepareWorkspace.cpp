@@ -64,8 +64,8 @@ void flagMultCands( TString fname, TString tname ) {
   for ( int ev=0; ev<tree->GetEntries(); ev++ ) {
     tree->GetEntry(ev);
     if ( ev%10000==0 ) cout << ev << "/" << tree->GetEntries() << endl;
-    //if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
-    if ( itype>0 && pass_bdt && pass_pid && (!pass_massveto) && totCandidates > 1 ) {
+    if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
+    //if ( itype>0 && pass_bdt && pass_pid && (!pass_massveto) && totCandidates > 1 ) {
       multCandEventNumbers[eventNumber] = totCandidates;
     }
   }
@@ -230,8 +230,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
     }
 
     // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS
-    //if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
-    if ( pass_bdt && pass_pid && pass_multcand && !pass_massveto) {
+    if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
+      //if ( pass_bdt && pass_pid && pass_multcand && !pass_massveto) {
       // Data 2011
       if ( itype == 71 ) {
         w->data("Data")->add( *w->set("observables") );

@@ -8,6 +8,7 @@
 #include "ApplyBDTAndPIDCuts.h"
 #include "AddAngles.h"
 #include "MassVariablesPlotter.h"
+#include "PIDVariablesPlotter.h"
 
 using namespace std;
 using namespace Utils;
@@ -28,6 +29,7 @@ int main(int argc, char **argv) {
   Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid    = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
   Bs2KstKst::AddAngles             *addAng    = new Bs2KstKst::AddAngles             ( "AddAngles"     , v );
   Bs2KstKst::MassVariablesPlotter  *massPlot  = new Bs2KstKst::MassVariablesPlotter  ( "MassVariablesPlotter", v );
+  Bs2KstKst::PIDVariablesPlotter   *pidPlot   = new Bs2KstKst::PIDVariablesPlotter   ( "PIDVariablesPlotter", v );
 
   // pass variables to runner
   runner.setVariables( v );
@@ -39,6 +41,7 @@ int main(int argc, char **argv) {
   runner.addAnalyser( bdtPid    );
   runner.addAnalyser( addAng    );
   runner.addAnalyser( massPlot  );
+  runner.addAnalyser( pidPlot   );
 
   // run
   runner.run();
@@ -51,6 +54,7 @@ int main(int argc, char **argv) {
   delete bdtPid;
   delete addAng;
   delete massPlot;
+  delete pidPlot;
 
   return 0;
 
