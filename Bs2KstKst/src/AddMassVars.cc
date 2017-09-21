@@ -24,6 +24,7 @@ bool Bs2KstKst::AddMassVars::AnalyseEvent() {
 
   Double_t K_mass  = 493.677;
   Double_t Pi_mass = 139.57018;
+  Double_t P_mass  = 938.27203;
 
 	TLorentzVector Kplus_p4;
 	TLorentzVector Kminus_p4;
@@ -67,6 +68,18 @@ bool Bs2KstKst::AddMassVars::AnalyseEvent() {
   TLorentzVector B_s0_KpPimKmKp_p4 = Kminus_p4 + Kplus_p4 + Piminus_p4 + Piplus_p4;
   v->B_s0_M_KpPimKmKp = B_s0_KpPimKmKp_p4.M();
   Piplus_p4.SetVectM( Piplus_p4.Vect(), Pi_mass ); // switch back
+
+  // switch Km for Pb
+  Kminus_p4.SetVectM( Kminus_p4.Vect(), P_mass );
+  TLorentzVector B_s0_KpPimpbPip = Kminus_p4 + Kplus_p4 + Piminus_p4 + Piplus_p4;
+  v->B_s0_M_KpPimpbPip = B_s0_KpPimpbPip.M();
+  Kminus_p4.SetVectM( Kminus_p4.Vect(), K_mass ); // switch back
+
+  // switch Kp for P
+  Kplus_p4.SetVectM( Kplus_p4.Vect(), P_mass );
+  TLorentzVector B_s0_pPimKmPip = Kminus_p4 + Kplus_p4 + Piminus_p4 + Piplus_p4;
+  v->B_s0_M_pPimKmPip = B_s0_pPimKmPip.M();
+  Kplus_p4.SetVectM( Kplus_p4.Vect(), K_mass ); // switch back
 
   passedEvents++;
   return true;

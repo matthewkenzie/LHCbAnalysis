@@ -104,7 +104,8 @@ void Bs2KstKst::AddPIDVarsAndDatasets::Term() {
     w->import( *(ds->second) );
   }
 
-  w->writeToFile("root/MultiDimCutOpt/MultiDimCutDatasets.root");
+  system("mkdir -p root/CutOptimisation");
+  w->writeToFile("root/CutOptimisation/CutOptimisationDatasets.root");
   delete w;
 
 }

@@ -1406,6 +1406,8 @@ namespace Bs2KstKst {
       Double_t             B_s0_M_PipPimKmPip                      ; // switch Kp for Pip
       Double_t             B_s0_M_KpKmKmPip                        ; // switch Pim for Km
       Double_t             B_s0_M_KpPimKmKp                        ; // switch Pip for Kp
+      Double_t             B_s0_M_KpPimpbPip                       ; // switch Km for pbar
+      Double_t             B_s0_M_pPimKmPip                        ; // switch Kp for p
       Double_t             M_KpKmPip                               ;
       Double_t             M_KpKmPim                               ;
       Double_t             M_KpPipPim                              ;
@@ -1425,8 +1427,10 @@ namespace Bs2KstKst {
 
       Bool_t               pass_bdt                                ;
       Bool_t               pass_pid                                ;
+      Bool_t               pass_lambdab                            ;
       Bool_t               pass_rhokst                             ;
       Bool_t               pass_massveto                           ;
+      Bool_t               pass_bdtpidmass                         ;
 
       Double_t             B_s0_DTF_B_s0_CosTheta1                 ;
       Double_t             B_s0_DTF_B_s0_CosTheta2                 ;

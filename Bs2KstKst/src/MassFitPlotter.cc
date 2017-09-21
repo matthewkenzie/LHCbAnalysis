@@ -57,6 +57,19 @@ void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, in
   makePlot( plot, name, 2 );
 }
 
+void Bs2KstKst::MassFitPlotter::makeBkgPlot( TString outfName ) {
+  w->loadSnapshot("part_reco_bkg_self_pdf_fit");
+
+  RooPlot *plot = w->var("B_s0_DTF_B_s0_M_forPartReco")->frame();
+
+  w->data("PartReco")->plotOn(plot);
+  w->pdf("part_reco_bkg_self_pdf")->plotOn(plot, Components("bkg_pr_pdf"), LineColor(kRed), LineStyle(kDashed) );
+  w->pdf("part_reco_bkg_self_pdf")->plotOn(plot, Components("part_reco_self_pdf"), LineColor(kBlue+2), LineStyle(kDashed) );
+  w->pdf("part_reco_bkg_self_pdf")->plotOn(plot);
+
+  makePlot( plot, outfName, 2 );
+}
+
 void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName, TString catName ) {
 
   //w->loadSnapshot("pdf_fit");
@@ -84,14 +97,15 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   // component lists
   TString bkgComps;
   TString precComps;
-  if ( catName != "All" ) {
-    bkgComps = "bkg_pdf_" + catName;
+  //if ( catName != "All" ) {
+    //bkgComps = "bkg_pdf_" + catName;
     //precComps = "part_reco_pdf_" + catName;
-  }
-  else {
-    bkgComps  = "bkg_pdf_HadronTOS2011,bkg_pdf_HadronTOS2012,bkg_pdf_GlobalTIS2011,bkg_pdf_GlobalTIS2012";
+  //}
+  //else {
+    //bkgComps  = "bkg_pdf_HadronTOS2011,bkg_pdf_HadronTOS2012,bkg_pdf_GlobalTIS2011,bkg_pdf_GlobalTIS2012";
     //precComps = "part_reco_pdf_HadronTOS2011,part_reco_pdf_HadronTOS2012,part_reco_pdf_GlobalTIS2011,part_reco_pdf_GlobalTIS2012";
-  }
+  //}
+  bkgComps = "bkg_pdf";
   precComps = "part_reco_pdf";
 
   // data invisible to start things off

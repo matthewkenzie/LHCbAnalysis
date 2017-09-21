@@ -36,7 +36,7 @@ map< ULong64_t, pair<double,double> > getMapFromDataSet( RooDataSet *data ) {
 
     resMap[eventNumber] = make_pair( mass, weight );
 
-    cout << Form("%-20llu  %10.4f  %6.4f",eventNumber,mass,weight) << endl;
+    //cout << Form("%-20llu  %10.4f  %6.4f",eventNumber,mass,weight) << endl;
 
   }
 
@@ -55,7 +55,7 @@ double getSWeight( map< ULong64_t, pair<double,double> > &resMap, ULong64_t even
     return -999.;
   }
   double sweight = resMap[eventNumber].second;
-  cout << "Got sweight " << resMap[eventNumber].second << " for event " << eventNumber << endl;
+  //cout << "Got sweight " << resMap[eventNumber].second << " for event " << eventNumber << endl;
   return sweight;
 
 }
@@ -135,7 +135,7 @@ void addSWeightToTree() {
     pass_all = false;
     category = -1;
 
-    if ( pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600 && B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600 && B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800 ) {
+    if ( pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600 && B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600 && B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600 ) {
       pass_all = true;
     }
 
@@ -195,7 +195,7 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
   TH1F *h = new TH1F( var, var, bins, xmin, xmax );
 
   //tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) )", "goff" );
-  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800) )", "goff" );
+  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -223,8 +223,8 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
 
   TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
 
-  //tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800) )", "goff" );
-  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800) )", "goff" );
+  //tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -288,7 +288,7 @@ void makeSWPlots() {
   TFile *tf = TFile::Open("root/AnalysisOutWSWeights.root");
   TTree *tree = (TTree*)tf->Get("AnalysisTree");
 
-  draw( tree, "B_s0_DTF_B_s0_M"         , 100, 5000  , 5800 , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
+  draw( tree, "B_s0_DTF_B_s0_M"         , 100, 5200  , 5600 , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
   draw( tree, "B_s0_DTF_B_s0_MERR"      , 100, 0     , 100  , "m(K^{+}#pi^{-}K^{-}#pi^{+})", "MeV"  );
   draw( tree, "B_s0_DTF_KST1_M"         , 90 , 750   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );
   draw( tree, "B_s0_DTF_KST2_M"         , 90 , 750   , 1600 , "m(K^{-}#pi^{+})",             "MeV"  );

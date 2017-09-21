@@ -97,7 +97,7 @@ void flagMultCands( TString fname, TString tname ) {
 
 void defineDatasets( RooWorkspace *w ) {
 
-  w->factory( "B_s0_DTF_B_s0_M [5000,5800]" );
+  w->factory( "B_s0_DTF_B_s0_M [5200,5600]" );
   w->factory( "eventNumber [0, 10e10]" );
   w->factory( "DataCat[HadronTOS2011,GlobalTIS2011,HadronTOS2012,GlobalTIS2012]" );
 
@@ -140,6 +140,19 @@ void defineDatasets( RooWorkspace *w ) {
     w->import( *data );
     delete data;
   }
+
+  dsets.push_back( "PartReco" );
+  dsets.push_back( "Combinatorial" );
+
+  w->factory( "B_s0_DTF_B_s0_M_forPartReco [5000,5250]" );
+  RooDataSet *part_reco = new RooDataSet( "PartReco", "PartReco", *w->var("B_s0_DTF_B_s0_M_forPartReco") );
+  w->import( *part_reco );
+  delete part_reco;
+
+  w->factory(" B_s0_DTF_B_s0_M_forCombinatorial [5600,5800]" );
+  RooDataSet *combinatorial = new RooDataSet( "Combinatorial", "Combinatorial", *w->var("B_s0_DTF_B_s0_M_forCombinatorial") );
+  w->import( *combinatorial );
+  delete combinatorial;
 }
 
 void fillDatasets( TString fname, TString tname, TString outfname ) {
@@ -160,6 +173,11 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   bool      B_s0_L0Global_TIS;
   double    B_s0_DTF_KST1_M;
   double    B_s0_DTF_KST2_M;
+  // use these to get the part-reco shape (from vetoed stuff)
+  double    B_s0_M_KpPimpbPip;
+  double    B_s0_M_pPimKmPip;
+  double    B_s0_M_KpKmKmPip;
+  double    B_s0_M_KpPimKmKp;
 
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "year"                        , &year                        );
@@ -174,6 +192,10 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
   tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
   tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
+  tree->SetBranchAddress(  "B_s0_M_KpPimpbPip"           , &B_s0_M_KpPimpbPip           );
+  tree->SetBranchAddress(  "B_s0_M_pPimKmPip"            , &B_s0_M_pPimKmPip            );
+  tree->SetBranchAddress(  "B_s0_M_KpKmKmPip"            , &B_s0_M_KpKmKmPip            );
+  tree->SetBranchAddress(  "B_s0_M_KpPimKmKp"            , &B_s0_M_KpPimKmKp            );
 
   RooWorkspace *w = new RooWorkspace("w","w");
   defineDatasets( w );
@@ -184,10 +206,15 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
 
     if ( ev%10000==0 ) cout << ev << " / " << tree->GetEntries() << endl;
 
-    // cut events outside the mass window
-    if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
-    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
-    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
+    // fill the datasets for the combinatorial and part reco first
+    w->var("B_s0_DTF_B_s0_M_forPartReco")->setVal( B_s0_DTF_B_s0_M );
+    if ( itype>0 && pass_bdt && pass_pid && !pass_rhokst && (B_s0_M_KpKmKmPip<5270 || B_s0_M_KpPimKmKp<5270 || B_s0_M_pPimKmPip<5350 || B_s0_M_KpPimpbPip<5350) ) {
+      w->data("PartReco")->add( *w->var("B_s0_DTF_B_s0_M_forPartReco") );
+    }
+    w->var("B_s0_DTF_B_s0_M_forCombinatorial")->setVal( B_s0_DTF_B_s0_M );
+    if ( itype>0 && pass_bdt && B_s0_DTF_B_s0_M >= 5600 && B_s0_DTF_B_s0_M <= 5800 ) {
+      w->data("Combinatorial")->add( *w->var("B_s0_DTF_B_s0_M_forCombinatorial") );
+    }
 
     // set workspace values
     w->var("B_s0_DTF_B_s0_M")->setVal( B_s0_DTF_B_s0_M );
@@ -203,6 +230,11 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
       else continue;
     }
     else continue;
+
+    // cut events outside the mass window
+    if ( B_s0_DTF_B_s0_M < 5200 || B_s0_DTF_B_s0_M > 5600 ) continue;
+    if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
+    if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
 
     // for the most case we put the bdt and pid requirement in
     // for low stats MC samples we don't use it
@@ -451,7 +483,7 @@ void makeBd2PhiKstPdf( RooWorkspace *w ) {
   w->factory("bd2phikst_l[-5,-20,-1]" );
   w->factory("bd2phikst_zeta[0.]" );
   w->factory("bd2phikst_fb[0.]" );
-  w->factory("bd2phikst_sigma[18,10,25]" );
+  w->factory("bd2phikst_sigma[18,5,25]" );
   w->factory("bd2phikst_mu[5200,5270]" );
   w->factory("bd2phikst_a[2.5,0,10]" );
   w->factory("bd2phikst_n[2.5,0,10]" );
@@ -522,8 +554,8 @@ void makeBd2RhoKstPdf( RooWorkspace *w ) {
 // Lb2pKpipi MC
 void makeLb2pKpipiPdf( RooWorkspace *w ) {
   w->factory("lb2pkpipi_mean[5450,5550]");
-  w->factory("CBShape::lb2pkpipi_mc_cb1( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma1[10,1,40], lb2pkpipi_alpha1[0.04,0.01,5.], lb2pkpipi_n1[0.1,0.01,200.])");
-  w->factory("CBShape::lb2pkpipi_mc_cb2( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma2[10,1,200], lb2pkpipi_alpha2[-0.04,-10.,-0.01], lb2pkpipi_n2[0.1,0.01,100.])");
+  w->factory("CBShape::lb2pkpipi_mc_cb1( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma1[27,1,40], lb2pkpipi_alpha1[0.04,0.01,5.], lb2pkpipi_n1[3.])");
+  w->factory("CBShape::lb2pkpipi_mc_cb2( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma2[117,1,200], lb2pkpipi_alpha2[-0.04,-10.,-0.01], lb2pkpipi_n2[3.])");
   w->factory("SUM::lb2pkpipi_mc_pdf( lb2pkpipi_f1[0.4,0.,1.]*lb2pkpipi_mc_cb1, lb2pkpipi_mc_cb2 )");
   defineParamSet( w, "lb2pkpipi_mc_pdf");
 }
@@ -531,7 +563,7 @@ void makeLb2pKpipiPdf( RooWorkspace *w ) {
 // Lb2ppipipi MC
 void makeLb2ppipipiPdf( RooWorkspace *w ) {
   w->factory("lb2ppipipi_mean[5450,5600]");
-  w->factory("CBShape::lb2ppipipi_mc_pdf( B_s0_DTF_B_s0_M, lb2ppipipi_mean, lb2ppipipi_sigma[10,1,200], lb2ppipipi_alpha[0.04,0.01,10.], lb2ppipipi_n[5.,0.01,20.])");
+  w->factory("CBShape::lb2ppipipi_mc_pdf( B_s0_DTF_B_s0_M, lb2ppipipi_mean, lb2ppipipi_sigma[10,1,200], lb2ppipipi_alpha[0.04,0.01,10.], lb2ppipipi_n[3.])");
   defineParamSet( w, "lb2ppipipi_mc_pdf");
 }
 
@@ -547,17 +579,27 @@ void makePartRecoPdf( RooWorkspace *w ) {
   // same shape for each cat
   w->factory( "ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5226], part_reco_c[-10.0,-50.,-2.], part_reco_p[0.4,0.,1.] )");
   defineParamSet( w, "part_reco_pdf" );
+  // and one to constrain it before hand
+  w->factory( "ArgusBG::part_reco_self_pdf( B_s0_DTF_B_s0_M_forPartReco, part_reco_m0, part_reco_c, part_reco_p )");
 }
 
 // Combinatorial PDFs
 void makeCombinatorialPdf( RooWorkspace *w ) {
   // one in each cat
-  RooCategory *cat = (RooCategory*)w->cat("DataCat");
-  for ( int i=0; i < cat->numTypes(); i++ ) {
-    cat->setIndex(i);
-    w->factory( Form("Exponential::bkg_pdf_%s( B_s0_DTF_B_s0_M, bkg_exp_p1_%s[-0.002,-0.005,0.] )", cat->getLabel(), cat->getLabel() ) );
-    defineParamSet( w, Form("bkg_pdf_%s",cat->getLabel()) );
-  }
+  //RooCategory *cat = (RooCategory*)w->cat("DataCat");
+  //for ( int i=0; i < cat->numTypes(); i++ ) {
+    //cat->setIndex(i);
+    //w->factory( Form("Exponential::bkg_pdf_%s( B_s0_DTF_B_s0_M, bkg_exp_p1_%s[-0.002,-0.005,0.] )", cat->getLabel(), cat->getLabel() ) );
+    //defineParamSet( w, Form("bkg_pdf_%s",cat->getLabel()) );
+  //}
+  // same shape in each cat
+  w->factory( "Exponential::bkg_pdf( B_s0_DTF_B_s0_M, bkg_exp_p1[-0.002,-0.005,0.] )" );
+  defineParamSet( w, "bkg_pdf");
+  // and one to constrain it before hand
+  w->factory( "Exponential::bkg_self_pdf( B_s0_DTF_B_s0_M_forCombinatorial, bkg_exp_p1 )" );
+  // and the shape which is both part-reco and combinatorial together
+  w->factory( "Exponential::bkg_pr_pdf( B_s0_DTF_B_s0_M_forPartReco, bkg_exp_p1 )" );
+  w->factory( "SUM::part_reco_bkg_self_pdf( part_reco_self_frac[0.8,0.,1.]*part_reco_self_pdf, bkg_pr_pdf )" );
 }
 
 // total PDF
@@ -577,19 +619,19 @@ void makeTotalPdf( RooWorkspace *w ) {
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
   for ( int i=0; i < cat->numTypes(); i++ ) {
     cat->setIndex(i);
-    w->factory( Form("bkg_y_%s[200,5000]",       cat->getLabel()));
-    w->factory( Form("part_reco_y_%s[100,2000]", cat->getLabel()));
-    w->factory( Form("bs2kstkst_y_%s[1000,5000]", cat->getLabel()));
-    w->factory( Form("bd2kstkst_y_%s[100,1000]", cat->getLabel()));
-    w->factory( Form("bd2phikst_y_%s[1,1000]", cat->getLabel()));
+    w->factory( Form("bkg_y_%s[50,1000]",       cat->getLabel()));
+    w->factory( Form("part_reco_y_%s[0.1,500]", cat->getLabel()));
+    w->factory( Form("bs2kstkst_y_%s[500,5000]", cat->getLabel()));
+    w->factory( Form("bd2kstkst_y_%s[10,1000]", cat->getLabel()));
+    w->factory( Form("bd2phikst_y_%s[1,200]", cat->getLabel()));
     // add bs2phikst yield as constrained ratio
     w->factory( Form("prod::bs2phikst_y_%s( yield_ratio_bs2phikst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
-    //w->factory( Form("bs2phikst_y_%s[10,5000]", cat->getLabel()));
+    //w->factory( Form("bs2phikst_y_%s[1,500]", cat->getLabel()));
     // add bd2rhokst yield as constrained ratio
     w->factory( Form("prod::bd2rhokst_y_%s( yield_ratio_bd2rhokst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
-    //w->factory( Form("bd2rhokst_y_%s[5,250]", cat->getLabel()));
-    w->factory( Form("lb2pkpipi_y_%s[0,200]", cat->getLabel()));
-    w->factory( Form("lb2ppipipi_y_%s[0,200]", cat->getLabel()));
+    //w->factory( Form("bd2rhokst_y_%s[1,500]", cat->getLabel()));
+    w->factory( Form("lb2pkpipi_y_%s[0,20]", cat->getLabel()));
+    //w->factory( Form("lb2ppipipi_y_%s[0,10]", cat->getLabel()));
   }
 
   // construct the pdf for each category
@@ -610,9 +652,10 @@ void makeTotalPdf( RooWorkspace *w ) {
     //yields->add(*w->var( Form("lb2ppipipi_y_%s", cat->getLabel()) )); // this guy we scrap
 
     RooArgList *pdfs   = new RooArgList();
-    pdfs->add(*w->pdf( Form("bkg_pdf_%s", cat->getLabel()) ));
+    //pdfs->add(*w->pdf( Form("bkg_pdf_%s", cat->getLabel()) ));
+    pdfs->add(*w->pdf("bkg_pdf" ));
     pdfs->add(*w->pdf("part_reco_pdf" ));
-    pdfs->add(*w->pdf("bs2kstkst_mc_pdf"  ));
+    pdfs->add(*w->pdf("bs2kstkst_mc_pdf" ));
     pdfs->add(*w->pdf("bd2kstkst_mc_pdf" ));
     pdfs->add(*w->pdf("bd2phikst_mc_pdf" ));
     pdfs->add(*w->pdf("bs2phikst_mc_pdf" ));

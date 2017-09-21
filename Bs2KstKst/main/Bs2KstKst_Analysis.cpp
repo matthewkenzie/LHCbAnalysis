@@ -5,7 +5,7 @@
 #include "BDTNoPID.h"
 #include "AddMassVars.h"
 #include "AddPIDVarsAndDatasets.h"
-#include "ApplyBDTAndPIDCuts.h"
+#include "ApplyBDTPIDAndMassCuts.h"
 #include "AddAngles.h"
 #include "MassVariablesPlotter.h"
 #include "PIDVariablesPlotter.h"
@@ -22,14 +22,14 @@ int main(int argc, char **argv) {
   Bs2KstKst::Variables_Analysis *v = new Bs2KstKst::Variables_Analysis() ;
 
   // make the analysers
-  Bs2KstKst::BDTNoPID              *bdtRunner = new Bs2KstKst::BDTNoPID     ( "BDTNoPID" , v );
+  Bs2KstKst::BDTNoPID               *bdtRunner = new Bs2KstKst::BDTNoPID              ( "BDTNoPID" , v );
   bdtRunner->setEvalMode();
-  Bs2KstKst::AddMassVars           *addMass   = new Bs2KstKst::AddMassVars           ( "AddMassVars"   , v );
-  Bs2KstKst::AddPIDVarsAndDatasets *addPid    = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"    , v );
-  Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid    = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
-  Bs2KstKst::AddAngles             *addAng    = new Bs2KstKst::AddAngles             ( "AddAngles"     , v );
-  Bs2KstKst::MassVariablesPlotter  *massPlot  = new Bs2KstKst::MassVariablesPlotter  ( "MassVariablesPlotter", v );
-  Bs2KstKst::PIDVariablesPlotter   *pidPlot   = new Bs2KstKst::PIDVariablesPlotter   ( "PIDVariablesPlotter", v );
+  Bs2KstKst::AddMassVars            *addMass   = new Bs2KstKst::AddMassVars           ( "AddMassVars"           , v ); // Adds mass variables (e.g. M_pPimKmPip )
+  Bs2KstKst::AddPIDVarsAndDatasets  *addPid    = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"            , v ); // Adds PID variables  (e.g. Prob_NNpKpi )
+  Bs2KstKst::ApplyBDTPIDAndMassCuts *applyCuts = new Bs2KstKst::ApplyBDTPIDAndMassCuts( "ApplyBDTPIDAndMassCuts", v ); // Applies the cuts by adding pass_ variables
+  Bs2KstKst::AddAngles              *addAng    = new Bs2KstKst::AddAngles             ( "AddAngles"             , v ); // Adds the decay angles
+  Bs2KstKst::MassVariablesPlotter   *massPlot  = new Bs2KstKst::MassVariablesPlotter  ( "MassVariablesPlotter"  , v ); // Makes some mass distribution plots
+  Bs2KstKst::PIDVariablesPlotter    *pidPlot   = new Bs2KstKst::PIDVariablesPlotter   ( "PIDVariablesPlotter"   , v ); // Makes some PID distribution plots
 
   // pass variables to runner
   runner.setVariables( v );
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
   runner.addAnalyser( bdtRunner );
   runner.addAnalyser( addMass   );
   runner.addAnalyser( addPid    );
-  runner.addAnalyser( bdtPid    );
+  runner.addAnalyser( applyCuts );
   runner.addAnalyser( addAng    );
   runner.addAnalyser( massPlot  );
   runner.addAnalyser( pidPlot   );
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   delete bdtRunner;
   delete addMass;
   delete addPid;
-  delete bdtPid;
+  delete applyCuts;
   delete addAng;
   delete massPlot;
   delete pidPlot;

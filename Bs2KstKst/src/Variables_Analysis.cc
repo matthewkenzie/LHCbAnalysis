@@ -2774,6 +2774,8 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("B_s0_M_PipPimKmPip"                    , &B_s0_M_PipPimKmPip                      , "B_s0_M_PipPimKmPip/D"                  );
   tree->Branch("B_s0_M_KpKmKmPip"                      , &B_s0_M_KpKmKmPip                        , "B_s0_M_KpKmKmPip/D"                    );
   tree->Branch("B_s0_M_KpPimKmKp"                      , &B_s0_M_KpPimKmKp                        , "B_s0_M_KpPimKmKp/D"                    );
+  tree->Branch("B_s0_M_KpPimpbPip"                     , &B_s0_M_KpPimpbPip                       , "B_s0_M_KpPimpbPip/D"                   );
+  tree->Branch("B_s0_M_pPimKmPip"                      , &B_s0_M_pPimKmPip                        , "B_s0_M_pPimKmPip/D"                    );
   tree->Branch("M_KpKmPip"                             , &M_KpKmPip                               , "M_KpKmPip/D"                           );
   tree->Branch("M_KpKmPim"                             , &M_KpKmPim                               , "M_KpKmPim/D"                           );
   tree->Branch("M_KpPipPim"                            , &M_KpPipPim                              , "M_KpPipPim/D"                          );
@@ -2793,8 +2795,10 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
 
   tree->Branch("pass_bdt"                              , &pass_bdt                                , "pass_bdt/O"                            );
   tree->Branch("pass_pid"                              , &pass_pid                                , "pass_pid/O"                            );
+  tree->Branch("pass_lambab"                           , &pass_lambab                             , "pass_lambab/O"                         );
   tree->Branch("pass_rhokst"                           , &pass_rhokst                             , "pass_rhokst/O"                         );
   tree->Branch("pass_massveto"                         , &pass_massveto                           , "pass_massveto/O"                       );
+  tree->Branch("pass_bdtpidmass"                       , &pass_bdtpidmass                         , "pass_bdtpidmass/O"                     );
 
   tree->Branch("B_s0_DTF_B_s0_CosTheta1"               , &B_s0_DTF_B_s0_CosTheta1                 , "B_s0_DTF_B_s0_CosTheta1/D"             );
   tree->Branch("B_s0_DTF_B_s0_CosTheta2"               , &B_s0_DTF_B_s0_CosTheta2                 , "B_s0_DTF_B_s0_CosTheta2/D"             );

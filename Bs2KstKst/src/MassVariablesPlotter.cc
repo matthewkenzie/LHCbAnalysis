@@ -46,7 +46,7 @@ void Bs2KstKst::MassVariablesPlotter::defineHistograms(){
 
   // add these histograms
   //
-  addHist("B_s0_DTF_B_s0_M", "m(K^{+}#pi^{-}K^{-}#pi^{+}) (MeV)", 100, 5200,5800, "R");
+  addHist("B_s0_DTF_B_s0_M", "m(K^{+}#pi^{-}K^{-}#pi^{+}) (MeV)", 100, 5000,5800, "R");
   addHist("B_s0_DTF_KST1_M", "m(K^{-}#pi^{+}) (MeV)", 50, 800, 1750, "R");
   addHist("B_s0_DTF_KST2_M", "m(K^{+}#pi^{-}) (MeV)", 50, 800, 1750, "R");
 
@@ -58,8 +58,8 @@ void Bs2KstKst::MassVariablesPlotter::defineHistograms(){
   addHist("M_KpKm"    , "m(K^{+}K^{-}) (MeV)", 100, 800, 5500, "R");
   addHist("M_PipPim"  , "m(#pi^{+}#pi^{-}) (MeV)", 100, 0, 6000, "R");
 
-  addHist("B_s0_M_KpPimPimPip", "m(K^{+}#pi^{-}#pi^{-}#pi^{+})", 100, 5100, 5800, "R" );
-  addHist("B_s0_M_PipPimKmPip", "m(#pi^{+}#pi^{-}K^{-}#pi^{+})", 100, 5100, 5800, "R" );
+  addHist("B_s0_M_KpPimPimPip", "m(K^{+}#pi^{-}#pi^{-}#pi^{+})", 100, 4600, 5600, "R" );
+  addHist("B_s0_M_PipPimKmPip", "m(#pi^{+}#pi^{-}K^{-}#pi^{+})", 100, 4600, 5600, "R" );
   addHist("B_s0_M_KpKmKmPip"  , "m(K^{+}K^{-}K^{-}#pi^{+})"    , 100, 5350, 5800, "R" );
   addHist("B_s0_M_KpPimKmKp"  , "m(K^{+}#pi^{-}K^{-}K^{+})"    , 100, 5350, 5800, "R" );
 

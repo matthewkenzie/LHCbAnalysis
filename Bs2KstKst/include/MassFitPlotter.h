@@ -23,6 +23,7 @@ namespace Bs2KstKst {
 
       void plot( TString var, TString data, TString pdf="", int resid=2 );
       void makeDataPlot( TString outfName, TString dsetName="DataCombined", TString catName="All" );
+      void makeBkgPlot( TString outfName );
 
     private:
 

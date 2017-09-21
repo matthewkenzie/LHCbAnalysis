@@ -29,6 +29,7 @@
 #include "RooAddPdf.h"
 #include "RooCBShape.h"
 #include "RooArgusBG.h"
+#include "RooExponential.h"
 
 #include "RooStats/SPlot.h"
 
@@ -52,6 +53,21 @@ void fit( RooWorkspace *w, TString pdf, TString data ) {
 
 }
 
+void fitToObs( RooWorkspace *w, TString pdf, TString data, TString obs ) {
+
+  assert( w->pdf(pdf) );
+  assert( w->data(data) );
+
+  RooArgSet *obsSet = new RooArgSet( *w->var(obs) );
+  RooFitResult *fr = w->pdf(pdf)->fitTo( *w->data(data), Save() );
+  RooArgSet *parameters = w->pdf(pdf)->getParameters(obsSet);
+  w->saveSnapshot( Form("%s_fit",pdf.Data()),*parameters );
+  fr->SetName( Form("%s_fr",pdf.Data()) );
+  w->import(*fr);
+  delete obsSet;
+
+}
+
 void RunMCFits( RooWorkspace *w ) {
   fit( w, "bs2kstkst_mc_pdf", "Bs2KstKst" );
   fit( w, "bd2kstkst_mc_pdf", "Bd2KstKst" );
@@ -62,6 +78,12 @@ void RunMCFits( RooWorkspace *w ) {
   fit( w, "lb2ppipipi_mc_pdf", "Lb2ppipipi" );
 }
 
+void RunBkgFits( RooWorkspace *w) {
+  fitToObs( w, "bkg_self_pdf"          , "Combinatorial", "B_s0_DTF_B_s0_M_forCombinatorial" );
+  w->var("bkg_exp_p1")->setConstant(true);
+  fitToObs( w, "part_reco_bkg_self_pdf", "PartReco"     , "B_s0_DTF_B_s0_M_forPartReco" );
+}
+
 void PlotMCFitResults( MassFitPlotter *plotter ) {
   plotter->plot( "B_s0_DTF_B_s0_M", "Bs2KstKst", "bs2kstkst_mc_pdf" );
   plotter->plot( "B_s0_DTF_B_s0_M", "Bd2KstKst", "bd2kstkst_mc_pdf" );
@@ -70,7 +92,12 @@ void PlotMCFitResults( MassFitPlotter *plotter ) {
   plotter->plot( "B_s0_DTF_B_s0_M", "Bd2RhoKst", "bd2rhokst_mc_pdf" );
   plotter->plot( "B_s0_DTF_B_s0_M", "Lb2pKpipi", "lb2pkpipi_mc_pdf" );
   plotter->plot( "B_s0_DTF_B_s0_M", "Lb2ppipipi", "lb2ppipipi_mc_pdf" );
+}
 
+void PlotBkgFitResults( MassFitPlotter *plotter ) {
+  plotter->plot( "B_s0_DTF_B_s0_M_forCombinatorial", "Combinatorial", "bkg_self_pdf" );
+  plotter->plot( "B_s0_DTF_B_s0_M_forPartReco"     , "PartReco"     , "part_reco_self_pdf" );
+  plotter->makeBkgPlot( "bkgs_fit" );
 }
 
 void RunDataFit( RooWorkspace *w ) {
@@ -83,6 +110,7 @@ void RunDataFit( RooWorkspace *w ) {
   w->loadSnapshot("bd2rhokst_mc_pdf_fit");
   w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
   w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
+  w->loadSnapshot("part_reco_bkg_self_pdf_fit");
 
   // set relevant parameters constant
   ((RooArgSet*)w->set("bs2kstkst_mc_pdf_params"))->setAttribAll("Constant");
@@ -92,6 +120,8 @@ void RunDataFit( RooWorkspace *w ) {
   ((RooArgSet*)w->set("bd2rhokst_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("lb2pkpipi_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("lb2ppipipi_mc_pdf_params"))->setAttribAll("Constant");
+  ((RooArgSet*)w->set("part_reco_pdf_params"))->setAttribAll("Constant");
+  ((RooArgSet*)w->set("bkg_pdf_params"))->setAttribAll("Constant");
 
   // release other parameters we want to
   w->var("bs2kstkst_mu")->setConstant(false);
@@ -99,7 +129,8 @@ void RunDataFit( RooWorkspace *w ) {
   w->var("bd2kstkst_mu")->setConstant(false);
   w->var("bd2kstkst_sigma")->setConstant(false);
   //w->var("bd2phikst_mu")->setConstant(false);
-  //w->var("bd2phikst_sigma")->setConstant(false);
+  w->var("bd2phikst_sigma")->setConstant(false);
+  w->var("bkg_exp_p1")->setConstant(false);
   //w->var("bs2phikst_mu")->setConstant(false);
   //w->var("bs2phikst_sigma")->setConstant(false);
   //w->var("bd2rhokst_mu")->setConstant(false);
@@ -158,6 +189,7 @@ void CalcSWeights( RooWorkspace *w ) {
   RooAddPdf  *lb2pkpipi_mc_pdf  = new RooAddPdf( "lb2pkpipi_mc_pdf", "lb2pkpipi_mc_pdf", RooArgList( *lb2pkpipi_mc_cb1, *lb2pkpipi_mc_cb2 ), RooArgList( *w->var("lb2pkpipi_f1") ) );
   RooCBShape *lb2ppipipi_mc_pdf = new RooCBShape( "lb2ppipipi_mc_pdf", "lb2ppipipi_mc_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("lb2ppipipi_mean"), *w->var("lb2ppipipi_sigma"), *w->var("lb2ppipipi_alpha"), *w->var("lb2ppipipi_n") );
   RooArgusBG *part_reco_pdf = new RooArgusBG( "part_reco_pdf", "part_reco_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("part_reco_m0"), *w->var("part_reco_c"), *w->var("part_reco_p") );
+  RooExponential *bkg_pdf = new RooExponential( "bkg_pdf", "bkg_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("bkg_exp_p1") );
 
   // load mc fit results
   w->loadSnapshot("bs2kstkst_mc_pdf_fit");
@@ -195,7 +227,8 @@ void CalcSWeights( RooWorkspace *w ) {
     pdfs->add( *lb2pkpipi_mc_pdf );
     //pdfs->add( *lb2ppipipi_mc_pdf );
     pdfs->add( *part_reco_pdf );
-    pdfs->add( *w->pdf(Form("bkg_pdf_%s",cat->getLabel())) );
+    //pdfs->add( *w->pdf(Form("bkg_pdf_%s",cat->getLabel())) );
+    pdfs->add( *bkg_pdf );
 
     RooAddPdf *pdf = new RooAddPdf( "pdf","", *pdfs, *yields );
 
@@ -286,6 +319,7 @@ int main() {
   TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs.root");
   RooWorkspace *w = (RooWorkspace*)inf->Get("w");
   RunMCFits( w );
+  RunBkgFits( w );
   RunDataFit( w );
   w->writeToFile("root/MassFit/MassFitResult.root");
   inf->Close();
@@ -294,6 +328,7 @@ int main() {
   RooWorkspace *ws = (RooWorkspace*)tf->Get("w");
   MassFitPlotter *plotter = new MassFitPlotter( ws, "MassFit" );
   PlotMCFitResults( plotter );
+  PlotBkgFitResults( plotter );
   PlotDataFitResult( ws, plotter );
   CalcSWeights( ws );
   PrintFitResult( ws );
