@@ -1,5 +1,5 @@
-#ifndef Bs2KstKst_ApplyBDTAndPIDCuts_h
-#define Bs2KstKst_ApplyBDTAndPIDCuts_h
+#ifndef Bs2KstKst_ApplyBDTPIDAndMassCuts_h
+#define Bs2KstKst_ApplyBDTPIDAndMassCuts_h
 
 #include <vector>
 #include <map>
@@ -13,12 +13,12 @@
 
 namespace Bs2KstKst {
 
-  class ApplyBDTAndPIDCuts : public Analyser {
+  class ApplyBDTPIDAndMassCuts : public Analyser {
 
     public:
 
-      ApplyBDTAndPIDCuts(TString _name, Variables_Analysis *_v);
-      ~ApplyBDTAndPIDCuts();
+      ApplyBDTPIDAndMassCuts(TString _name, Variables_Analysis *_v);
+      ~ApplyBDTPIDAndMassCuts();
 
       bool AnalyseEvent();
 
