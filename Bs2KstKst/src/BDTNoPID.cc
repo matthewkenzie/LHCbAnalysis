@@ -1,8 +1,10 @@
 #include "BDTNoPID.h"
 #include "TString.h"
+#include "TMath.h"
 
 using namespace std;
 using namespace TMVA;
+using namespace TMath;
 
 Bs2KstKst::BDTNoPID::BDTNoPID(TString _name, Variables_Analysis *_v, TMVAWrapperBase::mode _rMode):
   TMVAWrapperBase(_name, _v, _rMode),
@@ -49,9 +51,12 @@ void Bs2KstKst::BDTNoPID::setTrainingOptions(){
 }
 
 void Bs2KstKst::BDTNoPID::setInputVariables() {
-  addVar("B_s0_DTF_B_s0_PT");
-  addVar("B_s0_DTF_KST1_PT");
-  addVar("B_s0_DTF_KST2_PT");
+  //addVar("B_s0_DTF_B_s0_PT");
+  //addVar("B_s0_DTF_KST1_PT");
+  //addVar("B_s0_DTF_KST2_PT");
+  addVar("B_s0_PT");
+  addVar("Kst_PT");
+  addVar("Kstb_PT");
   addVar("max_track_PT");
   addVar("min_track_PT");
   addVar("B_s0_ETA");
@@ -78,13 +83,17 @@ bool Bs2KstKst::BDTNoPID::setEventValuesAndEvaluate() {
 
   //
   // PT
-  setVal("B_s0_DTF_B_s0_PT",v->B_s0_DTF_B_s0_PT);
-  setVal("B_s0_DTF_KST1_PT",v->B_s0_DTF_KST1_PT);
-  setVal("B_s0_DTF_KST2_PT",v->B_s0_DTF_KST2_PT);
+  //setVal("B_s0_DTF_B_s0_PT",v->B_s0_DTF_B_s0_PT);
+  //setVal("B_s0_DTF_KST1_PT",v->B_s0_DTF_KST1_PT);
+  //setVal("B_s0_DTF_KST2_PT",v->B_s0_DTF_KST2_PT);
+  setVal("B_s0_PT",v->B_s0_PT);
+  setVal("Kst_PT",v->Kst_PT);
+  setVal("Kstb_PT",v->Kstb_PT);
 
   // pt order
-  double pts[4]  = { v->B_s0_DTF_KST1_K_PT , v->B_s0_DTF_KST2_K_PT , v->B_s0_DTF_KST1_PI_PT , v->B_s0_DTF_KST2_PI_PT };
-  double etas[4] = { v->Kplus_ETA , v->Kminus_ETA , v->Piplus_ETA , v->Piminus_ETA };
+  //double pts[4]  = { v->B_s0_DTF_KST1_K_PT , v->B_s0_DTF_KST2_K_PT , v->B_s0_DTF_KST1_PI_PT , v->B_s0_DTF_KST2_PI_PT };
+  double pts[4]  = { v->Kplus_PT , v->Kminus_PT , v->Piplus_PT , v->Piminus_PT };
+  double etas[4] = { Abs(v->Kplus_ETA) , Abs(v->Kminus_ETA) , Abs(v->Piplus_ETA) , Abs(v->Piminus_ETA) };
   int max=-1;
   int min=-1;
   double maxpt=-1.e10;
@@ -103,9 +112,9 @@ bool Bs2KstKst::BDTNoPID::setEventValuesAndEvaluate() {
   setVal("max_track_PT",maxpt);
   setVal("min_track_PT",minpt);
 
-  setVal("B_s0_ETA",v->B_s0_ETA);
-  setVal("Kst_ETA", v->Kst_ETA);
-  setVal("Kstb_ETA",v->Kstb_ETA);
+  setVal("B_s0_ETA",Abs(v->B_s0_ETA));
+  setVal("Kst_ETA", Abs(v->Kst_ETA));
+  setVal("Kstb_ETA",Abs(v->Kstb_ETA));
   setVal("max_track_ETA",etas[max]);
   setVal("min_track_ETA",etas[min]);
 
@@ -121,7 +130,7 @@ bool Bs2KstKst::BDTNoPID::setEventValuesAndEvaluate() {
     }
     // Data only
     if ( v->itype > 0 ) {
-      if ( v->B_s0_MM < 5500 ) return false;
+      if ( v->B_s0_DTF_B_s0_M <= 5600 ) return false;
       addBackgroundEvent(year);
     }
   }
