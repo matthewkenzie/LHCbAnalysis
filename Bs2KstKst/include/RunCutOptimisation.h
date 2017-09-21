@@ -25,12 +25,12 @@ namespace Bs2KstKst {
       inline void setBackgroundSelString( TString cut ) { bkgSel = cut; };
       inline void setMisIDSelString( TString cut ) {misSel = cut; };
 
-      void optimise( TString var, std::vector<int> fomTypes, int nsteps, float min, float max, TString operation=">" );
+      void optimise( TString var, std::vector<int> fomTypes, int nsteps, float min, float max, TString plotext="", TString operation=">" );
 
       TString getFOMName( int type );
       float getFOM( int fomType, float nSig, float nBkg, float nMis );
 
-      void plotOptCurves( std::vector<TGraph*> curves, std::vector<int> fomTypes, TString var, float xmin, float xmax );
+      void plotOptCurves( std::vector<TGraph*> curves, std::vector<int> fomTypes, TString var, float xmin, float xmax, TString plotext="" );
       void printOptResult( std::vector<TGraph*> curves, std::vector<int> fomTypes, TString var );
 
     private:

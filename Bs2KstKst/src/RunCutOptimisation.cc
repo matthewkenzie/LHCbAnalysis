@@ -46,7 +46,7 @@ void Bs2KstKst::RunCutOptimisation::printOptResult( vector<TGraph*> curves, vect
   }
 }
 
-void Bs2KstKst::RunCutOptimisation::plotOptCurves( vector<TGraph*> curves, vector<int> fomTypes, TString var, float xmin, float xmax) {
+void Bs2KstKst::RunCutOptimisation::plotOptCurves( vector<TGraph*> curves, vector<int> fomTypes, TString var, float xmin, float xmax, TString plotext) {
 
   int colors[4] = { kBlack, kBlue, kRed, kGreen+2 };
 
@@ -83,7 +83,7 @@ void Bs2KstKst::RunCutOptimisation::plotOptCurves( vector<TGraph*> curves, vecto
   leg->Draw("same");
   canv->Update();
   canv->Modified();
-  canv->Print(Form("plots/CutOptimisation/pdf/%s.pdf",var.Data()));
+  canv->Print(Form("plots/CutOptimisation/pdf/%s%s.pdf",var.Data(),plotext.Data()));
 
 }
 
@@ -111,7 +111,7 @@ float Bs2KstKst::RunCutOptimisation::getFOM( int fomType, float nSig, float nBkg
 
 }
 
-void Bs2KstKst::RunCutOptimisation::optimise( TString var, vector<int> fomTypes, int nsteps, float min, float max, TString operation)
+void Bs2KstKst::RunCutOptimisation::optimise( TString var, vector<int> fomTypes, int nsteps, float min, float max, TString plotext, TString operation)
 {
   TH1F hdum("hdum","",nsteps,min,max);
 
@@ -152,7 +152,7 @@ void Bs2KstKst::RunCutOptimisation::optimise( TString var, vector<int> fomTypes,
     }
   }
 
-  plotOptCurves( res, fomTypes, var, min, max );
+  plotOptCurves( res, fomTypes, var, min, max, plotext );
   printOptResult( res, fomTypes, var );
 
 }
