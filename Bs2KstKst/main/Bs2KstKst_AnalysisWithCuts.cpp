@@ -4,7 +4,7 @@
 #include "Variables_Analysis.h"
 #include "BDTNoPID.h"
 #include "AddPIDVarsAndDatasets.h"
-#include "ApplyBDTAndPIDCuts.h"
+#include "ApplyBDTPIDAndMassCuts.h"
 #include "CutOnBDT.h"
 #include "CutOnPID.h"
 
@@ -20,12 +20,12 @@ int main(int argc, char **argv) {
   Bs2KstKst::Variables_Analysis *v = new Bs2KstKst::Variables_Analysis() ;
 
   // make the analysers
-  Bs2KstKst::BDTNoPID              *bdtRunner = new Bs2KstKst::BDTNoPID     ( "BDTNoPID" , v );
+  Bs2KstKst::BDTNoPID               *bdtRunner = new Bs2KstKst::BDTNoPID     ( "BDTNoPID" , v );
   bdtRunner->setEvalMode();
-  Bs2KstKst::AddPIDVarsAndDatasets *addVars   = new Bs2KstKst::AddPIDVarsAndDatasets ( "AddPIDVars"    , v );
-  Bs2KstKst::ApplyBDTAndPIDCuts    *bdtPid    = new Bs2KstKst::ApplyBDTAndPIDCuts    ( "ApplyBDTAndPID", v );
-  Bs2KstKst::CutOnBDT              *bdtCut    = new Bs2KstKst::CutOnBDT              ( "BDTCut", v );
-  Bs2KstKst::CutOnPID              *pidCut    = new Bs2KstKst::CutOnPID              ( "PIDCut", v );
+  Bs2KstKst::AddPIDVarsAndDatasets  *addVars   = new Bs2KstKst::AddPIDVarsAndDatasets  ( "AddPIDVars"    , v );
+  Bs2KstKst::ApplyBDTPIDAndMassCuts *bdtPid    = new Bs2KstKst::ApplyBDTPIDAndMassCuts ( "ApplyBDTPIDAndMass", v );
+  Bs2KstKst::CutOnBDT               *bdtCut    = new Bs2KstKst::CutOnBDT               ( "BDTCut", v );
+  Bs2KstKst::CutOnPID               *pidCut    = new Bs2KstKst::CutOnPID               ( "PIDCut", v );
 
   // pass variables to runner
   runner.setVariables( v );
