@@ -12,10 +12,14 @@
 ####################################################################################################
 
 # Bs2Kst0Kst0
-itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magDown_Bs2Kst0Kst0_13104001_Job1558.root     tname=Bs2Kst0Kst0/DecayTree
-itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magUp_Bs2Kst0Kst0_13104001_Job1556.root       tname=Bs2Kst0Kst0/DecayTree
-itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magDown_Bs2Kst0Kst0_13104001_Job1555.root     tname=Bs2Kst0Kst0/DecayTree
-itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magUp_Bs2Kst0Kst0_13104001_Job1553.root       tname=Bs2Kst0Kst0/DecayTree
+#itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magDown_Bs2Kst0Kst0_13104001_Job1558.root     tname=Bs2Kst0Kst0/DecayTree
+#itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magUp_Bs2Kst0Kst0_13104001_Job1556.root       tname=Bs2Kst0Kst0/DecayTree
+#itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magDown_Bs2Kst0Kst0_13104001_Job1555.root     tname=Bs2Kst0Kst0/DecayTree
+#itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magUp_Bs2Kst0Kst0_13104001_Job1553.root       tname=Bs2Kst0Kst0/DecayTree
+itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magDown_Bs2Kst0Kst0_LargeCPV_13104002.root  tname=Bs2Kst0Kst0/DecayTree
+itype=-70  sqrts=7  year=2011  name=Bs2Kst0Kst0_MC2011            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magUp_Bs2Kst0Kst0_LargeCPV_13104002.root    tname=Bs2Kst0Kst0/DecayTree
+itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magDown_Bs2Kst0Kst0_LargeCPV_13104002.root  tname=Bs2Kst0Kst0/DecayTree
+itype=-80  sqrts=8  year=2012  name=Bs2Kst0Kst0_MC2012            fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2012_magUp_Bs2Kst0Kst0_LargeCPV_13104002.root    tname=Bs2Kst0Kst0/DecayTree
 
 # Bs2Kst0Kst01430
 itype=-71  sqrts=7  year=2011  name=Bs2Kst0Kst01430_MC2011        fname=root://eoslhcb.cern.ch//eos/lhcb/user/j/jugarcia/MC_ntuples/Bs2Kst0Kst0_wide/Bs2Kst0Kst0_wide_MC2011_magDown_Bs2Kst0K0st0_13104041_Job1561.root    tname=Bs2Kst0Kst0/DecayTree

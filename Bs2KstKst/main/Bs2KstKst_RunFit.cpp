@@ -312,19 +312,20 @@ void PrintFitResult( RooWorkspace *w ) {
 int main() {
 
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  gROOT->ProcessLine(".x ~/lhcbStyle.C");
   system("mkdir -p plots/MassFit/png");
   system("mkdir -p plots/MassFit/pdf");
   system("mkdir -p plots/MassFit/C");
 
-  TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs.root");
+  TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs_nomassveto.root");
   RooWorkspace *w = (RooWorkspace*)inf->Get("w");
   RunMCFits( w );
   RunBkgFits( w );
   RunDataFit( w );
-  w->writeToFile("root/MassFit/MassFitResult.root");
+  w->writeToFile("root/MassFit/MassFitResult_nomassveto.root");
   inf->Close();
 
-  TFile *tf = TFile::Open("root/MassFit/MassFitResult.root");
+  TFile *tf = TFile::Open("root/MassFit/MassFitResult_nomassveto.root");
   RooWorkspace *ws = (RooWorkspace*)tf->Get("w");
   MassFitPlotter *plotter = new MassFitPlotter( ws, "MassFit" );
   PlotMCFitResults( plotter );

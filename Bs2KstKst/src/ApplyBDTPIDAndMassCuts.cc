@@ -52,20 +52,20 @@ bool Bs2KstKst::ApplyBDTPIDAndMassCuts::AnalyseEvent() {
   // 3.) Apply a cut for Lambdas
   double LambdaB_mass = 5620.2;
   v->pass_lambdab = false;
-  if ( (TMath::Abs( v->B_s0_M_pPimKmPip - LambdaB_mass) <= 30.) && v->Kplus_ProbNNp>0.4 ) { // if Kplus switched with proton and near Lambda_b mass apply tight proton PID
+  if ( (TMath::Abs( v->B_s0_M_pPimKmPip - LambdaB_mass) <= 34.) && v->Kplus_ProbNNp>0.2 ) { // if Kplus switched with proton and near Lambda_b mass apply tight proton PID
     v->pass_lambdab = true;
   }
-  if ( (TMath::Abs( v->B_s0_M_KpPimpbPip - LambdaB_mass) <=30.) && v->Kminus_ProbNNp>0.4 ) { // if Kminus switched with antiproton and near Lambda_b mass apply tight proton PID
+  if ( (TMath::Abs( v->B_s0_M_KpPimpbPip - LambdaB_mass) <=34.) && v->Kminus_ProbNNp>0.2 ) { // if Kminus switched with antiproton and near Lambda_b mass apply tight proton PID
     v->pass_lambdab = true;
   }
 
   // 4.) Apply a cut for Bd(s) -> RhoKst contributions
   double Bd_mass = 5279.53;
   v->pass_rhokst = false;
-  if ( (TMath::Abs( v->B_s0_M_PipPimKmPip - Bd_mass) <= 30.) && ( v->Kplus_ProbNNpi>0.2 || (v->Kplus_ProbNNpi*(1.-v->Kplus_ProbNNk))>0.3 ) ) { // if Kplus switched with pion and near Bd mass apply pion PID cut on kaon
+  if ( (TMath::Abs( v->B_s0_M_PipPimKmPip - Bd_mass) <= 30.) && ( v->Kplus_ProbNNpi>0.2 && (v->Kplus_ProbNNpi*(1.-v->Kplus_ProbNNk))>0.3 ) ) { // if Kplus switched with pion and near Bd mass apply pion PID cut on kaon
     v->pass_rhokst = true;
   }
-  if ( (TMath::Abs( v->B_s0_M_KpPimPimPip - Bd_mass) <= 30.) && ( v->Kminus_ProbNNpi>0.2 || (v->Kminus_ProbNNpi*(1.-v->Kminus_ProbNNk))>0.3 ) ) { // if Kminus switched with pion and near Bd mass apply pion PID cut on kaon
+  if ( (TMath::Abs( v->B_s0_M_KpPimPimPip - Bd_mass) <= 30.) && ( v->Kminus_ProbNNpi>0.2 && (v->Kminus_ProbNNpi*(1.-v->Kminus_ProbNNk))>0.3 ) ) { // if Kminus switched with pion and near Bd mass apply pion PID cut on kaon
     v->pass_rhokst = true;
   }
 

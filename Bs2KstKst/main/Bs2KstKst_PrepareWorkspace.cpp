@@ -42,18 +42,12 @@ void flagMultCands( TString fname, TString tname ) {
 
   ULong64_t  eventNumber;
   int        itype;
-  bool       pass_bdt;
-  bool       pass_pid;
-  bool       pass_rhokst;
-  bool       pass_massveto;
+  bool       pass_bdtpidmass;
   UInt_t     nCandidate;
   ULong64_t  totCandidates;
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "itype"                       , &itype                       );
-  tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
-  tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
-  tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
-  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
+  tree->SetBranchAddress(  "pass_bdtpidmass"             , &pass_bdtpidmass             );
   tree->SetBranchAddress(  "totCandidates"               , &totCandidates               );
   tree->SetBranchAddress(  "nCandidate"                  , &nCandidate                  );
 
@@ -64,8 +58,7 @@ void flagMultCands( TString fname, TString tname ) {
   for ( int ev=0; ev<tree->GetEntries(); ev++ ) {
     tree->GetEntry(ev);
     if ( ev%10000==0 ) cout << ev << "/" << tree->GetEntries() << endl;
-    if ( itype>0 && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && totCandidates > 1 ) {
-    //if ( itype>0 && pass_bdt && pass_pid && (!pass_massveto) && totCandidates > 1 ) {
+    if ( itype>0 && pass_bdtpidmass && totCandidates > 1 ) {
       multCandEventNumbers[eventNumber] = totCandidates;
     }
   }
@@ -95,9 +88,10 @@ void flagMultCands( TString fname, TString tname ) {
   delete inFile;
 }
 
-void defineDatasets( RooWorkspace *w ) {
+void defineDatasets( RooWorkspace *w, bool applyMassVeto ) {
 
-  w->factory( "B_s0_DTF_B_s0_M [5200,5600]" );
+  if ( applyMassVeto ) w->factory( "B_s0_DTF_B_s0_M [5200,5600]" );
+  else w->factory( "B_s0_DTF_B_s0_M [5000,5800]" );
   w->factory( "eventNumber [0, 10e10]" );
   w->factory( "DataCat[HadronTOS2011,GlobalTIS2011,HadronTOS2012,GlobalTIS2012]" );
 
@@ -155,7 +149,7 @@ void defineDatasets( RooWorkspace *w ) {
   delete combinatorial;
 }
 
-void fillDatasets( TString fname, TString tname, TString outfname ) {
+void fillDatasets( TString fname, TString tname, TString outfname, bool applyMassVeto=true ) {
 
   TFile *inFile = TFile::Open( fname );
   TTree *tree = (TTree*)inFile->Get( tname );
@@ -167,8 +161,10 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   bool      pass_bdt;
   bool      pass_pid;
   bool      pass_rhokst;
+  bool      pass_lambdab;
   bool      pass_massveto;
   bool      pass_multcand;
+  bool      pass_bdtpidmass;
   bool      B_s0_L0HadronDecision_TOS;
   bool      B_s0_L0Global_TIS;
   double    B_s0_DTF_KST1_M;
@@ -186,8 +182,10 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
   tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
+  tree->SetBranchAddress(  "pass_lambdab"                , &pass_lambdab                 );
   tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
+  tree->SetBranchAddress(  "pass_bdtpidmass"             , &pass_bdtpidmass             );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
   tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
@@ -198,7 +196,7 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
   tree->SetBranchAddress(  "B_s0_M_KpPimKmKp"            , &B_s0_M_KpPimKmKp            );
 
   RooWorkspace *w = new RooWorkspace("w","w");
-  defineDatasets( w );
+  defineDatasets( w, applyMassVeto );
 
   for (int ev=0; ev<tree->GetEntries(); ev++) {
 
@@ -232,7 +230,8 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
     else continue;
 
     // cut events outside the mass window
-    if ( B_s0_DTF_B_s0_M < 5200 || B_s0_DTF_B_s0_M > 5600 ) continue;
+    if ( B_s0_DTF_B_s0_M < 5000 || B_s0_DTF_B_s0_M > 5800 ) continue;
+    if ( applyMassVeto && (B_s0_DTF_B_s0_M < 5200 || B_s0_DTF_B_s0_M > 5600) ) continue;
     if ( B_s0_DTF_KST1_M < 750  || B_s0_DTF_KST1_M > 1600 ) continue;
     if ( B_s0_DTF_KST2_M < 750  || B_s0_DTF_KST2_M > 1600 ) continue;
 
@@ -261,9 +260,9 @@ void fillDatasets( TString fname, TString tname, TString outfname ) {
       w->data("Bd2RhoKst")->add( *w->set("observables") );
     }
 
-    // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS
-    if ( pass_bdt && pass_pid && pass_multcand && !pass_rhokst && !pass_massveto) {
-      //if ( pass_bdt && pass_pid && pass_multcand && !pass_massveto) {
+    // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS (insert pass_all here?)
+    if ( pass_bdt && pass_pid && !pass_rhokst && !pass_lambdab && pass_multcand ) {
+      if ( applyMassVeto && !pass_massveto ) continue;
       // Data 2011
       if ( itype == 71 ) {
         w->data("Data")->add( *w->set("observables") );
@@ -713,17 +712,29 @@ void constructPdfs( RooWorkspace *w, TString outfname ) {
 
 int main() {
 
+  bool applyMassVeto = false;
+  
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  gROOT->ProcessLine(".x ~/lhcbStyle.C");
   system("mkdir -p root/MassFit");
 
-  flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
-  fillDatasets( "root/AnalysisOut.root", "AnalysisTree", "root/MassFit/MassFitWorkspace.root" );
+  TString wsFileName   = "root/MassFit/MassFitWorkspace";
+  TString pdfsFileName =  wsFileName + "WithPDFs";
+  if ( !applyMassVeto ) {
+    wsFileName   += "_nomassveto";
+    pdfsFileName += "_nomassveto";
+  }
+  wsFileName   += ".root";
+  pdfsFileName += ".root";
 
-  TFile *tf = TFile::Open("root/MassFit/MassFitWorkspace.root");
+  flagMultCands( "root/AnalysisOut.root", "AnalysisTree" );
+  fillDatasets( "root/AnalysisOut.root", "AnalysisTree", wsFileName, applyMassVeto );
+
+  TFile *tf = TFile::Open(wsFileName);
   RooWorkspace *w = (RooWorkspace*)tf->Get("w");
   drawData( w );
 
-  constructPdfs( w, "root/MassFit/MassFitWorkspaceWithPDFs.root" );
+  constructPdfs( w, pdfsFileName );
 
   w->Print("v");
   return 0;
