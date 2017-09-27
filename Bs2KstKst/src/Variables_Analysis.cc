@@ -2797,7 +2797,8 @@ void Bs2KstKst::Variables_Analysis::setOutputBranches(TTree *tree) {
   tree->Branch("pass_pid"                              , &pass_pid                                , "pass_pid/O"                            );
   tree->Branch("pass_lambdab"                          , &pass_lambdab                            , "pass_lambdab/O"                        );
   tree->Branch("pass_rhokst"                           , &pass_rhokst                             , "pass_rhokst/O"                         );
-  tree->Branch("pass_massveto"                         , &pass_massveto                           , "pass_massveto/O"                       );
+  tree->Branch("pass_massveto_2body"                   , &pass_massveto_2body                     , "pass_massveto_2body/O"                 );
+  tree->Branch("pass_massveto_4body"                   , &pass_massveto_4body                     , "pass_massveto_4body/O"                 );
   tree->Branch("pass_bdtpidmass"                       , &pass_bdtpidmass                         , "pass_bdtpidmass/O"                     );
 
   tree->Branch("B_s0_DTF_B_s0_CosTheta1"               , &B_s0_DTF_B_s0_CosTheta1                 , "B_s0_DTF_B_s0_CosTheta1/D"             );

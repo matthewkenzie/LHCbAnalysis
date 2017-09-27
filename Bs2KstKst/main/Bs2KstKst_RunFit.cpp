@@ -82,6 +82,7 @@ void RunBkgFits( RooWorkspace *w) {
   fitToObs( w, "bkg_self_pdf"          , "Combinatorial", "B_s0_DTF_B_s0_M_forCombinatorial" );
   w->var("bkg_exp_p1")->setConstant(true);
   fitToObs( w, "part_reco_bkg_self_pdf", "PartReco"     , "B_s0_DTF_B_s0_M_forPartReco" );
+  w->var("bkg_exp_p1")->setConstant(false);
 }
 
 void PlotMCFitResults( MassFitPlotter *plotter ) {
@@ -110,6 +111,7 @@ void RunDataFit( RooWorkspace *w ) {
   w->loadSnapshot("bd2rhokst_mc_pdf_fit");
   w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
   w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
+  w->loadSnapshot("bkg_self_pdf_fit");
   w->loadSnapshot("part_reco_bkg_self_pdf_fit");
 
   // set relevant parameters constant
@@ -120,15 +122,15 @@ void RunDataFit( RooWorkspace *w ) {
   ((RooArgSet*)w->set("bd2rhokst_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("lb2pkpipi_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("lb2ppipipi_mc_pdf_params"))->setAttribAll("Constant");
-  ((RooArgSet*)w->set("part_reco_pdf_params"))->setAttribAll("Constant");
-  ((RooArgSet*)w->set("bkg_pdf_params"))->setAttribAll("Constant");
+  //((RooArgSet*)w->set("part_reco_pdf_params"))->setAttribAll("Constant");
+  //((RooArgSet*)w->set("bkg_pdf_params"))->setAttribAll("Constant");
 
   // release other parameters we want to
   w->var("bs2kstkst_mu")->setConstant(false);
   w->var("bs2kstkst_sigma")->setConstant(false);
   w->var("bd2kstkst_mu")->setConstant(false);
   w->var("bd2kstkst_sigma")->setConstant(false);
-  //w->var("bd2phikst_mu")->setConstant(false);
+  w->var("bd2phikst_mu")->setConstant(false);
   w->var("bd2phikst_sigma")->setConstant(false);
   w->var("bkg_exp_p1")->setConstant(false);
   //w->var("bs2phikst_mu")->setConstant(false);
@@ -139,8 +141,8 @@ void RunDataFit( RooWorkspace *w ) {
   // now fit and save
 
   // constrained
-  RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst"),*w->var("yield_ratio_bd2rhokst_o_bd2phikst")) ), Extended(), Save() );
-  //RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst")) ), Extended(), Save() );
+  //RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst"),*w->var("yield_ratio_bd2rhokst_o_bd2phikst")) ), Extended(), Save() );
+  RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst")) ), Extended(), Save() );
   RooArgSet *parameters = w->pdf("constrained_pdf")->getParameters(w->set("observables"));
   w->saveSnapshot("constrained_pdf_fit",*parameters);
   fr->SetName("constrained_pdf_fr");
@@ -209,12 +211,9 @@ void CalcSWeights( RooWorkspace *w ) {
     yields->add( *w->var(Form("bs2kstkst_y_%s",cat->getLabel())) );
     yields->add( *w->var(Form("bd2kstkst_y_%s",cat->getLabel())) );
     yields->add( *w->var(Form("bd2phikst_y_%s",cat->getLabel())) ); // constrained
-    //yields->add( *w->var(Form("bd2phikst_y_%s",cat->getLabel())) );
-    //yields->add( *w->var(Form("bd2rhokst_y_%s",cat->getLabel())) );
     yields->add( *w->function(Form("bs2phikst_y_%s",cat->getLabel())) );
     yields->add( *w->function(Form("bd2rhokst_y_%s",cat->getLabel())) );
-    yields->add( *w->var(Form("lb2pkpipi_y_%s",cat->getLabel())) );
-    //yields->add( *w->var(Form("lb2ppipipi_y_%s",cat->getLabel())) );
+    yields->add( *w->function(Form("lb2pkpipi_y_%s",cat->getLabel())) );
     yields->add( *w->var(Form("part_reco_y_%s",cat->getLabel())) );
     yields->add( *w->var(Form("bkg_y_%s",cat->getLabel())) );
 
@@ -225,18 +224,17 @@ void CalcSWeights( RooWorkspace *w ) {
     pdfs->add( *bs2phikst_mc_pdf );
     pdfs->add( *bd2rhokst_mc_pdf );
     pdfs->add( *lb2pkpipi_mc_pdf );
-    //pdfs->add( *lb2ppipipi_mc_pdf );
     pdfs->add( *part_reco_pdf );
-    //pdfs->add( *w->pdf(Form("bkg_pdf_%s",cat->getLabel())) );
     pdfs->add( *bkg_pdf );
 
     RooAddPdf *pdf = new RooAddPdf( "pdf","", *pdfs, *yields );
 
     RooArgSet obsAndCats( *w->set("observables"), *w->set("categories") );
     RooArgSet *nonyields = pdf->getParameters( RooArgSet( *yields, obsAndCats ) );
-    // need to change the actualy floating parameters for the sWeights to get rid of the yield ratios
+    // need to change the actual floating parameters for the sWeights to get rid of the yield ratios
     yields->remove( *w->function(Form("bs2phikst_y_%s",cat->getLabel())) );
     yields->remove( *w->function(Form("bd2rhokst_y_%s",cat->getLabel())) );
+    yields->remove( *w->function(Form("lb2pkpipi_y_%s",cat->getLabel())) );
 
     TString dsetName;
     if ( cat->getLabel() == TString("HadronTOS2011") ) dsetName = "Data2011HadronTOS";
@@ -317,15 +315,15 @@ int main() {
   system("mkdir -p plots/MassFit/pdf");
   system("mkdir -p plots/MassFit/C");
 
-  TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs_nomassveto.root");
+  TFile *inf = TFile::Open("root/MassFit/MassFitWorkspaceWithPDFs.root");
   RooWorkspace *w = (RooWorkspace*)inf->Get("w");
   RunMCFits( w );
   RunBkgFits( w );
   RunDataFit( w );
-  w->writeToFile("root/MassFit/MassFitResult_nomassveto.root");
+  w->writeToFile("root/MassFit/MassFitResult.root");
   inf->Close();
 
-  TFile *tf = TFile::Open("root/MassFit/MassFitResult_nomassveto.root");
+  TFile *tf = TFile::Open("root/MassFit/MassFitResult.root");
   RooWorkspace *ws = (RooWorkspace*)tf->Get("w");
   MassFitPlotter *plotter = new MassFitPlotter( ws, "MassFit" );
   PlotMCFitResults( plotter );

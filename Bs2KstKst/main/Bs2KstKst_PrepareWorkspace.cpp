@@ -162,7 +162,8 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
   bool      pass_pid;
   bool      pass_rhokst;
   bool      pass_lambdab;
-  bool      pass_massveto;
+  bool      pass_massveto_2body;
+  bool      pass_massveto_4body;
   bool      pass_multcand;
   bool      pass_bdtpidmass;
   bool      B_s0_L0HadronDecision_TOS;
@@ -182,18 +183,19 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
   tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
   tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
   tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
-  tree->SetBranchAddress(  "pass_lambdab"                , &pass_lambdab                 );
-  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
+  tree->SetBranchAddress(  "pass_lambdab"                , &pass_lambdab                );
+  tree->SetBranchAddress(  "pass_massveto_2body"         , &pass_massveto_2body         );
+  tree->SetBranchAddress(  "pass_massveto_4body"         , &pass_massveto_4body         );
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "pass_bdtpidmass"             , &pass_bdtpidmass             );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
   tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
   tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
-  tree->SetBranchAddress(  "B_s0_M_KpPimpbPip"           , &B_s0_M_KpPimpbPip           );
-  tree->SetBranchAddress(  "B_s0_M_pPimKmPip"            , &B_s0_M_pPimKmPip            );
-  tree->SetBranchAddress(  "B_s0_M_KpKmKmPip"            , &B_s0_M_KpKmKmPip            );
-  tree->SetBranchAddress(  "B_s0_M_KpPimKmKp"            , &B_s0_M_KpPimKmKp            );
+  //tree->SetBranchAddress(  "B_s0_M_KpPimpbPip"           , &B_s0_M_KpPimpbPip           );
+  //tree->SetBranchAddress(  "B_s0_M_pPimKmPip"            , &B_s0_M_pPimKmPip            );
+  //tree->SetBranchAddress(  "B_s0_M_KpKmKmPip"            , &B_s0_M_KpKmKmPip            );
+  //tree->SetBranchAddress(  "B_s0_M_KpPimKmKp"            , &B_s0_M_KpPimKmKp            );
 
   RooWorkspace *w = new RooWorkspace("w","w");
   defineDatasets( w, applyMassVeto );
@@ -206,11 +208,11 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
 
     // fill the datasets for the combinatorial and part reco first
     w->var("B_s0_DTF_B_s0_M_forPartReco")->setVal( B_s0_DTF_B_s0_M );
-    if ( itype>0 && pass_bdt && pass_pid && !pass_rhokst && (B_s0_M_KpKmKmPip<5270 || B_s0_M_KpPimKmKp<5270 || B_s0_M_pPimKmPip<5350 || B_s0_M_KpPimpbPip<5350) ) {
+    if ( itype>0 && pass_bdtpidmass && pass_massveto_4body ) {
       w->data("PartReco")->add( *w->var("B_s0_DTF_B_s0_M_forPartReco") );
     }
     w->var("B_s0_DTF_B_s0_M_forCombinatorial")->setVal( B_s0_DTF_B_s0_M );
-    if ( itype>0 && pass_bdt && B_s0_DTF_B_s0_M >= 5600 && B_s0_DTF_B_s0_M <= 5800 ) {
+    if ( itype>0 && pass_bdt && !pass_rhokst && !pass_lambdab && !pass_massveto_2body && B_s0_DTF_B_s0_M >= 5600 && B_s0_DTF_B_s0_M <= 5800 ) {
       w->data("Combinatorial")->add( *w->var("B_s0_DTF_B_s0_M_forCombinatorial") );
     }
 
@@ -261,8 +263,8 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
     }
 
     // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS (insert pass_all here?)
-    if ( pass_bdt && pass_pid && !pass_rhokst && !pass_lambdab && pass_multcand ) {
-      if ( applyMassVeto && !pass_massveto ) continue;
+    if ( pass_bdtpidmass && pass_multcand ) {
+      if ( applyMassVeto && !pass_massveto_4body ) continue;
       // Data 2011
       if ( itype == 71 ) {
         w->data("Data")->add( *w->set("observables") );
@@ -603,34 +605,33 @@ void makeCombinatorialPdf( RooWorkspace *w ) {
 
 // total PDF
 void makeTotalPdf( RooWorkspace *w ) {
-
-  // constrain the bs->phikst / bd->phikst ratio
+  
+  // setup some yield ratios (as want these constant across categories)
+  // 1.) constrain the bs->phikst / bd->phikst ratio (this is well known)
   // the BR ratio is (0.113 +/- 0.0287) and also include fs/fd = (0.259 +/- 0.015): TOTAL = (0.029 +/- 0.008)
   w->factory( "yield_ratio_bs2phikst_o_bd2phikst[0.029,0.,0.5]" );
-  //w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.113, 0.0287 )" );
   w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.029, 0.008 )" );
-  // constrain the bd->rhokst / bd->phikst ratio (0.39 +/- 0.13) and also include the relative efficiencies (0.24 +/- 0.02): TOTAL = (0.094,0.032)
-  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.094,0.,1.]" );
+  // 2a.) have a ratio between rhokst and phikst component but no constraint
+  // 2b.) constrain the bd->rhokst / bd->phikst ratio (0.39 +/- 0.13) and also include the relative efficiencies (0.24 +/- 0.02): TOTAL = (0.094,0.032)
+  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.094,0.,0.6]" );
   //w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.39, 0.13 )" );
-  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.094, 0.032 )" );
+  //w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.094, 0.032 )" );
+  // 3.) have a ratio between lambda and phikst component but no constraint
+  w->factory("yield_ratio_lb2pkpipi_o_bd2phikst[0.9,0.,2.]" );
 
   // make a yield for each category
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
   for ( int i=0; i < cat->numTypes(); i++ ) {
     cat->setIndex(i);
-    w->factory( Form("bkg_y_%s[50,1000]",       cat->getLabel()));
-    w->factory( Form("part_reco_y_%s[0.1,500]", cat->getLabel()));
-    w->factory( Form("bs2kstkst_y_%s[500,5000]", cat->getLabel()));
-    w->factory( Form("bd2kstkst_y_%s[10,1000]", cat->getLabel()));
-    w->factory( Form("bd2phikst_y_%s[1,200]", cat->getLabel()));
-    // add bs2phikst yield as constrained ratio
+    w->factory( Form("bkg_y_%s[50,2000]",       cat->getLabel()));  // bkg floats in each category
+    w->factory( Form("part_reco_y_%s[50,1000]", cat->getLabel()));  // part-reco floats in each category
+    w->factory( Form("bs2kstkst_y_%s[500,5000]", cat->getLabel())); // bs floats in each category
+    w->factory( Form("bd2kstkst_y_%s[10,1000]", cat->getLabel()));  // bd floats in each category
+    w->factory( Form("bd2phikst_y_%s[1,400]", cat->getLabel()));    // bd2phi floats in each category
+    // do the rest as ratios
     w->factory( Form("prod::bs2phikst_y_%s( yield_ratio_bs2phikst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
-    //w->factory( Form("bs2phikst_y_%s[1,500]", cat->getLabel()));
-    // add bd2rhokst yield as constrained ratio
     w->factory( Form("prod::bd2rhokst_y_%s( yield_ratio_bd2rhokst_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
-    //w->factory( Form("bd2rhokst_y_%s[1,500]", cat->getLabel()));
-    w->factory( Form("lb2pkpipi_y_%s[0,20]", cat->getLabel()));
-    //w->factory( Form("lb2ppipipi_y_%s[0,10]", cat->getLabel()));
+    w->factory( Form("prod::lb2pkpipi_y_%s( yield_ratio_lb2pkpipi_o_bd2phikst, bd2phikst_y_%s )", cat->getLabel(), cat->getLabel()) );
   }
 
   // construct the pdf for each category
@@ -644,14 +645,10 @@ void makeTotalPdf( RooWorkspace *w ) {
     yields->add(*w->var( Form("bd2kstkst_y_%s", cat->getLabel()) ));
     yields->add(*w->var( Form("bd2phikst_y_%s", cat->getLabel()) ));
     yields->add(*w->function( Form("bs2phikst_y_%s", cat->getLabel()) ));
-    //yields->add(*w->var( Form("bs2phikst_y_%s", cat->getLabel()) ));
     yields->add(*w->function( Form("bd2rhokst_y_%s", cat->getLabel()) ));
-    //yields->add(*w->var( Form("bd2rhokst_y_%s", cat->getLabel()) ));
-    yields->add(*w->var( Form("lb2pkpipi_y_%s", cat->getLabel()) ));
-    //yields->add(*w->var( Form("lb2ppipipi_y_%s", cat->getLabel()) )); // this guy we scrap
+    yields->add(*w->function( Form("lb2pkpipi_y_%s", cat->getLabel()) ));
 
     RooArgList *pdfs   = new RooArgList();
-    //pdfs->add(*w->pdf( Form("bkg_pdf_%s", cat->getLabel()) ));
     pdfs->add(*w->pdf("bkg_pdf" ));
     pdfs->add(*w->pdf("part_reco_pdf" ));
     pdfs->add(*w->pdf("bs2kstkst_mc_pdf" ));
@@ -660,7 +657,6 @@ void makeTotalPdf( RooWorkspace *w ) {
     pdfs->add(*w->pdf("bs2phikst_mc_pdf" ));
     pdfs->add(*w->pdf("bd2rhokst_mc_pdf" ));
     pdfs->add(*w->pdf("lb2pkpipi_mc_pdf" ));
-    //pdfs->add(*w->pdf("lb2ppipipi_mc_pdf")); // this guy we scrap
 
     RooAddPdf *pdf = new RooAddPdf( Form("pdf_%s",cat->getLabel()), "pdf" , *pdfs, *yields);
     w->import(*pdf);
@@ -670,7 +666,7 @@ void makeTotalPdf( RooWorkspace *w ) {
     RooArgSet *prodpdfs = new RooArgSet();
     prodpdfs->add( *w->pdf(Form("pdf_%s",cat->getLabel())) );
     prodpdfs->add( *w->pdf("yield_ratio_bs2phikst_o_bd2phikst_constraint") );
-    prodpdfs->add( *w->pdf("yield_ratio_bd2rhokst_o_bd2phikst_constraint") );
+    //prodpdfs->add( *w->pdf("yield_ratio_bd2rhokst_o_bd2phikst_constraint") );
     RooProdPdf *cpdf = new RooProdPdf( Form("constrained_pdf_%s",cat->getLabel()), "constrained_pdf", *prodpdfs );
     w->import(*cpdf);
     delete cpdf;
@@ -720,9 +716,9 @@ int main() {
 
   TString wsFileName   = "root/MassFit/MassFitWorkspace";
   TString pdfsFileName =  wsFileName + "WithPDFs";
-  if ( !applyMassVeto ) {
-    wsFileName   += "_nomassveto";
-    pdfsFileName += "_nomassveto";
+  if ( applyMassVeto ) {
+    wsFileName   += "_withmassveto";
+    pdfsFileName += "_withmassveto";
   }
   wsFileName   += ".root";
   pdfsFileName += ".root";

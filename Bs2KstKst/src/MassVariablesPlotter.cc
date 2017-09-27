@@ -91,7 +91,7 @@ bool Bs2KstKst::MassVariablesPlotter::fillHistograms(){
   if ( !v->pass_bdt ) return true;
   if ( !v->pass_pid ) return true;
   if ( v->pass_rhokst ) return true;
-  if ( v->pass_massveto ) return true;
+  if ( v->pass_massveto_2body ) return true;
 
   double K_mass  = 493.677;
   double PI_mass = 139.57018;

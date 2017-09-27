@@ -72,7 +72,7 @@ bool Bs2KstKst::ApplyBDTPIDAndMassCuts::AnalyseEvent() {
   // 5.) Apply mass vetoes for part_reco stuff
 
   // 4-body mass vetoes
-  v->pass_massveto = false;
+  v->pass_massveto_4body = false;
   // very-tight vetoes:
   //if ( v->B_s0_M_KpPimPimPip < 5000 || v->B_s0_M_KpPimPimPip > 5400 ) v->pass_massveto = true;
   //if ( v->B_s0_M_PipPimKmPip < 5000 || v->B_s0_M_PipPimKmPip > 5400 ) v->pass_massveto = true;
@@ -81,20 +81,21 @@ bool Bs2KstKst::ApplyBDTPIDAndMassCuts::AnalyseEvent() {
   //if ( v->B_s0_M_KpPimKmKp   < 5350 || v->B_s0_M_KpPimKmKp   > 5800 ) v->pass_massveto = true;
   //if ( v->B_s0_M_KpKmKmPip   < 5350 || v->B_s0_M_KpKmKmPip   > 5800 ) v->pass_massveto = true;
   // looser vetoes (help keep some components for fitting)
-  if ( v->B_s0_M_KpPimpbPip  < 5350 ) v->pass_massveto = true;
-  if ( v->B_s0_M_pPimKmPip   < 5350 ) v->pass_massveto = true;
-  if ( v->B_s0_M_KpPimKmKp   < 5270 ) v->pass_massveto = true;
-  if ( v->B_s0_M_KpKmKmPip   < 5270 ) v->pass_massveto = true;
+  if ( v->B_s0_M_KpPimpbPip  < 5350 ) v->pass_massveto_4body = true;
+  if ( v->B_s0_M_pPimKmPip   < 5350 ) v->pass_massveto_4body = true;
+  if ( v->B_s0_M_KpPimKmKp   < 5270 ) v->pass_massveto_4body = true;
+  if ( v->B_s0_M_KpKmKmPip   < 5270 ) v->pass_massveto_4body = true;
 
   // 2-body mass vetoes
+  v->pass_massveto_2body = false;
   if ( TMath::Abs( v->M_KpKm - 1850 )<30. || TMath::Abs( v->M_PipPim - 782)<30. ) {
-    v->pass_massveto = true;
+    v->pass_massveto_2body = true;
   }
 
-  // 6.) Finally put everything together into a single veto variable
+  // 6.) Finally put everything together into a single veto variable (note not using _4body mass veto)
   v->pass_bdtpidmass = false;
 
-  if ( v->pass_bdt && v->pass_pid && !v->pass_lambdab && !v->pass_rhokst && !v->pass_massveto ) v->pass_bdtpidmass = true;
+  if ( v->pass_bdt && v->pass_pid && !v->pass_lambdab && !v->pass_rhokst && !v->pass_massveto_2body ) v->pass_bdtpidmass = true;
 
   passedEvents++;
   return true;

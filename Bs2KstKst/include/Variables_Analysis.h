@@ -1429,7 +1429,8 @@ namespace Bs2KstKst {
       Bool_t               pass_pid                                ;
       Bool_t               pass_lambdab                            ;
       Bool_t               pass_rhokst                             ;
-      Bool_t               pass_massveto                           ;
+      Bool_t               pass_massveto_2body                     ;
+      Bool_t               pass_massveto_4body                     ;
       Bool_t               pass_bdtpidmass                         ;
 
       Double_t             B_s0_DTF_B_s0_CosTheta1                 ;

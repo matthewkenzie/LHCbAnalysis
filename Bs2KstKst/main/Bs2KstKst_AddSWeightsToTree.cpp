@@ -89,10 +89,7 @@ void addSWeightToTree() {
   double     B_s0_DTF_B_s0_M;
   int        itype;
   TString    *year;
-  bool       pass_bdt;
-  bool       pass_pid;
-  bool       pass_rhokst;
-  bool       pass_massveto;
+  bool       pass_bdtpidmass;
   bool       pass_multcand;
   bool       B_s0_L0HadronDecision_TOS;
   bool       B_s0_L0Global_TIS;
@@ -114,10 +111,7 @@ void addSWeightToTree() {
   tree->SetBranchAddress(  "B_s0_DTF_B_s0_M"             , &B_s0_DTF_B_s0_M             );
   tree->SetBranchAddress(  "itype"                       , &itype                       );
   tree->SetBranchAddress(  "year"                        , &year                        );
-  tree->SetBranchAddress(  "pass_bdt"                    , &pass_bdt                    );
-  tree->SetBranchAddress(  "pass_pid"                    , &pass_pid                    );
-  tree->SetBranchAddress(  "pass_rhokst"                 , &pass_rhokst                 );
-  tree->SetBranchAddress(  "pass_massveto"               , &pass_massveto               );
+  tree->SetBranchAddress(  "pass_bdtpidmass"             , &pass_bdtpidmass             );
   tree->SetBranchAddress(  "pass_multcand"               , &pass_multcand               );
   tree->SetBranchAddress(  "B_s0_L0HadronDecision_TOS"   , &B_s0_L0HadronDecision_TOS   );
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
@@ -135,7 +129,7 @@ void addSWeightToTree() {
     pass_all = false;
     category = -1;
 
-    if ( pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600 && B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600 && B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600 ) {
+    if ( pass_bdtpidmass && pass_multcand && B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600 && B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600 && B_s0_DTF_B_s0_M>=5000 && B_s0_DTF_B_s0_M<=5800 ) {
       pass_all = true;
     }
 
@@ -194,8 +188,7 @@ void draw( TTree *tree, TString var, int bins, double xmin, double xmax, TString
 
   TH1F *h = new TH1F( var, var, bins, xmin, xmax );
 
-  //tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) )", "goff" );
-  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
+  tree->Draw( var+">>"+var, "sweight*( (itype==71 || itype==81) && pass_all )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -223,8 +216,7 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
 
   TH2F *h = new TH2F( var1+"_"+var2, "", xbins, xmin, xmax, ybins, ymin, ymax );
 
-  //tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
-  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_bdt && pass_pid && (!pass_rhokst) && (!pass_massveto) && pass_multcand && (B_s0_DTF_KST1_M>=750 && B_s0_DTF_KST1_M<=1600) && (B_s0_DTF_KST2_M>=750 && B_s0_DTF_KST2_M<=1600) && (B_s0_DTF_B_s0_M>=5200 && B_s0_DTF_B_s0_M<=5600) )", "goff" );
+  tree->Draw( var2+":"+var1+">>"+var1+"_"+var2, "sweight*( (itype==71 || itype==81) && pass_all )", "goff" );
 
   TString title = h->GetTitle();
   if ( xtitle!="" ) title = xtitle;
@@ -284,6 +276,7 @@ void draw2D( TTree *tree, TString var1, TString var2, int xbins, double xmin, do
 void makeSWPlots() {
 
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
+  gROOT->ProcessLine(".x ~/lhcbStyle.C");
   gStyle->SetPalette(1);
   TFile *tf = TFile::Open("root/AnalysisOutWSWeights.root");
   TTree *tree = (TTree*)tf->Get("AnalysisTree");
