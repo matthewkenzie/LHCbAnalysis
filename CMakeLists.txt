@@ -109,8 +109,8 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -O3 -g3")
 #endif()
 
 # set additional compiler flags
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-extensions"   )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-extensions -std=c++0x "   )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3")
 
 ######################################
 #

@@ -47,14 +47,18 @@ Bs2KstKst::MassFitPlotter::~MassFitPlotter(){}
 
 void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, int resid ) {
 
-  w->loadSnapshot(Form("%s_fit",pdf.Data()));
+  if ( pdf!="" ) w->loadSnapshot(Form("%s_fit",pdf.Data()));
 
   RooPlot *plot = w->var(var)->frame();
   w->data(data)->plotOn(plot);
   if ( pdf!="" ) w->pdf(pdf)->plotOn(plot);
 
-  TString name = "v" + var + "_d" + data + "_p" + pdf;
-  makePlot( plot, name, 2 );
+  TString name = "v" + var + "_d" + data;
+  if ( pdf!="" ) name += "_p" + pdf;
+  
+  if ( pdf=="" ) resid = 0;
+
+  makePlot( plot, name, resid );
 }
 
 void Bs2KstKst::MassFitPlotter::makeBkgPlot( TString outfName ) {

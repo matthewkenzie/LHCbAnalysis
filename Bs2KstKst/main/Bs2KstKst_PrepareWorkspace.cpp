@@ -243,7 +243,7 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
     // NO REQUIREMENT:
     // Lb2pKpipi MC
     if ( itype == -78 || itype == -88 ) {
-      w->data("Lb2pKpipi")->add( *w->set("observables") );
+      if (pass_lambdab) w->data("Lb2pKpipi")->add( *w->set("observables") );
     }
     // Lb2ppipipi MC
     else if ( itype == -79 || itype == -89 ) {
@@ -554,10 +554,24 @@ void makeBd2RhoKstPdf( RooWorkspace *w ) {
 
 // Lb2pKpipi MC
 void makeLb2pKpipiPdf( RooWorkspace *w ) {
-  w->factory("lb2pkpipi_mean[5450,5550]");
-  w->factory("CBShape::lb2pkpipi_mc_cb1( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma1[27,1,40], lb2pkpipi_alpha1[0.04,0.01,5.], lb2pkpipi_n1[3.])");
-  w->factory("CBShape::lb2pkpipi_mc_cb2( B_s0_DTF_B_s0_M, lb2pkpipi_mean, lb2pkpipi_sigma2[117,1,200], lb2pkpipi_alpha2[-0.04,-10.,-0.01], lb2pkpipi_n2[3.])");
-  w->factory("SUM::lb2pkpipi_mc_pdf( lb2pkpipi_f1[0.4,0.,1.]*lb2pkpipi_mc_cb1, lb2pkpipi_mc_cb2 )");
+  w->factory("lb2pkpipi_l[-5,-200,-1]" );
+  w->factory("lb2pkpipi_zeta[0.]" );
+  w->factory("lb2pkpipi_fb[0.]" );
+  w->factory("lb2pkpipi_sigma[15,10,100]" );
+  w->factory("lb2pkpipi_mu[5450,5550]" );
+  w->factory("lb2pkpipi_a[2.5,0,10]" );
+  w->factory("lb2pkpipi_n[2.5,0,200]" );
+  w->factory("lb2pkpipi_a2[2.5,0,10]" );
+  w->factory("lb2pkpipi_n2[2.5,0,10]" );
+
+  w->var("lb2pkpipi_zeta")->setConstant(true);
+  w->var("lb2pkpipi_fb")->setConstant(true);
+
+  RooIpatia2 *pdf = new RooIpatia2("lb2pkpipi_mc_pdf","lb2pkpipi_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("lb2pkpipi_l"),*w->var("lb2pkpipi_zeta"),*w->var("lb2pkpipi_fb"),*w->var("lb2pkpipi_sigma"),*w->var("lb2pkpipi_mu"),*w->var("lb2pkpipi_a"),*w->var("lb2pkpipi_n"),*w->var("lb2pkpipi_a2"),*w->var("lb2pkpipi_n2"));
+
+  w->import(*pdf);
+  delete pdf;
+
   defineParamSet( w, "lb2pkpipi_mc_pdf");
 }
 
@@ -578,7 +592,8 @@ void makePartRecoPdf( RooWorkspace *w ) {
     //defineParamSet( w, Form("part_reco_pdf_%s",cat->getLabel()) );
   //}
   // same shape for each cat
-  w->factory( "ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0[5226], part_reco_c[-10.0,-50.,-2.], part_reco_p[0.4,0.,1.] )");
+  w->factory( "sum::part_reco_m0( bs2kstkst_mu, -139.57018 )" );
+  w->factory( "ArgusBG::part_reco_pdf( B_s0_DTF_B_s0_M, part_reco_m0, part_reco_c[-10.0,-50.,-0.05], part_reco_p[0.4,0.,1.] )");
   defineParamSet( w, "part_reco_pdf" );
   // and one to constrain it before hand
   w->factory( "ArgusBG::part_reco_self_pdf( B_s0_DTF_B_s0_M_forPartReco, part_reco_m0, part_reco_c, part_reco_p )");
@@ -610,21 +625,32 @@ void makeTotalPdf( RooWorkspace *w ) {
   // 1.) constrain the bs->phikst / bd->phikst ratio (this is well known)
   // the BR ratio is (0.113 +/- 0.0287) and also include fs/fd = (0.259 +/- 0.015): TOTAL = (0.029 +/- 0.008)
   w->factory( "yield_ratio_bs2phikst_o_bd2phikst[0.029,0.,0.5]" );
-  w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, 0.029, 0.008 )" );
-  // 2a.) have a ratio between rhokst and phikst component but no constraint
-  // 2b.) constrain the bd->rhokst / bd->phikst ratio (0.39 +/- 0.13) and also include the relative efficiencies (0.24 +/- 0.02): TOTAL = (0.094,0.032)
-  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.094,0.,0.6]" );
-  //w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.39, 0.13 )" );
-  //w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, 0.094, 0.032 )" );
+  w->factory( "Gaussian::yield_ratio_bs2phikst_o_bd2phikst_constraint( yield_ratio_bs2phikst_o_bd2phikst, yield_ratio_bs2phikst_o_bd2phikst_constraint_mu[0.029], yield_ratio_bs2phikst_o_bd2phikst_constraint_sigma[0.008] )");
+  // 2.) constrain the bd->rhokst / bd->phikst ratio (0.39 +/- 0.13) and also include the relative efficiencies (0.24 +/- 0.02): TOTAL = (0.094,0.032)
+  //      this is done with the following information:
+  //         - PhiKst MC (PIDCalib) efficiency is 424 / 3760  = 0.113 +/- 0.005
+  //         - RhoKst MC (PIDCalib) efficiency is 167 / 15153 = 0.0110 +/- 0.0008
+  //         - BR (PDG) B0 -> K*(892) KK   = (2.75 +/- 0.26)x10^-5
+  //         - BR (PDG) B0 -> K*(892) pipi = (5.5  +/- 0.5 )x10^-5
+  //         - PhiKst eff*BR = (0.31  +/- 0.03)x10^-5
+  //         - RhoKst eff*BR = (0.061 +/- 0.007)x10^-5
+  //         - Ratio of yields = (0.20 +/- 0.03)
+  w->factory("yield_ratio_bd2rhokst_o_bd2phikst[0.094,0.01,2.]" );
+  w->factory( "Gaussian::yield_ratio_bd2rhokst_o_bd2phikst_constraint( yield_ratio_bd2rhokst_o_bd2phikst, yield_ratio_bd2rhokst_o_bd2phikst_constraint_mu[0.20], yield_ratio_bd2rhokst_o_bd2phikst_constraint_sigma[0.03] )" );
   // 3.) have a ratio between lambda and phikst component but no constraint
-  w->factory("yield_ratio_lb2pkpipi_o_bd2phikst[0.9,0.,2.]" );
+  w->factory("yield_ratio_lb2pkpipi_o_bd2phikst[0.9,0.001,2.]" );
+
+  // Add other constraints
+  w->factory( "Gaussian::bkg_exp_p1_constraint( bkg_exp_p1, bkg_exp_p1_constraint_mu[-3.e-3], bkg_exp_p1_constraint_sigma[3.5e-4] )" ); // this gets updated later
+  w->factory( "Gaussian::part_reco_c_constraint( part_reco_c, part_reco_c_constraint_mu[-4.1], part_reco_c_constraint_sigma[1.7]  )" ); // this gets updated later
+  w->factory( "Gaussian::part_reco_p_constraint( part_reco_p, part_reco_p_constraint_mu[5.70], part_reco_p_constraint_sigma[0.06] )" ); // this gets updated later
 
   // make a yield for each category
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
   for ( int i=0; i < cat->numTypes(); i++ ) {
     cat->setIndex(i);
     w->factory( Form("bkg_y_%s[50,2000]",       cat->getLabel()));  // bkg floats in each category
-    w->factory( Form("part_reco_y_%s[50,1000]", cat->getLabel()));  // part-reco floats in each category
+    w->factory( Form("part_reco_y_%s[50,2000]", cat->getLabel()));  // part-reco floats in each category
     w->factory( Form("bs2kstkst_y_%s[500,5000]", cat->getLabel())); // bs floats in each category
     w->factory( Form("bd2kstkst_y_%s[10,1000]", cat->getLabel()));  // bd floats in each category
     w->factory( Form("bd2phikst_y_%s[1,400]", cat->getLabel()));    // bd2phi floats in each category
@@ -666,7 +692,10 @@ void makeTotalPdf( RooWorkspace *w ) {
     RooArgSet *prodpdfs = new RooArgSet();
     prodpdfs->add( *w->pdf(Form("pdf_%s",cat->getLabel())) );
     prodpdfs->add( *w->pdf("yield_ratio_bs2phikst_o_bd2phikst_constraint") );
-    //prodpdfs->add( *w->pdf("yield_ratio_bd2rhokst_o_bd2phikst_constraint") );
+    prodpdfs->add( *w->pdf("yield_ratio_bd2rhokst_o_bd2phikst_constraint") );
+    prodpdfs->add( *w->pdf("bkg_exp_p1_constraint") );
+    prodpdfs->add( *w->pdf("part_reco_c_constraint") );
+    prodpdfs->add( *w->pdf("part_reco_p_constraint") );
     RooProdPdf *cpdf = new RooProdPdf( Form("constrained_pdf_%s",cat->getLabel()), "constrained_pdf", *prodpdfs );
     w->import(*cpdf);
     delete cpdf;

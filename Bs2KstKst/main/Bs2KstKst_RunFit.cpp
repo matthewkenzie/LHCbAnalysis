@@ -75,14 +75,23 @@ void RunMCFits( RooWorkspace *w ) {
   fit( w, "bs2phikst_mc_pdf", "Bs2PhiKst" );
   fit( w, "bd2rhokst_mc_pdf", "Bd2RhoKst" );
   fit( w, "lb2pkpipi_mc_pdf", "Lb2pKpipi" );
-  fit( w, "lb2ppipipi_mc_pdf", "Lb2ppipipi" );
+  //fit( w, "lb2ppipipi_mc_pdf", "Lb2ppipipi" );
 }
 
 void RunBkgFits( RooWorkspace *w) {
   fitToObs( w, "bkg_self_pdf"          , "Combinatorial", "B_s0_DTF_B_s0_M_forCombinatorial" );
+  w->var("bkg_exp_p1_constraint_mu")->setVal( w->var("bkg_exp_p1")->getVal() );
+  w->var("bkg_exp_p1_constraint_sigma")->setVal( w->var("bkg_exp_p1")->getError() );
   w->var("bkg_exp_p1")->setConstant(true);
+  w->var("bs2kstkst_mu")->setVal(5371.7109); // where we eventually fit to
+  w->var("bs2kstkst_mu")->setConstant(true);
   fitToObs( w, "part_reco_bkg_self_pdf", "PartReco"     , "B_s0_DTF_B_s0_M_forPartReco" );
+  w->var("part_reco_c_constraint_mu")->setVal( w->var("part_reco_c")->getVal() );
+  w->var("part_reco_c_constraint_sigma")->setVal( w->var("part_reco_c")->getError() );
+  w->var("part_reco_p_constraint_mu")->setVal( w->var("part_reco_p")->getVal() );
+  w->var("part_reco_p_constraint_sigma")->setVal( w->var("part_reco_p")->getError() );
   w->var("bkg_exp_p1")->setConstant(false);
+  w->var("bs2kstkst_mu")->setConstant(false);
 }
 
 void PlotMCFitResults( MassFitPlotter *plotter ) {
@@ -92,12 +101,12 @@ void PlotMCFitResults( MassFitPlotter *plotter ) {
   plotter->plot( "B_s0_DTF_B_s0_M", "Bs2PhiKst", "bs2phikst_mc_pdf" );
   plotter->plot( "B_s0_DTF_B_s0_M", "Bd2RhoKst", "bd2rhokst_mc_pdf" );
   plotter->plot( "B_s0_DTF_B_s0_M", "Lb2pKpipi", "lb2pkpipi_mc_pdf" );
-  plotter->plot( "B_s0_DTF_B_s0_M", "Lb2ppipipi", "lb2ppipipi_mc_pdf" );
+  //plotter->plot( "B_s0_DTF_B_s0_M", "Lb2ppipipi", "lb2ppipipi_mc_pdf" );
 }
 
 void PlotBkgFitResults( MassFitPlotter *plotter ) {
   plotter->plot( "B_s0_DTF_B_s0_M_forCombinatorial", "Combinatorial", "bkg_self_pdf" );
-  plotter->plot( "B_s0_DTF_B_s0_M_forPartReco"     , "PartReco"     , "part_reco_self_pdf" );
+  plotter->plot( "B_s0_DTF_B_s0_M_forPartReco"     , "PartReco"     , "part_reco_bkg_self_pdf" );
   plotter->makeBkgPlot( "bkgs_fit" );
 }
 
@@ -110,7 +119,7 @@ void RunDataFit( RooWorkspace *w ) {
   w->loadSnapshot("bs2phikst_mc_pdf_fit");
   w->loadSnapshot("bd2rhokst_mc_pdf_fit");
   w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
-  w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
+  //w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
   w->loadSnapshot("bkg_self_pdf_fit");
   w->loadSnapshot("part_reco_bkg_self_pdf_fit");
 
@@ -121,7 +130,7 @@ void RunDataFit( RooWorkspace *w ) {
   ((RooArgSet*)w->set("bs2phikst_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("bd2rhokst_mc_pdf_params"))->setAttribAll("Constant");
   ((RooArgSet*)w->set("lb2pkpipi_mc_pdf_params"))->setAttribAll("Constant");
-  ((RooArgSet*)w->set("lb2ppipipi_mc_pdf_params"))->setAttribAll("Constant");
+  //((RooArgSet*)w->set("lb2ppipipi_mc_pdf_params"))->setAttribAll("Constant");
   //((RooArgSet*)w->set("part_reco_pdf_params"))->setAttribAll("Constant");
   //((RooArgSet*)w->set("bkg_pdf_params"))->setAttribAll("Constant");
 
@@ -141,8 +150,15 @@ void RunDataFit( RooWorkspace *w ) {
   // now fit and save
 
   // constrained
-  //RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst"),*w->var("yield_ratio_bd2rhokst_o_bd2phikst")) ), Extended(), Save() );
-  RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( RooArgSet(*w->var("yield_ratio_bs2phikst_o_bd2phikst")) ), Extended(), Save() );
+  RooArgSet *constraints = new RooArgSet();
+  constraints->add( *w->var("yield_ratio_bs2phikst_o_bd2phikst") );
+  constraints->add( *w->var("yield_ratio_bd2rhokst_o_bd2phikst") );
+  constraints->add( *w->var("bkg_exp_p1") );
+  constraints->add( *w->var("part_reco_c") );
+  constraints->add( *w->var("part_reco_p") );
+  w->defineSet( "constrained_vars", *constraints);
+  delete constraints;
+  RooFitResult *fr = w->pdf("constrained_pdf")->fitTo( *w->data("DataCombined"), Constrain( *w->set("constrainted_vars") ), Extended(), Save() );
   RooArgSet *parameters = w->pdf("constrained_pdf")->getParameters(w->set("observables"));
   w->saveSnapshot("constrained_pdf_fit",*parameters);
   fr->SetName("constrained_pdf_fr");
@@ -186,11 +202,9 @@ void CalcSWeights( RooWorkspace *w ) {
   RooIpatia2 *bd2rhokst_mc_pdf = new RooIpatia2("bd2rhokst_mc_pdf","bd2rhokst_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("bd2rhokst_l"),*w->var("bd2rhokst_zeta"),*w->var("bd2rhokst_fb"),*w->var("bd2rhokst_sigma"),*w->var("bd2rhokst_mu"),*w->var("bd2rhokst_a"),*w->var("bd2rhokst_n"),*w->var("bd2rhokst_a2"),*w->var("bd2rhokst_n2"));
   RooIpatia2 *bd2phikst_mc_pdf = new RooIpatia2("bd2phikst_mc_pdf","bd2phikst_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("bd2phikst_l"),*w->var("bd2phikst_zeta"),*w->var("bd2phikst_fb"),*w->var("bd2phikst_sigma"),*w->var("bd2phikst_mu"),*w->var("bd2phikst_a"),*w->var("bd2phikst_n"),*w->var("bd2phikst_a2"),*w->var("bd2phikst_n2"));
   RooIpatia2 *bs2phikst_mc_pdf = new RooIpatia2("bs2phikst_mc_pdf","bs2phikst_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("bs2phikst_l"),*w->var("bs2phikst_zeta"),*w->var("bs2phikst_fb"),*w->var("bs2phikst_sigma"),*w->var("bs2phikst_mu"),*w->var("bs2phikst_a"),*w->var("bs2phikst_n"),*w->var("bs2phikst_a2"),*w->var("bs2phikst_n2"));
-  RooCBShape *lb2pkpipi_mc_cb1  = new RooCBShape( "lb2pkpipi_mc_cb1", "lb2pkpipi_mc_cb1", *w->var("B_s0_DTF_B_s0_M"), *w->var("lb2pkpipi_mean"), *w->var("lb2pkpipi_sigma1"), *w->var("lb2pkpipi_alpha1"), *w->var("lb2pkpipi_n1") );
-  RooCBShape *lb2pkpipi_mc_cb2  = new RooCBShape( "lb2pkpipi_mc_cb2", "lb2pkpipi_mc_cb2", *w->var("B_s0_DTF_B_s0_M"), *w->var("lb2pkpipi_mean"), *w->var("lb2pkpipi_sigma2"), *w->var("lb2pkpipi_alpha2"), *w->var("lb2pkpipi_n2") );
-  RooAddPdf  *lb2pkpipi_mc_pdf  = new RooAddPdf( "lb2pkpipi_mc_pdf", "lb2pkpipi_mc_pdf", RooArgList( *lb2pkpipi_mc_cb1, *lb2pkpipi_mc_cb2 ), RooArgList( *w->var("lb2pkpipi_f1") ) );
-  RooCBShape *lb2ppipipi_mc_pdf = new RooCBShape( "lb2ppipipi_mc_pdf", "lb2ppipipi_mc_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("lb2ppipipi_mean"), *w->var("lb2ppipipi_sigma"), *w->var("lb2ppipipi_alpha"), *w->var("lb2ppipipi_n") );
-  RooArgusBG *part_reco_pdf = new RooArgusBG( "part_reco_pdf", "part_reco_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("part_reco_m0"), *w->var("part_reco_c"), *w->var("part_reco_p") );
+  RooIpatia2 *lb2pkpipi_mc_pdf = new RooIpatia2("lb2pkpipi_mc_pdf","lb2pkpipi_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("lb2pkpipi_l"),*w->var("lb2pkpipi_zeta"),*w->var("lb2pkpipi_fb"),*w->var("lb2pkpipi_sigma"),*w->var("lb2pkpipi_mu"),*w->var("lb2pkpipi_a"),*w->var("lb2pkpipi_n"),*w->var("lb2pkpipi_a2"),*w->var("lb2pkpipi_n2"));
+  //RooCBShape *lb2ppipipi_mc_pdf = new RooCBShape( "lb2ppipipi_mc_pdf", "lb2ppipipi_mc_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("lb2ppipipi_mean"), *w->var("lb2ppipipi_sigma"), *w->var("lb2ppipipi_alpha"), *w->var("lb2ppipipi_n") );
+  RooArgusBG *part_reco_pdf = new RooArgusBG( "part_reco_pdf", "part_reco_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->function("part_reco_m0"), *w->var("part_reco_c"), *w->var("part_reco_p") );
   RooExponential *bkg_pdf = new RooExponential( "bkg_pdf", "bkg_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("bkg_exp_p1") );
 
   // load mc fit results
@@ -200,7 +214,7 @@ void CalcSWeights( RooWorkspace *w ) {
   w->loadSnapshot("bs2phikst_mc_pdf_fit");
   w->loadSnapshot("bd2rhokst_mc_pdf_fit");
   w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
-  w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
+  //w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
 
   // pdfs
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
