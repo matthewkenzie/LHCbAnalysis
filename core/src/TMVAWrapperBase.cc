@@ -119,13 +119,19 @@ void TMVAWrapperBase::initMVAFactories() {
     // loop over BDT categories (e.g. 2011/2012)
     for (vector<TString>::iterator cat = categories.begin(); cat != categories.end(); cat++) {
 
-      if ( rMode == kTrain ) factoryContainer[*cat] = vector<TMVA::Factory*>();
+      if ( rMode == kTrain ) {
+        dataContainer[*cat] = vector<TMVA::DataLoader*>();
+        factoryContainer[*cat] = vector<TMVA::Factory*>();
+      }
       sigEvCounts[*cat] = vector<pair<int,int> >();
       bkgEvCounts[*cat] = vector<pair<int,int> >();
 
       // loop over number of BDTs
       for (int b=0; b<numberOfBDTs; b++){
-        if ( rMode == kTrain ) factoryContainer[*cat].push_back(new Factory(Form("%sFactory",name.Data()),outFile,factoryOptions));
+        if ( rMode == kTrain ) {
+          dataContainer[*cat].push_back(new DataLoader(Form("%sDataLoader",name.Data())));
+          factoryContainer[*cat].push_back(new Factory(Form("%sFactory",name.Data()),outFile,factoryOptions));
+        }
         // set counters
         sigEvCounts[*cat].push_back(make_pair(0,0));
         bkgEvCounts[*cat].push_back(make_pair(0,0));
@@ -133,7 +139,7 @@ void TMVAWrapperBase::initMVAFactories() {
         // add variables to BDT
         if ( rMode == kTrain ) {
           for (vector<TString>::iterator var=varNames.begin(); var!=varNames.end(); var++){
-            factoryContainer[*cat][b]->AddVariable(*var);
+            dataContainer[*cat][b]->AddVariable(*var);
           }
         }
       }
@@ -170,13 +176,13 @@ void TMVAWrapperBase::prepare() {
   // prepare trees
   for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
     for (int b=0; b<numberOfBDTs; b++){
-      factoryContainer[*cat][b]->PrepareTrainingAndTestTree("","!V");
+      dataContainer[*cat][b]->PrepareTrainingAndTestTree("","!V");
     }
   }
   // book methods
   for (vector<TString>::iterator cat=categories.begin(); cat!=categories.end(); cat++){
     for (int b=0; b<numberOfBDTs; b++){
-      factoryContainer[*cat][b]->BookMethod( Types::kBDT, Form("%s_BDT_%d",cat->Data(),b), trainingOptions );
+      factoryContainer[*cat][b]->BookMethod( dataContainer[*cat][b], Types::kBDT, Form("%s_BDT_%d",cat->Data(),b), trainingOptions );
     }
   }
 }
@@ -259,21 +265,21 @@ void TMVAWrapperBase::addEvent(TString cat, bool isSig) {
     for (int b=0; b<numberOfBDTs; b++) {
       if (b==relBDT) {
         if (isSig) {
-          if ( rMode == kTrain ) factoryContainer[cat][b]->AddSignalTestEvent(values);
+          if ( rMode == kTrain ) dataContainer[cat][b]->AddSignalTestEvent(values);
           sigEvCounts[cat][b].first += 1;
         }
         else {
-          if ( rMode == kTrain ) factoryContainer[cat][b]->AddBackgroundTestEvent(values);
+          if ( rMode == kTrain ) dataContainer[cat][b]->AddBackgroundTestEvent(values);
           bkgEvCounts[cat][b].first += 1;
         }
       }
       else {
         if (isSig) {
-          if ( rMode == kTrain ) factoryContainer[cat][b]->AddSignalTrainingEvent(values);
+          if ( rMode == kTrain ) dataContainer[cat][b]->AddSignalTrainingEvent(values);
           sigEvCounts[cat][b].second += 1;
         }
         else {
-          if ( rMode == kTrain ) factoryContainer[cat][b]->AddBackgroundTrainingEvent(values);
+          if ( rMode == kTrain ) dataContainer[cat][b]->AddBackgroundTrainingEvent(values);
           bkgEvCounts[cat][b].second += 1;
         }
       }
@@ -282,21 +288,21 @@ void TMVAWrapperBase::addEvent(TString cat, bool isSig) {
   else { // no BDT cycling
     if (v->eventNumber%2==0) {
       if (isSig) {
-        if ( rMode == kTrain ) factoryContainer[cat][0]->AddSignalTestEvent(values);
+        if ( rMode == kTrain ) dataContainer[cat][0]->AddSignalTestEvent(values);
         sigEvCounts[cat][0].first += 1;
       }
       else {
-        if ( rMode == kTrain ) factoryContainer[cat][0]->AddBackgroundTestEvent(values);
+        if ( rMode == kTrain ) dataContainer[cat][0]->AddBackgroundTestEvent(values);
         bkgEvCounts[cat][0].first += 1;
       }
     }
     else {
       if (isSig) {
-        if ( rMode == kTrain ) factoryContainer[cat][0]->AddSignalTrainingEvent(values);
+        if ( rMode == kTrain ) dataContainer[cat][0]->AddSignalTrainingEvent(values);
         sigEvCounts[cat][0].second += 1;
       }
       else {
-        if ( rMode == kTrain ) factoryContainer[cat][0]->AddBackgroundTrainingEvent(values);
+        if ( rMode == kTrain ) dataContainer[cat][0]->AddBackgroundTrainingEvent(values);
         bkgEvCounts[cat][0].second += 1;
       }
     }

@@ -18,6 +18,7 @@
 #include "TH2F.h"
 #include "TMVA/Factory.h"
 #include "TMVA/Reader.h"
+#include "TMVA/DataLoader.h"
 
 class TMVAWrapperBase : public Analyser {
 
@@ -98,6 +99,7 @@ class TMVAWrapperBase : public Analyser {
     void save();
 
     TFile *outFile;
+    std::map<TString, std::vector<TMVA::DataLoader*> > dataContainer;
     std::map<TString, std::vector<TMVA::Factory*> > factoryContainer;
     std::map<TString, std::vector<TMVA::Reader*> >  readerContainer;
     std::map<TString, std::vector<std::pair<int,int> > > sigEvCounts;

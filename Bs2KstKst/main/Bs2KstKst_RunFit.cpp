@@ -187,15 +187,13 @@ void PlotDataFitResult( RooWorkspace *w, MassFitPlotter *plotter ) {
 
 void CalcSWeights( RooWorkspace *w ) {
 
-  //w->loadSnapshot( "pdf_fit" );
-  w->loadSnapshot( "constrained_pdf_fit" );
-
   // we know there is a problem with the sWeights in categories
   // given the yields can float we just fix everything else
   // and redo it in each category - sigh!
   //
   // the sWeights do not like getting RooPDFs from the WS so
   // have to make a new ones - sigh!
+  w->loadSnapshot( "constrained_pdf_fit" );
 
   RooIpatia2 *bs2kstkst_mc_pdf = new RooIpatia2("bs2kstkst_mc_pdf","bs2kstkst_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("bs2kstkst_l"),*w->var("bs2kstkst_zeta"),*w->var("bs2kstkst_fb"),*w->var("bs2kstkst_sigma"),*w->var("bs2kstkst_mu"),*w->var("bs2kstkst_a"),*w->var("bs2kstkst_n"),*w->var("bs2kstkst_a2"),*w->var("bs2kstkst_n2"));
   RooIpatia2 *bd2kstkst_mc_pdf = new RooIpatia2("bd2kstkst_mc_pdf","bd2kstkst_mc_pdf",*w->var("B_s0_DTF_B_s0_M"),*w->var("bd2kstkst_l"),*w->var("bd2kstkst_zeta"),*w->var("bd2kstkst_fb"),*w->var("bd2kstkst_sigma"),*w->var("bd2kstkst_mu"),*w->var("bd2kstkst_a"),*w->var("bd2kstkst_n"),*w->var("bd2kstkst_a2"),*w->var("bd2kstkst_n2"));
@@ -207,14 +205,17 @@ void CalcSWeights( RooWorkspace *w ) {
   RooArgusBG *part_reco_pdf = new RooArgusBG( "part_reco_pdf", "part_reco_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->function("part_reco_m0"), *w->var("part_reco_c"), *w->var("part_reco_p") );
   RooExponential *bkg_pdf = new RooExponential( "bkg_pdf", "bkg_pdf", *w->var("B_s0_DTF_B_s0_M"), *w->var("bkg_exp_p1") );
 
-  // load mc fit results
-  w->loadSnapshot("bs2kstkst_mc_pdf_fit");
-  w->loadSnapshot("bd2kstkst_mc_pdf_fit");
-  w->loadSnapshot("bd2phikst_mc_pdf_fit");
-  w->loadSnapshot("bs2phikst_mc_pdf_fit");
-  w->loadSnapshot("bd2rhokst_mc_pdf_fit");
-  w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
+  // load fit result
+  //w->loadSnapshot("bs2kstkst_mc_pdf_fit");
+  //w->loadSnapshot("bd2kstkst_mc_pdf_fit");
+  //w->loadSnapshot("bd2phikst_mc_pdf_fit");
+  //w->loadSnapshot("bs2phikst_mc_pdf_fit");
+  //w->loadSnapshot("bd2rhokst_mc_pdf_fit");
+  //w->loadSnapshot("lb2pkpipi_mc_pdf_fit");
   //w->loadSnapshot("lb2ppipipi_mc_pdf_fit");
+  //w->loadSnapshot( "pdf_fit" );
+  w->loadSnapshot( "constrained_pdf_fit" );
+
 
   // pdfs
   RooCategory *cat = (RooCategory*)w->cat("DataCat");
