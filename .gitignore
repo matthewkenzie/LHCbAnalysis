@@ -3,7 +3,9 @@
 */bin
 */root
 */tmp
+.DS_Store
 */.DS_Store
+*/*.log
 doc/html
 doc/latex
 build/
