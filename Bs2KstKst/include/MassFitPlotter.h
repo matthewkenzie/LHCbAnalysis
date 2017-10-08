@@ -21,7 +21,7 @@ namespace Bs2KstKst {
 
       void makePlot( RooPlot *plot, TString fname, int resid=0, TLegend *leg=0, TString pTitle="", int pRedPull=-1, const RooArgList *params=0 );
 
-      void plot( TString var, TString data, TString pdf="", int resid=2 );
+      void plot( TString var, TString data, TString pdf="", int resid=2, bool project=false );
       void makeDataPlot( TString outfName, TString dsetName="DataCombined", TString catName="All" );
       void makeBkgPlot( TString outfName );
 

@@ -11,7 +11,7 @@ os.system('mkdir -p plots/MassVetoes/eps')
 os.system('mkdir -p plots/MassVetoes/C')
 os.system('mkdir -p plots/MassVetoes/root')
 
-tf = r.TFile("root/AnalysisOutWSWeightsOldMassVeto.root")
+tf = r.TFile("root/AnalysisOutWSWeights.root")
 tree = tf.Get("AnalysisTree")
 
 c = r.TCanvas("c","c",1600,1800)
@@ -24,8 +24,8 @@ m_P    = 0.93827203*1000.
 
 vars = [ 'KpPimPimPip', 'KpPimpbPip', 'KpKmKmPip', 'PipPimKmPip', 'pPimKmPip', 'KpPimKmKp' ]
 xtitles = ['m(K^{+}#pi^{-}#pi^{-}#pi^{+})', 'm(K^{+}#pi^{-}#bar{p}#pi^{+})', 'm(K^{+}K^{-}K^{-}#pi^{+})', 'm(#pi^{+}#pi^{-}K^{-}#pi^{+})', 'm(p#pi^{-}K^{-}#pi^{+})', 'm(K^{+}#pi^{-}K^{-}K^{+})' ]
-vetoes = [ [5000,5400], [5400,6200], [5350,5800], [5000,5400], [5400,6200], [5350,5800] ]
-#vetoes = [ [4000,8000], [5350,8000], [5270,8000], [4000,8000], [5350,8000], [5270,8000] ]
+#vetoes = [ [5000,5400], [5400,6200], [5350,5800], [5000,5400], [5400,6200], [5350,5800] ]
+vetoes = [ [4000,8000], [4000,8000], [4000,8000], [4000,8000], [4000,8000], [4000,8000] ]
 limits = [ [4800,5600], [5200,6400], [5200,6000], [4800,5600], [5200,6400], [5200,6000] ]
 hists = []
 

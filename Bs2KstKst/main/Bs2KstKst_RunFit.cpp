@@ -259,22 +259,36 @@ void CalcSWeights( RooWorkspace *w ) {
 
     RooDataSet *data = (RooDataSet*)w->data(dsetName);
 
+    // we've already done the fit and got the values so we want them fixed just to calculate the sWeights
     nonyields->setAttribAll("Constant");
+    yields->setAttribAll("Constant");
 
     cout << "Fixed for sPlot:" << endl;
     nonyields->Print("v");
-    cout << "Float for sPlot:" << endl;
+    //cout << "Float for sPlot:" << endl;
     yields->Print("v");
 
-    pdf->fitTo(*data, Extended() );
+    //pdf->fitTo(*data, Extended() );
+
+    cout << "Data before" << endl;
+    data->Print("v");
 
     RooStats::SPlot *sData = new RooStats::SPlot(Form("s%s",dsetName.Data()),"sData", *data, pdf, *yields, RooArgSet(*w->var("eventNumber")) );
 
+    cout << "Data after" << endl;
+    data->Print("v");
+
     w->import(*data, Rename(Form("%sSWeights",dsetName.Data())) );
+
+    cout << "Data after import" << endl;
+    data->Print("v");
 
     // make the projected dataset
     RooDataSet *dataSW = new RooDataSet(Form("%s_sw",data->GetName()), Form("%s_sw",data->GetTitle()), data, RooArgSet( *w->var("B_s0_DTF_B_s0_M"), *w->var("eventNumber"), *w->var(Form("bs2kstkst_y_%s_sw",cat->getLabel()))), 0, Form("bs2kstkst_y_%s_sw",cat->getLabel()) );
     w->import(*dataSW);
+
+    cout << "Data (sw) after import" << endl;
+    dataSW->Print("v");
 
   }
 

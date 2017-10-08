@@ -13,6 +13,7 @@
 #include "TString.h"
 #include "TLegend.h"
 #include "TRandom3.h"
+#include "TMath.h"
 
 #include "RooWorkspace.h"
 #include "RooCategory.h"
@@ -118,6 +119,46 @@ void defineDatasets( RooWorkspace *w, bool applyMassVeto ) {
   dsets.push_back( "Data2011GlobalTIS" );
   dsets.push_back( "Data2012HadronTOS" );
   dsets.push_back( "Data2012GlobalTIS" );
+  dsets.push_back( "Data2011HadronTOSMagUp" );
+  dsets.push_back( "Data2011GlobalTISMagUp" );
+  dsets.push_back( "Data2012HadronTOSMagUp" );
+  dsets.push_back( "Data2012GlobalTISMagUp" );
+  dsets.push_back( "Data2011HadronTOSMagDn" );
+  dsets.push_back( "Data2011GlobalTISMagDn" );
+  dsets.push_back( "Data2012HadronTOSMagDn" );
+  dsets.push_back( "Data2012GlobalTISMagDn" );
+  dsets.push_back( "Data2011HadronTOSPhi0" );
+  dsets.push_back( "Data2011GlobalTISPhi0" );
+  dsets.push_back( "Data2012HadronTOSPhi0" );
+  dsets.push_back( "Data2012GlobalTISPhi0" );
+  dsets.push_back( "Data2011HadronTOSPhi1" );
+  dsets.push_back( "Data2011GlobalTISPhi1" );
+  dsets.push_back( "Data2012HadronTOSPhi1" );
+  dsets.push_back( "Data2012GlobalTISPhi1" );
+  dsets.push_back( "Data2011HadronTOSPhi2" );
+  dsets.push_back( "Data2011GlobalTISPhi2" );
+  dsets.push_back( "Data2012HadronTOSPhi2" );
+  dsets.push_back( "Data2012GlobalTISPhi2" );
+  dsets.push_back( "Data2011HadronTOSPhi3" );
+  dsets.push_back( "Data2011GlobalTISPhi3" );
+  dsets.push_back( "Data2012HadronTOSPhi3" );
+  dsets.push_back( "Data2012GlobalTISPhi3" );
+  dsets.push_back( "Data2011HadronTOSCosTheta0" );
+  dsets.push_back( "Data2011GlobalTISCosTheta0" );
+  dsets.push_back( "Data2012HadronTOSCosTheta0" );
+  dsets.push_back( "Data2012GlobalTISCosTheta0" );
+  dsets.push_back( "Data2011HadronTOSCosTheta1" );
+  dsets.push_back( "Data2011GlobalTISCosTheta1" );
+  dsets.push_back( "Data2012HadronTOSCosTheta1" );
+  dsets.push_back( "Data2012GlobalTISCosTheta1" );
+  dsets.push_back( "Data2011HadronTOSCosTheta2" );
+  dsets.push_back( "Data2011GlobalTISCosTheta2" );
+  dsets.push_back( "Data2012HadronTOSCosTheta2" );
+  dsets.push_back( "Data2012GlobalTISCosTheta2" );
+  dsets.push_back( "Data2011HadronTOSCosTheta3" );
+  dsets.push_back( "Data2011GlobalTISCosTheta3" );
+  dsets.push_back( "Data2012HadronTOSCosTheta3" );
+  dsets.push_back( "Data2012GlobalTISCosTheta3" );
   dsets.push_back( "Bs2KstKst"           );
   dsets.push_back( "Bs2KstKst1430"       );
   dsets.push_back( "Bs2Kst1430Kst1430"   );
@@ -175,6 +216,10 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
   double    B_s0_M_pPimKmPip;
   double    B_s0_M_KpKmKmPip;
   double    B_s0_M_KpPimKmKp;
+  Short_t   Polarity;
+  double    B_s0_DTF_B_s0_Phi1;
+  double    B_s0_DTF_B_s0_CosTheta1;
+  double    B_s0_DTF_B_s0_CosTheta2;
 
   tree->SetBranchAddress(  "eventNumber"                 , &eventNumber                 );
   tree->SetBranchAddress(  "year"                        , &year                        );
@@ -192,6 +237,10 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
   tree->SetBranchAddress(  "B_s0_L0Global_TIS"           , &B_s0_L0Global_TIS           );
   tree->SetBranchAddress(  "B_s0_DTF_KST1_M"             , &B_s0_DTF_KST1_M             );
   tree->SetBranchAddress(  "B_s0_DTF_KST2_M"             , &B_s0_DTF_KST2_M             );
+  tree->SetBranchAddress(  "Polarity"                    , &Polarity                    );
+  tree->SetBranchAddress(  "B_s0_DTF_B_s0_Phi1"          , &B_s0_DTF_B_s0_Phi1          );
+  tree->SetBranchAddress(  "B_s0_DTF_B_s0_CosTheta1"     , &B_s0_DTF_B_s0_CosTheta1     );
+  tree->SetBranchAddress(  "B_s0_DTF_B_s0_CosTheta2"     , &B_s0_DTF_B_s0_CosTheta2     );
   //tree->SetBranchAddress(  "B_s0_M_KpPimpbPip"           , &B_s0_M_KpPimpbPip           );
   //tree->SetBranchAddress(  "B_s0_M_pPimKmPip"            , &B_s0_M_pPimKmPip            );
   //tree->SetBranchAddress(  "B_s0_M_KpKmKmPip"            , &B_s0_M_KpKmKmPip            );
@@ -262,6 +311,16 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
       w->data("Bd2RhoKst")->add( *w->set("observables") );
     }
 
+    int phiBin = -1;
+    if      ( B_s0_DTF_B_s0_Phi1 < (-1.*TMath::Pi()/2.) ) phiBin = 0;
+    else if ( B_s0_DTF_B_s0_Phi1 < ( 0. ) )               phiBin = 1;
+    else if ( B_s0_DTF_B_s0_Phi1 < (1.*TMath::Pi()/2.) )  phiBin = 2;
+    else                                                  phiBin = 3;
+    int cosThetaBin = -1;
+    if      ( B_s0_DTF_B_s0_CosTheta1 <  0 && B_s0_DTF_B_s0_CosTheta2 <  0 ) cosThetaBin = 0;
+    else if ( B_s0_DTF_B_s0_CosTheta1 <  0 && B_s0_DTF_B_s0_CosTheta2 >= 0 ) cosThetaBin = 1;
+    else if ( B_s0_DTF_B_s0_CosTheta1 >= 0 && B_s0_DTF_B_s0_CosTheta2 <  0 ) cosThetaBin = 2;
+    else                                                                     cosThetaBin = 3;
     // FROM HERE BDT, PID AND MASS VETO REQUIREMENTS (insert pass_all here?)
     if ( pass_bdtpidmass && pass_multcand ) {
       if ( applyMassVeto && !pass_massveto_4body ) continue;
@@ -271,9 +330,29 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
         w->data("Data2011")->add( *w->set("observables") );
         if ( B_s0_L0HadronDecision_TOS ) {
           w->data("Data2011HadronTOS")->add( *w->set("observables") );
+          if ( Polarity > 0 )    w->data("Data2011HadronTOSMagUp")->add( *w->set("observables") );
+          else                   w->data("Data2011HadronTOSMagDn")->add( *w->set("observables") );
+          if      (phiBin == 0 ) w->data("Data2011HadronTOSPhi0")->add( *w->set("observables") );
+          else if (phiBin == 1 ) w->data("Data2011HadronTOSPhi1")->add( *w->set("observables") );
+          else if (phiBin == 2 ) w->data("Data2011HadronTOSPhi2")->add( *w->set("observables") );
+          else if (phiBin == 3 ) w->data("Data2011HadronTOSPhi3")->add( *w->set("observables") );
+          if      (cosThetaBin == 0 ) w->data("Data2011HadronTOSCosTheta0")->add( *w->set("observables") );
+          else if (cosThetaBin == 1 ) w->data("Data2011HadronTOSCosTheta1")->add( *w->set("observables") );
+          else if (cosThetaBin == 2 ) w->data("Data2011HadronTOSCosTheta2")->add( *w->set("observables") );
+          else if (cosThetaBin == 3 ) w->data("Data2011HadronTOSCosTheta3")->add( *w->set("observables") );
         }
         if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS ) {
           w->data("Data2011GlobalTIS")->add( *w->set("observables") );
+          if ( Polarity > 0 )    w->data("Data2011GlobalTISMagUp")->add( *w->set("observables") );
+          else                   w->data("Data2011GlobalTISMagDn")->add( *w->set("observables") );
+          if      (phiBin == 0 ) w->data("Data2011GlobalTISPhi0")->add( *w->set("observables") );
+          else if (phiBin == 1 ) w->data("Data2011GlobalTISPhi1")->add( *w->set("observables") );
+          else if (phiBin == 2 ) w->data("Data2011GlobalTISPhi2")->add( *w->set("observables") );
+          else if (phiBin == 3 ) w->data("Data2011GlobalTISPhi3")->add( *w->set("observables") );
+          if      (cosThetaBin == 0 ) w->data("Data2011GlobalTISCosTheta0")->add( *w->set("observables") );
+          else if (cosThetaBin == 1 ) w->data("Data2011GlobalTISCosTheta1")->add( *w->set("observables") );
+          else if (cosThetaBin == 2 ) w->data("Data2011GlobalTISCosTheta2")->add( *w->set("observables") );
+          else if (cosThetaBin == 3 ) w->data("Data2011GlobalTISCosTheta3")->add( *w->set("observables") );
         }
       }
       // Data 2012
@@ -282,9 +361,29 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
         w->data("Data2012")->add( *w->set("observables") );
         if ( B_s0_L0HadronDecision_TOS ) {
           w->data("Data2012HadronTOS")->add( *w->set("observables") );
+          if ( Polarity > 0 )    w->data("Data2012HadronTOSMagUp")->add( *w->set("observables") );
+          else                   w->data("Data2012HadronTOSMagDn")->add( *w->set("observables") );
+          if      (phiBin == 0 ) w->data("Data2012HadronTOSPhi0")->add( *w->set("observables") );
+          else if (phiBin == 1 ) w->data("Data2012HadronTOSPhi1")->add( *w->set("observables") );
+          else if (phiBin == 2 ) w->data("Data2012HadronTOSPhi2")->add( *w->set("observables") );
+          else if (phiBin == 3 ) w->data("Data2012HadronTOSPhi3")->add( *w->set("observables") );
+          if      (cosThetaBin == 0 ) w->data("Data2012HadronTOSCosTheta0")->add( *w->set("observables") );
+          else if (cosThetaBin == 1 ) w->data("Data2012HadronTOSCosTheta1")->add( *w->set("observables") );
+          else if (cosThetaBin == 2 ) w->data("Data2012HadronTOSCosTheta2")->add( *w->set("observables") );
+          else if (cosThetaBin == 3 ) w->data("Data2012HadronTOSCosTheta3")->add( *w->set("observables") );
         }
         if ( B_s0_L0Global_TIS && !B_s0_L0HadronDecision_TOS ) {
           w->data("Data2012GlobalTIS")->add( *w->set("observables") );
+          if ( Polarity > 0 )    w->data("Data2012GlobalTISMagUp")->add( *w->set("observables") );
+          else                   w->data("Data2012GlobalTISMagDn")->add( *w->set("observables") );
+          if      (phiBin == 0 ) w->data("Data2012GlobalTISPhi0")->add( *w->set("observables") );
+          else if (phiBin == 1 ) w->data("Data2012GlobalTISPhi1")->add( *w->set("observables") );
+          else if (phiBin == 2 ) w->data("Data2012GlobalTISPhi2")->add( *w->set("observables") );
+          else if (phiBin == 3 ) w->data("Data2012GlobalTISPhi3")->add( *w->set("observables") );
+          if      (cosThetaBin == 0 ) w->data("Data2012GlobalTISCosTheta0")->add( *w->set("observables") );
+          else if (cosThetaBin == 1 ) w->data("Data2012GlobalTISCosTheta1")->add( *w->set("observables") );
+          else if (cosThetaBin == 2 ) w->data("Data2012GlobalTISCosTheta2")->add( *w->set("observables") );
+          else if (cosThetaBin == 3 ) w->data("Data2012GlobalTISCosTheta3")->add( *w->set("observables") );
         }
       }
       // Bs2KstKst MC
@@ -320,6 +419,96 @@ void fillDatasets( TString fname, TString tname, TString outfname, bool applyMas
   RooDataSet *DataComb = new RooDataSet( "DataCombined", "DataCombined", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMap) );
   w->import(*DataComb);
   delete DataComb;
+
+  map<string,RooDataSet*> dsetMapMagUp;
+  dsetMapMagUp[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSMagUp") ;
+  dsetMapMagUp[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISMagUp") ;
+  dsetMapMagUp[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSMagUp") ;
+  dsetMapMagUp[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISMagUp") ;
+  RooDataSet *DataCombMagUp = new RooDataSet( "DataCombMagUp", "DataCombMagUp", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapMagUp) );
+  w->import(*DataCombMagUp);
+  delete DataCombMagUp;
+
+  map<string,RooDataSet*> dsetMapMagDn;
+  dsetMapMagDn[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSMagDn") ;
+  dsetMapMagDn[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISMagDn") ;
+  dsetMapMagDn[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSMagDn") ;
+  dsetMapMagDn[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISMagDn") ;
+  RooDataSet *DataCombMagDn = new RooDataSet( "DataCombMagDn", "DataCombMagDn", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapMagDn) );
+  w->import(*DataCombMagDn);
+  delete DataCombMagDn;
+
+  map<string,RooDataSet*> dsetMapPhi0;
+  dsetMapPhi0[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSPhi0") ;
+  dsetMapPhi0[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISPhi0") ;
+  dsetMapPhi0[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSPhi0") ;
+  dsetMapPhi0[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISPhi0") ;
+  RooDataSet *DataCombPhi0 = new RooDataSet( "DataCombPhi0", "DataCombPhi0", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapPhi0) );
+  w->import(*DataCombPhi0);
+  delete DataCombPhi0;
+
+  map<string,RooDataSet*> dsetMapPhi1;
+  dsetMapPhi1[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSPhi1") ;
+  dsetMapPhi1[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISPhi1") ;
+  dsetMapPhi1[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSPhi1") ;
+  dsetMapPhi1[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISPhi1") ;
+  RooDataSet *DataCombPhi1 = new RooDataSet( "DataCombPhi1", "DataCombPhi1", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapPhi1) );
+  w->import(*DataCombPhi1);
+  delete DataCombPhi1;
+
+  map<string,RooDataSet*> dsetMapPhi2;
+  dsetMapPhi2[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSPhi2") ;
+  dsetMapPhi2[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISPhi2") ;
+  dsetMapPhi2[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSPhi2") ;
+  dsetMapPhi2[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISPhi2") ;
+  RooDataSet *DataCombPhi2 = new RooDataSet( "DataCombPhi2", "DataCombPhi2", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapPhi2) );
+  w->import(*DataCombPhi2);
+  delete DataCombPhi2;
+
+  map<string,RooDataSet*> dsetMapPhi3;
+  dsetMapPhi3[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSPhi3") ;
+  dsetMapPhi3[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISPhi3") ;
+  dsetMapPhi3[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSPhi3") ;
+  dsetMapPhi3[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISPhi3") ;
+  RooDataSet *DataCombPhi3 = new RooDataSet( "DataCombPhi3", "DataCombPhi3", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapPhi3) );
+  w->import(*DataCombPhi3);
+  delete DataCombPhi3;
+
+  map<string,RooDataSet*> dsetMapCosTheta0;
+  dsetMapCosTheta0[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSCosTheta0") ;
+  dsetMapCosTheta0[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISCosTheta0") ;
+  dsetMapCosTheta0[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSCosTheta0") ;
+  dsetMapCosTheta0[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISCosTheta0") ;
+  RooDataSet *DataCombCosTheta0 = new RooDataSet( "DataCombCosTheta0", "DataCombCosTheta0", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapCosTheta0) );
+  w->import(*DataCombCosTheta0);
+  delete DataCombCosTheta0;
+
+  map<string,RooDataSet*> dsetMapCosTheta1;
+  dsetMapCosTheta1[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSCosTheta1") ;
+  dsetMapCosTheta1[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISCosTheta1") ;
+  dsetMapCosTheta1[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSCosTheta1") ;
+  dsetMapCosTheta1[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISCosTheta1") ;
+  RooDataSet *DataCombCosTheta1 = new RooDataSet( "DataCombCosTheta1", "DataCombCosTheta1", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapCosTheta1) );
+  w->import(*DataCombCosTheta1);
+  delete DataCombCosTheta1;
+
+  map<string,RooDataSet*> dsetMapCosTheta2;
+  dsetMapCosTheta2[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSCosTheta2") ;
+  dsetMapCosTheta2[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISCosTheta2") ;
+  dsetMapCosTheta2[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSCosTheta2") ;
+  dsetMapCosTheta2[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISCosTheta2") ;
+  RooDataSet *DataCombCosTheta2 = new RooDataSet( "DataCombCosTheta2", "DataCombCosTheta2", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapCosTheta2) );
+  w->import(*DataCombCosTheta2);
+  delete DataCombCosTheta2;
+
+  map<string,RooDataSet*> dsetMapCosTheta3;
+  dsetMapCosTheta3[ "HadronTOS2011" ] = (RooDataSet*)w->data("Data2011HadronTOSCosTheta3") ;
+  dsetMapCosTheta3[ "GlobalTIS2011" ] = (RooDataSet*)w->data("Data2011GlobalTISCosTheta3") ;
+  dsetMapCosTheta3[ "HadronTOS2012" ] = (RooDataSet*)w->data("Data2012HadronTOSCosTheta3") ;
+  dsetMapCosTheta3[ "GlobalTIS2012" ] = (RooDataSet*)w->data("Data2012GlobalTISCosTheta3") ;
+  RooDataSet *DataCombCosTheta3 = new RooDataSet( "DataCombCosTheta3", "DataCombCosTheta3", *w->set("observables"), Index(*w->cat("DataCat")), Import(dsetMapCosTheta3) );
+  w->import(*DataCombCosTheta3);
+  delete DataCombCosTheta3;
 
   inFile->Close();
   delete inFile;
@@ -620,7 +809,7 @@ void makeCombinatorialPdf( RooWorkspace *w ) {
 
 // total PDF
 void makeTotalPdf( RooWorkspace *w ) {
-  
+
   // setup some yield ratios (as want these constant across categories)
   // 1.) constrain the bs->phikst / bd->phikst ratio (this is well known)
   // the BR ratio is (0.113 +/- 0.0287) and also include fs/fd = (0.259 +/- 0.015): TOTAL = (0.029 +/- 0.008)
@@ -738,7 +927,7 @@ void constructPdfs( RooWorkspace *w, TString outfname ) {
 int main() {
 
   bool applyMassVeto = false;
-  
+
   gROOT->ProcessLine(".x ~/Scratch/lhcb/lhcbStyle.C");
   gROOT->ProcessLine(".x ~/lhcbStyle.C");
   system("mkdir -p root/MassFit");

@@ -45,17 +45,21 @@ Bs2KstKst::MassFitPlotter::MassFitPlotter(RooWorkspace *_w, TString _outdirname)
 
 Bs2KstKst::MassFitPlotter::~MassFitPlotter(){}
 
-void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, int resid ) {
+void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, int resid, bool project ) {
+
 
   if ( pdf!="" ) w->loadSnapshot(Form("%s_fit",pdf.Data()));
 
   RooPlot *plot = w->var(var)->frame();
   w->data(data)->plotOn(plot);
-  if ( pdf!="" ) w->pdf(pdf)->plotOn(plot);
+  if ( pdf!="" ) {
+    if (project) w->pdf(pdf)->plotOn(plot, ProjWData(*w->cat("DataCat"),*w->data(data)) );
+    else w->pdf(pdf)->plotOn(plot);
+  }
 
   TString name = "v" + var + "_d" + data;
   if ( pdf!="" ) name += "_p" + pdf;
-  
+
   if ( pdf=="" ) resid = 0;
 
   makePlot( plot, name, resid );
@@ -77,7 +81,7 @@ void Bs2KstKst::MassFitPlotter::makeBkgPlot( TString outfName ) {
 void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName, TString catName ) {
 
   //w->loadSnapshot("pdf_fit");
-  w->loadSnapshot("constrained_pdf_fit");
+  //w->loadSnapshot("constrained_pdf_fit");
 
   // make a legend
   TLegend *leg = new TLegend(0.6,0.3,0.89,0.89);
