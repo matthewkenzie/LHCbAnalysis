@@ -41,9 +41,40 @@ Bs2KstKst::MassFitPlotter::MassFitPlotter(RooWorkspace *_w, TString _outdirname)
   system(Form("mkdir -p plots/%s/pdf",outdirname.Data()));
   system(Form("mkdir -p plots/%s/png",outdirname.Data()));
   system(Form("mkdir -p plots/%s/C",outdirname.Data()));
+  chooseColorScheme(0);
 }
 
 Bs2KstKst::MassFitPlotter::~MassFitPlotter(){}
+
+void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
+
+  colorScheme.clear();
+  if ( i==0 ) {
+    colorScheme.push_back(kRed-3);
+    colorScheme.push_back(kMagenta-3);
+    colorScheme.push_back(kCyan-3);
+    colorScheme.push_back(kOrange-3);
+    colorScheme.push_back(kViolet+1);
+    colorScheme.push_back(kBlue-7);
+    colorScheme.push_back(kTeal-7);
+    colorScheme.push_back(kGreen+1);
+  }
+  else if ( i==1 ) {
+    colorScheme.push_back( TColor::GetColor("#006d2c") );
+    colorScheme.push_back( TColor::GetColor("#2ca25f") );
+    colorScheme.push_back( TColor::GetColor("#66c2a4") );
+    colorScheme.push_back( TColor::GetColor("#b2e2e2") );
+    colorScheme.push_back( TColor::GetColor("#bdc9e1") );
+    colorScheme.push_back( TColor::GetColor("#74a9cf") );
+    colorScheme.push_back( TColor::GetColor("#2b8cbe") );
+    colorScheme.push_back( TColor::GetColor("#045a8d") );
+  }
+  else {
+    cout << "Color scheme " << i << " not recognised" << endl;
+    exit(1);
+  }
+
+}
 
 void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, int resid, bool project ) {
 
@@ -78,7 +109,7 @@ void Bs2KstKst::MassFitPlotter::makeBkgPlot( TString outfName ) {
   makePlot( plot, outfName, 2 );
 }
 
-void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName, TString catName ) {
+void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName, TString catName, bool paperStyle ) {
 
   //w->loadSnapshot("pdf_fit");
   //w->loadSnapshot("constrained_pdf_fit");
@@ -90,6 +121,8 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // make a plot
   RooPlot *plot = w->var("B_s0_DTF_B_s0_M")->frame();
+  if ( xtitle!="" ) plot->GetXaxis()->SetTitle(xtitle);
+  if ( ytitle!="" ) plot->GetYaxis()->SetTitle(ytitle);
 
   // keep this command arg as they all have it
   RooCmdArg proj = ProjWData(*w->cat("DataCat"),*w->data(dsetName));
@@ -124,85 +157,85 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bs->KstKst
   RooLinkedList bs2kstkst;
-  bs2kstkst.Add( new RooCmdArg( LineColor(kRed-3) ) );
-  bs2kstkst.Add( new RooCmdArg( FillColor(kRed-3) ) );
+  bs2kstkst.Add( new RooCmdArg( LineColor(colorScheme[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( FillColor(colorScheme[0]) ) );
   bs2kstkst.Add( new RooCmdArg( DrawOption("F") ) );
   bs2kstkst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf,bs2kstkst_mc_pdf" ) ) );
   bs2kstkst.Add( &proj );
   if ( slice ) bs2kstkst.Add( slice );
   w->pdf("pdf")->plotOn(plot, bs2kstkst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "B_{s} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{s} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bd->KstKst
   RooLinkedList bd2kstkst;
-  bd2kstkst.Add( new RooCmdArg( LineColor(kMagenta-3) ) );
-  bd2kstkst.Add( new RooCmdArg( FillColor(kMagenta-3) ) );
+  bd2kstkst.Add( new RooCmdArg( LineColor(colorScheme[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( FillColor(colorScheme[1]) ) );
   bd2kstkst.Add( new RooCmdArg( DrawOption("F") ) );
   bd2kstkst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf" ) ) );
   if ( slice ) bd2kstkst.Add( slice );
   bd2kstkst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2kstkst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "B_{d} #rightarrow (K^{+}#pi^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bd->PhiKst
   RooLinkedList bd2phikst;
-  bd2phikst.Add( new RooCmdArg( LineColor(kCyan-3) ) );
-  bd2phikst.Add( new RooCmdArg( FillColor(kCyan-3) ) );
+  bd2phikst.Add( new RooCmdArg( LineColor(colorScheme[2]) ) );
+  bd2phikst.Add( new RooCmdArg( FillColor(colorScheme[2]) ) );
   bd2phikst.Add( new RooCmdArg( DrawOption("F") ) );
   bd2phikst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf" ) ) );
   if ( slice ) bd2phikst.Add( slice );
   bd2phikst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2phikst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "B_{d} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
 
   // Bd->RhoKst
   RooLinkedList bd2rhokst;
-  bd2rhokst.Add( new RooCmdArg( LineColor(kOrange-3) ) );
-  bd2rhokst.Add( new RooCmdArg( FillColor(kOrange-3) ) );
+  bd2rhokst.Add( new RooCmdArg( LineColor(colorScheme[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( FillColor(colorScheme[3]) ) );
   bd2rhokst.Add( new RooCmdArg( DrawOption("F") ) );
   bd2rhokst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf" ) ) );
   if ( slice ) bd2rhokst.Add( slice );
   bd2rhokst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2rhokst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "B_{d}#rightarrow (#pi^{+}#pi^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d}#rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{#pi}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bs->PhiKst
   RooLinkedList bs2phikst;
-  bs2phikst.Add( new RooCmdArg( LineColor(kViolet+1) ) );
-  bs2phikst.Add( new RooCmdArg( FillColor(kViolet+1) ) );
+  bs2phikst.Add( new RooCmdArg( LineColor(colorScheme[4]) ) );
+  bs2phikst.Add( new RooCmdArg( FillColor(colorScheme[4]) ) );
   bs2phikst.Add( new RooCmdArg( DrawOption("F") ) );
   bs2phikst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf" ) ) );
   if ( slice ) bs2phikst.Add( slice );
   bs2phikst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bs2phikst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "B_{s} #rightarrow (K^{+}K^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{s} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
 
   // Lb->pKpipi
   RooLinkedList lb2ppipipi;
-  lb2ppipipi.Add( new RooCmdArg( LineColor(kBlue-7) ) );
-  lb2ppipipi.Add( new RooCmdArg( FillColor(kBlue-7) ) );
+  lb2ppipipi.Add( new RooCmdArg( LineColor(colorScheme[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( FillColor(colorScheme[5]) ) );
   lb2ppipipi.Add( new RooCmdArg( DrawOption("F") ) );
   lb2ppipipi.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf" ) ) );
   if ( slice ) lb2ppipipi.Add( slice );
   lb2ppipipi.Add( &proj );
   w->pdf("pdf")->plotOn(plot, lb2ppipipi );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#Lambda_{b}#rightarrow (p^{+}#pi^{-})(K^{-}#pi^{+})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{#Lambda}^{0}_{#it{b}}#rightarrow (#it{p}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // part reco
   RooLinkedList prec;
-  prec.Add( new RooCmdArg( LineColor(kTeal-7) ) );
-  prec.Add( new RooCmdArg( FillColor(kTeal-7) ) );
+  prec.Add( new RooCmdArg( LineColor(colorScheme[6]) ) );
+  prec.Add( new RooCmdArg( FillColor(colorScheme[6]) ) );
   prec.Add( new RooCmdArg( DrawOption("F") ) );
   prec.Add( new RooCmdArg( Components( bkgComps + "," + precComps ) ) );
   if ( slice ) prec.Add( slice );
   prec.Add( &proj );
   w->pdf("pdf")->plotOn(plot, prec );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "Part reco", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "Partially reconstructed", "F" );
 
   // bkg
   RooLinkedList bkg;
-  bkg.Add( new RooCmdArg( LineColor(kGreen+1) ) );
-  bkg.Add( new RooCmdArg( FillColor(kGreen+1) ) );
+  bkg.Add( new RooCmdArg( LineColor(colorScheme[7]) ) );
+  bkg.Add( new RooCmdArg( FillColor(colorScheme[7]) ) );
   bkg.Add( new RooCmdArg( DrawOption("F") ) );
   bkg.Add( new RooCmdArg( Components( bkgComps ) ) );
   if ( slice ) bkg.Add( slice );
@@ -234,14 +267,26 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   // file name
   TString fname = outfName+catName;
 
+  // setup the PAPER style
+  int resid = 2;
+  int pRedPull = 3;
+  TString plotLabel = "#splitline{Simultaneous Mass Fit}{"+label+"}";
+  if ( paperStyle ) {
+    resid = 0;
+    pRedPull = -1;
+    plotLabel = "LHCb";
+  }
+
   // plot it
-  makePlot( plot, fname, 2, leg, "#splitline{Simultaneous Mass Fit}{"+label+"}", 3 );
+  makePlot( plot, fname, resid, leg, plotLabel, pRedPull );
 }
 
 void Bs2KstKst::MassFitPlotter::makePlot( RooPlot *plot, TString fname, int resid, TLegend *leg, TString pTitle, int pRedPull, const RooArgList *params ) {
 
+  plot->GetXaxis()->SetTitleSize(0.08);
+  plot->GetYaxis()->SetTitleSize(0.08);
   plot->GetXaxis()->SetTitleOffset(0.8);
-  plot->GetYaxis()->SetTitleOffset(0.75);
+  plot->GetYaxis()->SetTitleOffset(0.9);
 
   // legend
   if ( leg ) {
@@ -432,8 +477,12 @@ void Bs2KstKst::MassFitPlotter::makePlot( RooPlot *plot, TString fname, int resi
     clog = new TCanvas("clog","clog",800,600);
     clog->SetBottomMargin(0.2);
     RooPlot *logplot = (RooPlot*)plot->Clone();
-    logplot->GetYaxis()->SetRangeUser(1.,plot->GetMaximum()*2.);
+    logRangeMin = logRangeMin > 0 ? logRangeMin : 1.;
+    logRangeMax = logRangeMax > 0 ? logRangeMax : plot->GetMaximum()*2.;
+    cout << "YO: " << logRangeMin << " " << logRangeMax << endl;
+    logplot->GetYaxis()->SetRangeUser(logRangeMin, logRangeMax);
     logplot->Draw();
+    if ( pTitle != "" && titleOnLog ) title->Draw("same");
     clog->SetLogy();
     clog->Update();
     clog->Modified();
