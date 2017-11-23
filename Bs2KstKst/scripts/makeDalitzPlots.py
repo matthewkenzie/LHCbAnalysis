@@ -52,6 +52,7 @@ text.SetLineColor(0)
 text.SetShadowColor(0)
 text.SetBorderSize(0)
 text.SetTextSize(0.1)
+text.SetTextAlign(22)
 text.AddText("LHCb")
 
 c = r.TCanvas()

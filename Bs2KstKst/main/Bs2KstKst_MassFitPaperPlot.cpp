@@ -28,7 +28,7 @@ int main() {
   plotter->logRangeMax = 2.e3;
   plotter->xtitle = "#it{m}(#it{K}^{#plus}#it{#pi}^{#minus}#it{K}^{#minus}#it{#pi}^{#plus}) [MeV/#it{c}^{2}]";
   plotter->ytitle = "Candidates / 8 MeV/#it{c}^{2}";
-  plotter->chooseColorScheme(0);
+  plotter->chooseColorScheme(1);
 
   w->loadSnapshot("constrained_pdf_fit");
   plotter->makeDataPlot( "DataFit", "DataCombined", "All", true );

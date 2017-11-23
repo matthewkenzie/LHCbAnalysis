@@ -115,7 +115,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   //w->loadSnapshot("constrained_pdf_fit");
 
   // make a legend
-  TLegend *leg = new TLegend(0.6,0.3,0.89,0.89);
+  TLegend *leg = new TLegend(0.56,0.28,0.92,0.92);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
 
@@ -249,7 +249,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   pdf.Add( &proj );
   //w->pdf("pdf")->plotOn(plot, pdf);
   w->pdf("constrained_pdf")->plotOn(plot, pdf);
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "Total PDF" , "L" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "Total" , "L" );
 
   // redraw data on top
   RooLinkedList data;
