@@ -48,32 +48,194 @@ Bs2KstKst::MassFitPlotter::~MassFitPlotter(){}
 
 void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
 
-  colorScheme.clear();
+  lineColor.clear();
+  lineStyle.clear();
+  lineWidth.clear();
+  fillColor.clear();
+  fillStyle.clear();
+  drawOpt.clear();
+  
   if ( i==0 ) {
-    colorScheme.push_back(kRed-3);
-    colorScheme.push_back(kMagenta-3);
-    colorScheme.push_back(kCyan-3);
-    colorScheme.push_back(kOrange-3);
-    colorScheme.push_back(kViolet+1);
-    colorScheme.push_back(kBlue-7);
-    colorScheme.push_back(kTeal-7);
-    colorScheme.push_back(kGreen+1);
+    lineColor.push_back(kRed-3);
+    lineColor.push_back(kMagenta-3);
+    lineColor.push_back(kCyan-3);
+    lineColor.push_back(kOrange-3);
+    lineColor.push_back(kViolet+1);
+    lineColor.push_back(kBlue-7);
+    lineColor.push_back(kTeal-7);
+    lineColor.push_back(kGreen+1);
+    
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    lineWidth.push_back(2);
+    
+    fillColor.push_back(kRed-3);
+    fillColor.push_back(kMagenta-3);
+    fillColor.push_back(kCyan-3);
+    fillColor.push_back(kOrange-3);
+    fillColor.push_back(kViolet+1);
+    fillColor.push_back(kBlue-7);
+    fillColor.push_back(kTeal-7);
+    fillColor.push_back(kGreen+1);
+
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
+    drawOpt.push_back("F");
   }
   else if ( i==1 ) {
-    colorScheme.push_back( TColor::GetColor("#006d2c") );
-    colorScheme.push_back( TColor::GetColor("#2ca25f") );
-    colorScheme.push_back( TColor::GetColor("#66c2a4") );
-    colorScheme.push_back( TColor::GetColor("#b2e2e2") );
-    colorScheme.push_back( TColor::GetColor("#bdc9e1") );
-    colorScheme.push_back( TColor::GetColor("#74a9cf") );
-    colorScheme.push_back( TColor::GetColor("#2b8cbe") );
-    colorScheme.push_back( TColor::GetColor("#045a8d") );
+    lineColor.push_back( TColor::GetColor("#006d2c") );
+    lineColor.push_back( TColor::GetColor("#2ca25f") );
+    lineColor.push_back( TColor::GetColor("#66c2a4") );
+    lineColor.push_back( TColor::GetColor("#b2e2e2") );
+    lineColor.push_back( TColor::GetColor("#bdc9e1") );
+    lineColor.push_back( TColor::GetColor("#74a9cf") );
+    lineColor.push_back( TColor::GetColor("#2b8cbe") );
+    lineColor.push_back( TColor::GetColor("#045a8d") );
+
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    lineWidth.push_back(3);
+    
+    fillColor.push_back( TColor::GetColor("#006d2c") );
+    fillColor.push_back( TColor::GetColor("#2ca25f") );
+    fillColor.push_back( TColor::GetColor("#66c2a4") );
+    fillColor.push_back( TColor::GetColor("#b2e2e2") );
+    fillColor.push_back( TColor::GetColor("#bdc9e1") );
+    fillColor.push_back( TColor::GetColor("#74a9cf") );
+    fillColor.push_back( TColor::GetColor("#2b8cbe") );
+    fillColor.push_back( TColor::GetColor("#045a8d") );
+
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+  }
+  else if ( i==2 ) {
+    //lineColor.push_back( TColor::GetColor("#016c59") );
+    //lineColor.push_back( TColor::GetColor("#d0d1e6") );
+    //lineColor.push_back( TColor::GetColor("#67a9cf") );
+    //lineColor.push_back( TColor::GetColor("#014636") );
+    //lineColor.push_back( TColor::GetColor("#ece2f0") );
+    //lineColor.push_back( TColor::GetColor("#3690c0") );
+    //lineColor.push_back( TColor::GetColor("#02818a") );
+    //lineColor.push_back( TColor::GetColor("#a6bddb") );
+
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+    lineColor.push_back(1);
+
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    lineStyle.push_back(1);
+    
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    lineWidth.push_back(1);
+    
+    fillColor.push_back( TColor::GetColor("#016c59") );
+    fillColor.push_back( TColor::GetColor("#d0d1e6") );
+    fillColor.push_back( TColor::GetColor("#67a9cf") );
+    fillColor.push_back( TColor::GetColor("#014636") );
+    fillColor.push_back( TColor::GetColor("#ece2f0") );
+    fillColor.push_back( TColor::GetColor("#3690c0") );
+    fillColor.push_back( TColor::GetColor("#02818a") );
+    fillColor.push_back( TColor::GetColor("#a6bddb") );
+
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+    fillStyle.push_back(1001);
+
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
+    drawOpt.push_back("LF");
   }
   else {
     cout << "Color scheme " << i << " not recognised" << endl;
     exit(1);
   }
-
 }
 
 void Bs2KstKst::MassFitPlotter::plot( TString var, TString data, TString pdf, int resid, bool project ) {
@@ -157,9 +319,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bs->KstKst
   RooLinkedList bs2kstkst;
-  bs2kstkst.Add( new RooCmdArg( LineColor(colorScheme[0]) ) );
-  bs2kstkst.Add( new RooCmdArg( FillColor(colorScheme[0]) ) );
-  bs2kstkst.Add( new RooCmdArg( DrawOption("F") ) );
+  bs2kstkst.Add( new RooCmdArg( LineColor(lineColor[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( LineStyle(lineStyle[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( LineWidth(lineWidth[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( FillColor(fillColor[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( FillStyle(fillStyle[0]) ) );
+  bs2kstkst.Add( new RooCmdArg( DrawOption(drawOpt[0]) ) );
   bs2kstkst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf,bs2kstkst_mc_pdf" ) ) );
   bs2kstkst.Add( &proj );
   if ( slice ) bs2kstkst.Add( slice );
@@ -168,9 +333,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bd->KstKst
   RooLinkedList bd2kstkst;
-  bd2kstkst.Add( new RooCmdArg( LineColor(colorScheme[1]) ) );
-  bd2kstkst.Add( new RooCmdArg( FillColor(colorScheme[1]) ) );
-  bd2kstkst.Add( new RooCmdArg( DrawOption("F") ) );
+  bd2kstkst.Add( new RooCmdArg( LineColor(lineColor[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( LineStyle(lineStyle[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( LineWidth(lineWidth[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( FillColor(fillColor[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( FillStyle(fillStyle[1]) ) );
+  bd2kstkst.Add( new RooCmdArg( DrawOption(drawOpt[1]) ) );
   bd2kstkst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf,bd2kstkst_mc_pdf" ) ) );
   if ( slice ) bd2kstkst.Add( slice );
   bd2kstkst.Add( &proj );
@@ -179,9 +347,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bd->PhiKst
   RooLinkedList bd2phikst;
-  bd2phikst.Add( new RooCmdArg( LineColor(colorScheme[2]) ) );
-  bd2phikst.Add( new RooCmdArg( FillColor(colorScheme[2]) ) );
-  bd2phikst.Add( new RooCmdArg( DrawOption("F") ) );
+  bd2phikst.Add( new RooCmdArg( LineColor(lineColor[2]) ) );
+  bd2phikst.Add( new RooCmdArg( LineStyle(lineStyle[2]) ) );
+  bd2phikst.Add( new RooCmdArg( LineWidth(lineWidth[2]) ) );
+  bd2phikst.Add( new RooCmdArg( FillColor(fillColor[2]) ) );
+  bd2phikst.Add( new RooCmdArg( FillStyle(fillStyle[2]) ) );
+  bd2phikst.Add( new RooCmdArg( DrawOption(drawOpt[2]) ) );
   bd2phikst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf,bd2phikst_mc_pdf" ) ) );
   if ( slice ) bd2phikst.Add( slice );
   bd2phikst.Add( &proj );
@@ -190,9 +361,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bd->RhoKst
   RooLinkedList bd2rhokst;
-  bd2rhokst.Add( new RooCmdArg( LineColor(colorScheme[3]) ) );
-  bd2rhokst.Add( new RooCmdArg( FillColor(colorScheme[3]) ) );
-  bd2rhokst.Add( new RooCmdArg( DrawOption("F") ) );
+  bd2rhokst.Add( new RooCmdArg( LineColor(lineColor[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( LineStyle(lineStyle[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( LineWidth(lineWidth[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( FillColor(fillColor[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( FillStyle(fillStyle[3]) ) );
+  bd2rhokst.Add( new RooCmdArg( DrawOption(drawOpt[3]) ) );
   bd2rhokst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf,bd2rhokst_mc_pdf" ) ) );
   if ( slice ) bd2rhokst.Add( slice );
   bd2rhokst.Add( &proj );
@@ -201,9 +375,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Bs->PhiKst
   RooLinkedList bs2phikst;
-  bs2phikst.Add( new RooCmdArg( LineColor(colorScheme[4]) ) );
-  bs2phikst.Add( new RooCmdArg( FillColor(colorScheme[4]) ) );
-  bs2phikst.Add( new RooCmdArg( DrawOption("F") ) );
+  bs2phikst.Add( new RooCmdArg( LineColor(lineColor[4]) ) );
+  bs2phikst.Add( new RooCmdArg( LineStyle(lineStyle[4]) ) );
+  bs2phikst.Add( new RooCmdArg( LineWidth(lineWidth[4]) ) );
+  bs2phikst.Add( new RooCmdArg( FillColor(fillColor[4]) ) );
+  bs2phikst.Add( new RooCmdArg( FillStyle(fillStyle[4]) ) );
+  bs2phikst.Add( new RooCmdArg( DrawOption(drawOpt[4]) ) );
   bs2phikst.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf,bs2phikst_mc_pdf" ) ) );
   if ( slice ) bs2phikst.Add( slice );
   bs2phikst.Add( &proj );
@@ -212,9 +389,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // Lb->pKpipi
   RooLinkedList lb2ppipipi;
-  lb2ppipipi.Add( new RooCmdArg( LineColor(colorScheme[5]) ) );
-  lb2ppipipi.Add( new RooCmdArg( FillColor(colorScheme[5]) ) );
-  lb2ppipipi.Add( new RooCmdArg( DrawOption("F") ) );
+  lb2ppipipi.Add( new RooCmdArg( LineColor(lineColor[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( LineStyle(lineStyle[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( LineWidth(lineWidth[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( FillColor(fillColor[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( FillStyle(fillStyle[5]) ) );
+  lb2ppipipi.Add( new RooCmdArg( DrawOption(drawOpt[5]) ) );
   lb2ppipipi.Add( new RooCmdArg( Components( bkgComps + "," + precComps + ",lb2pkpipi_mc_pdf" ) ) );
   if ( slice ) lb2ppipipi.Add( slice );
   lb2ppipipi.Add( &proj );
@@ -223,9 +403,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // part reco
   RooLinkedList prec;
-  prec.Add( new RooCmdArg( LineColor(colorScheme[6]) ) );
-  prec.Add( new RooCmdArg( FillColor(colorScheme[6]) ) );
-  prec.Add( new RooCmdArg( DrawOption("F") ) );
+  prec.Add( new RooCmdArg( LineColor(lineColor[6]) ) );
+  prec.Add( new RooCmdArg( LineStyle(lineStyle[6]) ) );
+  prec.Add( new RooCmdArg( LineWidth(lineWidth[6]) ) );
+  prec.Add( new RooCmdArg( FillColor(fillColor[6]) ) );
+  prec.Add( new RooCmdArg( FillStyle(fillStyle[6]) ) );
+  prec.Add( new RooCmdArg( DrawOption(drawOpt[6]) ) );
   prec.Add( new RooCmdArg( Components( bkgComps + "," + precComps ) ) );
   if ( slice ) prec.Add( slice );
   prec.Add( &proj );
@@ -234,9 +417,12 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // bkg
   RooLinkedList bkg;
-  bkg.Add( new RooCmdArg( LineColor(colorScheme[7]) ) );
-  bkg.Add( new RooCmdArg( FillColor(colorScheme[7]) ) );
-  bkg.Add( new RooCmdArg( DrawOption("F") ) );
+  bkg.Add( new RooCmdArg( LineColor(lineColor[7]) ) );
+  bkg.Add( new RooCmdArg( LineStyle(lineStyle[7]) ) );
+  bkg.Add( new RooCmdArg( LineWidth(lineWidth[7]) ) );
+  bkg.Add( new RooCmdArg( FillColor(fillColor[7]) ) );
+  bkg.Add( new RooCmdArg( FillStyle(fillStyle[7]) ) );
+  bkg.Add( new RooCmdArg( DrawOption(drawOpt[7]) ) );
   bkg.Add( new RooCmdArg( Components( bkgComps ) ) );
   if ( slice ) bkg.Add( slice );
   bkg.Add( &proj );
@@ -245,6 +431,9 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
 
   // full pdf over the top
   RooLinkedList pdf;
+  pdf.Add( new RooCmdArg( LineWidth(3) ) );
+  pdf.Add( new RooCmdArg( LineStyle(1) ) );
+  pdf.Add( new RooCmdArg( LineColor(kBlue) ) );
   if ( slice ) pdf.Add( slice );
   pdf.Add( &proj );
   //w->pdf("pdf")->plotOn(plot, pdf);

@@ -24,11 +24,11 @@ int main() {
 
   MassFitPlotter *plotter = new MassFitPlotter( w, "Paper");
   plotter->titleOnLog = true;
-  plotter->logRangeMin = 2.;
+  plotter->logRangeMin = 4.;
   plotter->logRangeMax = 2.e3;
   plotter->xtitle = "#it{m}(#it{K}^{#plus}#it{#pi}^{#minus}#it{K}^{#minus}#it{#pi}^{#plus}) [MeV/#it{c}^{2}]";
   plotter->ytitle = "Candidates / 8 MeV/#it{c}^{2}";
-  plotter->chooseColorScheme(1);
+  plotter->chooseColorScheme(2);
 
   w->loadSnapshot("constrained_pdf_fit");
   plotter->makeDataPlot( "DataFit", "DataCombined", "All", true );

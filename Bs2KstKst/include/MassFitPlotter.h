@@ -36,7 +36,12 @@ namespace Bs2KstKst {
 
       RooWorkspace *w;
       TString outdirname;
-      std::vector<int> colorScheme;
+      std::vector<int> lineColor;
+      std::vector<int> lineStyle;
+      std::vector<int> lineWidth;
+      std::vector<int> fillColor;
+      std::vector<int> fillStyle;
+      std::vector<TString> drawOpt;
   };
 
 }
