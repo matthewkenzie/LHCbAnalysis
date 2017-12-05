@@ -54,7 +54,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
   fillColor.clear();
   fillStyle.clear();
   drawOpt.clear();
-  
+
   if ( i==0 ) {
     lineColor.push_back(kRed-3);
     lineColor.push_back(kMagenta-3);
@@ -64,7 +64,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineColor.push_back(kBlue-7);
     lineColor.push_back(kTeal-7);
     lineColor.push_back(kGreen+1);
-    
+
     lineStyle.push_back(1);
     lineStyle.push_back(1);
     lineStyle.push_back(1);
@@ -73,7 +73,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineStyle.push_back(1);
     lineStyle.push_back(1);
     lineStyle.push_back(1);
-    
+
     lineWidth.push_back(2);
     lineWidth.push_back(2);
     lineWidth.push_back(2);
@@ -82,7 +82,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineWidth.push_back(2);
     lineWidth.push_back(2);
     lineWidth.push_back(2);
-    
+
     fillColor.push_back(kRed-3);
     fillColor.push_back(kMagenta-3);
     fillColor.push_back(kCyan-3);
@@ -129,7 +129,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineStyle.push_back(1);
     lineStyle.push_back(1);
     lineStyle.push_back(1);
-    
+
     lineWidth.push_back(3);
     lineWidth.push_back(3);
     lineWidth.push_back(3);
@@ -138,7 +138,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineWidth.push_back(3);
     lineWidth.push_back(3);
     lineWidth.push_back(3);
-    
+
     fillColor.push_back( TColor::GetColor("#006d2c") );
     fillColor.push_back( TColor::GetColor("#2ca25f") );
     fillColor.push_back( TColor::GetColor("#66c2a4") );
@@ -194,7 +194,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineStyle.push_back(1);
     lineStyle.push_back(1);
     lineStyle.push_back(1);
-    
+
     lineWidth.push_back(1);
     lineWidth.push_back(1);
     lineWidth.push_back(1);
@@ -203,7 +203,7 @@ void Bs2KstKst::MassFitPlotter::chooseColorScheme( int i) {
     lineWidth.push_back(1);
     lineWidth.push_back(1);
     lineWidth.push_back(1);
-    
+
     fillColor.push_back( TColor::GetColor("#016c59") );
     fillColor.push_back( TColor::GetColor("#d0d1e6") );
     fillColor.push_back( TColor::GetColor("#67a9cf") );
@@ -329,7 +329,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   bs2kstkst.Add( &proj );
   if ( slice ) bs2kstkst.Add( slice );
   w->pdf("pdf")->plotOn(plot, bs2kstkst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{s} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{s}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bd->KstKst
   RooLinkedList bd2kstkst;
@@ -343,7 +343,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2kstkst.Add( slice );
   bd2kstkst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2kstkst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bd->PhiKst
   RooLinkedList bd2phikst;
@@ -357,7 +357,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2phikst.Add( slice );
   bd2phikst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2phikst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
 
   // Bd->RhoKst
   RooLinkedList bd2rhokst;
@@ -371,7 +371,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2rhokst.Add( slice );
   bd2rhokst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2rhokst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{d}#rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{#pi}^{#minus}#it{#pi}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}}#rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{#pi}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bs->PhiKst
   RooLinkedList bs2phikst;
@@ -385,7 +385,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bs2phikst.Add( slice );
   bs2phikst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bs2phikst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{s} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{s}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
 
   // Lb->pKpipi
   RooLinkedList lb2ppipipi;
@@ -438,7 +438,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   pdf.Add( &proj );
   //w->pdf("pdf")->plotOn(plot, pdf);
   w->pdf("constrained_pdf")->plotOn(plot, pdf);
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "Total" , "L" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "Total Model" , "L" );
 
   // redraw data on top
   RooLinkedList data;
