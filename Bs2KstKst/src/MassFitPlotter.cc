@@ -343,7 +343,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2kstkst.Add( slice );
   bd2kstkst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2kstkst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bd->PhiKst
   RooLinkedList bd2phikst;
@@ -357,7 +357,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2phikst.Add( slice );
   bd2phikst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2phikst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0} #rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{K}^{#minus}#it{K}^{#plus})", "F" );
 
   // Bd->RhoKst
   RooLinkedList bd2rhokst;
@@ -371,7 +371,7 @@ void Bs2KstKst::MassFitPlotter::makeDataPlot( TString outfName, TString dsetName
   if ( slice ) bd2rhokst.Add( slice );
   bd2rhokst.Add( &proj );
   w->pdf("pdf")->plotOn(plot, bd2rhokst );
-  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}_{#it{d}}#rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{#pi}^{#minus}#it{#pi}^{#plus})", "F" );
+  leg->AddEntry( plot->getObject(plot->numItems()-1), "#it{B}^{0}#rightarrow (#it{K}^{#plus}#it{#pi}^{#minus})(#it{#pi}^{#minus}#it{#pi}^{#plus})", "F" );
 
   // Bs->PhiKst
   RooLinkedList bs2phikst;
