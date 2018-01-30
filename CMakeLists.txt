@@ -1,6 +1,8 @@
 # require a certain cmake version
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
-SET(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14) # C++11...
+set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
 # declare the project name
 PROJECT(LHCbAnalysis)
@@ -46,16 +48,25 @@ find_package(ROOT REQUIRED COMPONENTS MathCore MathMore RIO Hist Tree RooFit Roo
 #set(Boost_USE_MULTITHREADED      ON)
 #set(Boost_USE_STATIC_RUNTIME     ON)
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  set(BOOST_ROOT "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt" )
-  set(BOOST_INCLUDEDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59" )
-  set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
-  set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59")
-  set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
-  set(Boost_COMPILER "-gcc49")
+#IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  #set(BOOST_ROOT "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt" )
+  #set(BOOST_INCLUDEDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59" )
+  #set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
+  #set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59")
+  #set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
+  #set(Boost_COMPILER "-gcc49")
+  #set(Boost_NO_SYSTEM_PATHS ON)
+  #SET(Boost_NO_BOOST_CMAKE ON CACHE BOOL "Enable fix for FindBoost.cmake")
+
+  set(BOOST_ROOT        "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/" )
+  set(BOOST_INCLUDEDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/include/boost-1_62" )
+  set(BOOST_LIBRARYDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/lib" )
+  set(Boost_INCLUDE_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/include/boost-1_62")
+  set(Boost_LIBRARY_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/lib" )
+  set(Boost_COMPILER "-gcc62")
   set(Boost_NO_SYSTEM_PATHS ON)
   SET(Boost_NO_BOOST_CMAKE ON CACHE BOOL "Enable fix for FindBoost.cmake")
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 find_package(Boost REQUIRED COMPONENTS program_options system filesystem REQUIRED)
 
 # find Doxygen
@@ -86,7 +97,7 @@ ENDIF(DOXYGEN_FOUND)
 #ENDIF(NOT CMAKE_BUILD_TYPE)
 
 ## require proper c++, standard is C++03, flag reads: c++98
-##SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ansi -pedantic -Wno-long-long -Wshadow -Werror=overloaded-virtual"   )
+SET(CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS} -g3")
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g3")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -O3 -g3")
@@ -109,8 +120,8 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -O3 -g3")
 #endif()
 
 # set additional compiler flags
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-extensions -std=c++0x "   )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"   )
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -std=c++1y")
 
 ######################################
 #

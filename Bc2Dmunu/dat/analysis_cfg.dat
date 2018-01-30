@@ -11,12 +11,9 @@
 ##     tname: name of the input tree                                                              ##
 ####################################################################################################
 
-# MC
-itype=-80  sqrts=8  year=2012  name=Bc2DmuMC    fname=nTuples/Bc2Dmu_MC.root         tname=Jpsi_Tuple/DecayTree
-itype=-81  sqrts=8  year=2012  name=Bc2DstmuMC  fname=nTuples/Bc2Dstmu_MC.root       tname=Jpsi_Tuple/DecayTree
-itype=-82  sqrts=8  year=2012  name=Bu2DmuMC    fname=nTuples/Bu2D0mu_MC.root        tname=Jpsi_Tuple/DecayTree
-
 # Data
-itype=80   sqrts=8  year=2012  name=DataFav     fname=nTuples/D0_favoured_data.root  tname=Jpsi_Tuple/DecayTree
-itype=81   sqrts=8  year=2012  name=DataSup     fname=nTuples/D0mu_suppressed.root   tname=Jpsi_Tuple/DecayTree
+itype=70   sqrts=7  year=2011  name=Data2011     fname=/r01//lhcb/delaney/lfns/D0/213/resultTuple.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=70   sqrts=7  year=2011  name=Data2011     fname=/r01//lhcb/delaney/lfns/D0/214/resultTuple.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+
+# MC
 

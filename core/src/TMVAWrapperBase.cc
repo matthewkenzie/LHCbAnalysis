@@ -25,7 +25,7 @@ TMVAWrapperBase::TMVAWrapperBase(TString _name, const Variables *_v, mode _rMode
 {
   if (!doBDTCycling) numberOfBDTs=1;
   TH1::SetDefaultSumw2();
-  gROOT->ProcessLine(".x ~/bin/lhcbStyle.C");
+  gROOT->ProcessLine(".x ../scripts/lhcbStyle.C");
   gStyle->SetPalette(1);
   system(Form("mkdir -p plots/%s/pdf",_name.Data()));
   system(Form("mkdir -p plots/%s/png",_name.Data()));

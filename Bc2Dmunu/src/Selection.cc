@@ -18,32 +18,25 @@ bool Bc2Dmunu::Selection::AnalyseEvent(){
   // do physics cuts here:
   //
 
-  // PID fav
-  //if ( v->Kminus_PIDK < 2. || v->piplus_PIDK > -2. ) return false;
+  if ( v->K_minus_ProbNNk < 0.4 ) return false;
+  if ( v->Pi_plus_ProbNNpi < 0.4 ) return false;
+  if ( v->Mu_plus_ProbNNmu < 0.4 ) return false;
 
-  // PID sup
-  //if ( v->Kminus_PIDK > -5. || v->piplus_PIDK < 5. ) return false;
+  if ( v->K_minus_ProbNNghost > 0.5 ) return false;
+  if ( v->Pi_plus_ProbNNghost > 0.5 ) return false;
+  if ( v->Mu_plus_ProbNNghost > 0.5 ) return false;
 
-  if ( v->Kminus_NNK < 0.5 ) return false;
-  if ( v->piplus_NNpi < 0.5 ) return false;
-  if ( v->muplus_NNmu < 0.5 ) return false;
-
-  if ( v->Kminus_ghost > 0.1 ) return false;
-  if ( v->piplus_ghost > 0.1 ) return false;
-  if ( v->muplus_ghost > 0.1 ) return false;
-
-  if ( v->Kminus_MINIPCHI2 < 9. ) return false;
-  if ( v->piplus_MINIPCHI2 < 9. ) return false;
-  if ( v->muplus_MINIPCHI2 < 9. ) return false;
+  //if ( v->K_minus_MINIPCHI2 < 9. ) return false;
+  //if ( v->Pi_plus_MINIPCHI2 < 9. ) return false;
+  //if ( v->Mu_plus_MINIPCHI2 < 9. ) return false;
 
   if ( v->D0_PT < 1500 ) return false;
-  if ( v->D0_M < 1850 || v->D0_M > 1880 ) return false;
-  if ( v->D0_ENDVERTEX_CHI2 > 2. ) return false;
+  if ( v->D0_M < 1820 || v->D0_M > 1900 ) return false;
+  if ( v->D0_ENDVERTEX_CHI2/v->D0_ENDVERTEX_NDOF > 3. ) return false;
 
-  if ( v->Bplus_TAU < 0. || v->Bplus_TAU > 0.003 ) return false;
-  if ( v->Bplus_Mcorr < 4000. ) return false;
-  if ( v->Bplus_ENDVERTEX_CHI2 > 2. ) return false;
-  if ( v->Bplus_DIRA_OWNPV < 0.9997 ) return false;
+  if ( v->B_plus_LTIME < 0. || v->B_plus_LTIME > 0.03 ) return false;
+  if ( v->B_plus_MCORR < 2000. ) return false;
+  if ( v->B_plus_DIRA_OWNPV < 0.9997 ) return false;
 
 	return true;
 }
