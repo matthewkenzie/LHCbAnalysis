@@ -3,6 +3,8 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
 set(CMAKE_CXX_STANDARD 14) # C++11...
 set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+#set(CMAKE_C_COMPILER "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/gcc/6.2.0/x86_64-slc6/bin/gcc")
+#set(CMAKE_CXX_COMPILER "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/gcc/6.2.0/x86_64-slc6/bin/g++")
 
 # declare the project name
 PROJECT(LHCbAnalysis)
@@ -31,42 +33,24 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-# find ROOT
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-find_package(ROOT REQUIRED COMPONENTS MathCore MathMore RIO Hist Tree RooFit RooFitCore TMVA RooStats)
 
-# Get Boost
-#IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  #set(BOOST_ROOT "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt" )
-  #set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/lib" )
-  #set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_53")
-  #set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt/lib" )
-  #set(ENV{Boost_ROOT} /afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt)
-#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
-#set(Boost_USE_STATIC_LIBS        OFF) # only find static libs
-#set(Boost_USE_MULTITHREADED      ON)
-#set(Boost_USE_STATIC_RUNTIME     ON)
-
-#IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  #set(BOOST_ROOT "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt" )
-  #set(BOOST_INCLUDEDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59" )
-  #set(BOOST_LIBRARYDIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
-  #set(Boost_INCLUDE_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/include/boost-1_59")
-  #set(Boost_LIBRARY_DIR "/afs/cern.ch/sw/lcg/releases/LCG_84/Boost/1.59.0_python2.7/x86_64-slc6-gcc49-opt/lib" )
-  #set(Boost_COMPILER "-gcc49")
-  #set(Boost_NO_SYSTEM_PATHS ON)
-  #SET(Boost_NO_BOOST_CMAKE ON CACHE BOOL "Enable fix for FindBoost.cmake")
-
-  set(BOOST_ROOT        "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/" )
-  set(BOOST_INCLUDEDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/include/boost-1_62" )
-  set(BOOST_LIBRARYDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/lib" )
-  set(Boost_INCLUDE_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/include/boost-1_62")
-  set(Boost_LIBRARY_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc62-opt/lib" )
-  set(Boost_COMPILER "-gcc62")
+# Get Boost and ROOT
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(BOOST_ROOT        "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc49-opt/" )
+  set(BOOST_INCLUDEDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc49-opt/include/boost-1_62" )
+  set(BOOST_LIBRARYDIR  "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc49-opt/lib" )
+  set(Boost_INCLUDE_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc49-opt/include/boost-1_62")
+  set(Boost_LIBRARY_DIR "/cvmfs/lhcb.cern.ch/lib/lcg/releases/LCG_88/Boost/1.62.0/x86_64-slc6-gcc49-opt/lib" )
+  set(Boost_COMPILER "-gcc49")
   set(Boost_NO_SYSTEM_PATHS ON)
   SET(Boost_NO_BOOST_CMAKE ON CACHE BOOL "Enable fix for FindBoost.cmake")
-#ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+# find ROOT
+find_package(ROOT REQUIRED COMPONENTS MathCore MathMore RIO Hist Tree RooFit RooFitCore TMVA RooStats)
+
+# find BOOST
 find_package(Boost REQUIRED COMPONENTS program_options system filesystem REQUIRED)
 
 # find Doxygen
