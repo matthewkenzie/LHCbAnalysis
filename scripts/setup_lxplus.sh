@@ -5,4 +5,4 @@
 #export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/Python/2.7.3/x86_64-slc6-gcc47-opt/lib:$PWD:$LD_LIBRARY_PATH
 #export BOOSTPATH=/afs/cern.ch/sw/lcg/external/Boost/1.53.0_python2.7/x86_64-slc6-gcc47-opt:$BOOSTPATH
 #SetupProject DaVinci v41r2p1
-lb-run DaVinci/v39r1 bash --norc
+lb-run DaVinci/v42r7p1 bash --norc
