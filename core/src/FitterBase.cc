@@ -63,7 +63,7 @@ FitterBase::FitterBase(TString wsname, TString name, bool _verbose, bool _debug)
     RooMsgService::instance().setGlobalKillBelow(FATAL);
     RooMsgService::instance().setSilentMode(true);
   }
-  gROOT->ProcessLine(".x ~/bin/lhcbStyle.C");
+  gROOT->ProcessLine(".x ../scripts/lhcbStyle.C");
   gStyle->SetPalette(1);
   // make ws
 	w = new RooWorkspace(wsname);

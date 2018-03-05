@@ -22,7 +22,7 @@ PlotterBase::PlotterBase(TString _name, const Variables *_v):
   residType(1)
 {
   TH1F::SetDefaultSumw2();
-  gROOT->ProcessLine(".x ~/bin/lhcbStyle.C");
+  gROOT->ProcessLine(".x ../scripts/lhcbStyle.C");
   system(Form("mkdir -p plots/%s/pdf",name.Data()));
   system(Form("mkdir -p plots/%s/png",name.Data()));
   system(Form("mkdir -p plots/%s/C",name.Data()));

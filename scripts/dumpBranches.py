@@ -11,7 +11,7 @@ import ROOT as r
 import os
 import sys
 
-tf = r.TFile(opts.filename)
+tf = r.TFile.Open(opts.filename)
 if not tf:
   sys.exit('Not a valid filename: '+opts.filename)
 
@@ -48,7 +48,7 @@ for branch in tree.GetListOfBranches():
   else:
     sourceInputLines.append('  tree->SetBranchAddress(%-40s, &%-40s);\n'%('\"'+branch_name+'\"',name))
 
-  sourceOutputLines.append('  tree->Branch(%-40s, &%-40s, %-40s);\n'%('\"'+name+'\"', name, '\"'+title+'\"'))  
+  sourceOutputLines.append('  tree->Branch(%-40s, &%-40s, %-40s);\n'%('\"'+name+'\"', name, '\"'+title+'\"'))
 
 f = open('%s/branchdump.h'%opts.outputloc,'w')
 f.write('// ---- HEADER ---- //\n')

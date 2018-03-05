@@ -49,13 +49,13 @@ void Bc2Dmunu::BuRejectionBDT::setTrainingOptions(){
 }
 
 void Bc2Dmunu::BuRejectionBDT::setInputVariables() {
-  addVar("Bplus_LOGMINIPCHI2");
-  addVar("Bplus_DIRA_OWNPV");
-  addVar("Bplus_TAU");
-  addVar("D0_LOGMINIPCHI2");
+  addVar("B_plus_LOGIPCHI2");
+  addVar("B_plus_DIRA_OWNPV");
+  addVar("B_plus_LTIME");
+  addVar("D0_LOGIPCHI2");
   addVar("D0_PT");
   addVar("D0_ENDVERTEX_CHI2");
-  addVar("Bplus_ENDVERTEX_CHI2");
+  addVar("B_plus_ENDVERTEX_CHI2");
 }
 
 void Bc2Dmunu::BuRejectionBDT::setSpectatorVariables(){
@@ -67,13 +67,13 @@ bool Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() {
   // setup values
   //
 
-  setVal("Bplus_LOGMINIPCHI2", TMath::Log( v->Bplus_MINIPCHI2 ) );
-  setVal("Bplus_DIRA_OWNPV"  , v->Bplus_DIRA_OWNPV );
-  setVal("Bplus_TAU"         , v->Bplus_TAU );
-  setVal("D0_LOGMINIPCHI2"   , TMath::Log( v->D0_MINIPCHI2 ) );
+  setVal("B_plus_LOGIPCHI2", TMath::Log( v->B_plus_IPCHI2_OWNPV ) );
+  setVal("B_plus_DIRA_OWNPV"  , v->B_plus_DIRA_OWNPV );
+  setVal("B_plus_LTIME"         , v->B_plus_LTIME );
+  setVal("D0_LOGIPCHI2"   , TMath::Log( v->D0_IPCHI2_OWNPV ) );
   setVal("D0_PT"             , v->D0_PT );
   setVal("D0_ENDVERTEX_CHI2" , v->D0_ENDVERTEX_CHI2);
-  setVal("Bplus_ENDVERTEX_CHI2", v->Bplus_ENDVERTEX_CHI2);
+  setVal("B_plus_ENDVERTEX_CHI2", v->B_plus_ENDVERTEX_CHI2);
 
   // TRAINING
   if ( rMode == kTrain ) {
@@ -90,7 +90,8 @@ bool Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() {
 
   }
   else if ( rMode == kEval ) {
-    v->bu_rejection_bdtoutput = evaluateMVAValue("2012");
+    cout << "NOT IMPLEMENTED" << endl;
+    //v->bu_rejection_bdtoutput = evaluateMVAValue("2012");
   }
   else {
     cerr << "ERROR -- Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() -- invalid run mode" << endl;
