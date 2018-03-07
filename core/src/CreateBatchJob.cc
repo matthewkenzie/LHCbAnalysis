@@ -71,10 +71,11 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
 
   of << "mkdir -p scratch" << endl;
   of << "cd scratch" << endl;
-  of << Form("source %s/setup_lxplus.sh",cwd.c_str()) << endl;
+  of << Form("source %s/../scripts/setup_cam.sh",cwd.c_str()) << endl;
   of << Form("cp %s/bin/%s .",cwd.c_str(),prog_name.c_str()) << endl;
   of << Form("mkdir -p lib") << endl;
-  of << Form("cp %s/lib/lib%sLib.so lib/",cwd.c_str(),prog_name.c_str()) << endl;
+  of << Form("cp %s/../build/libLHCbAnalysisComponents.so lib/",cwd.c_str()) << endl;
+  of << Form("cp %s/../build/%s/lib%sLib.so lib/",cwd.c_str(),prog_name.c_str(),prog_name.c_str()) << endl;
   of << Form("cp %s/%s/%s .",cwd.c_str(), rOpt.batchdir.c_str(), datfname.c_str()) << endl;
 
   string exec_line;
