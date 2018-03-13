@@ -628,8 +628,8 @@ void Bc2Dmunu::Variables_Analysis::setInputBranches(TTree *tree) {
 //  tree->SetBranchAddress("K_minus_0.60_nc_IT"                    , &K_minus_0_60_nc_IT                      );
 //  tree->SetBranchAddress("K_minus_0.60_nc_maxPt_PT"              , &K_minus_0_60_nc_maxPt_PT                );
 //  tree->SetBranchAddress("K_minus_0.60_IT"                       , &K_minus_0_60_IT                         );
-  tree->SetBranchAddress("K_minus_AllIP"                         ,  K_minus_AllIP                           );
-  tree->SetBranchAddress("K_minus_AllIPchi2"                     ,  K_minus_AllIPchi2                       );
+//  tree->SetBranchAddress("K_minus_AllIP"                         ,  K_minus_AllIP                           );
+//  tree->SetBranchAddress("K_minus_AllIPchi2"                     ,  K_minus_AllIPchi2                       );
   tree->SetBranchAddress("K_minus_OWNPV_X"                       , &K_minus_OWNPV_X                         );
   tree->SetBranchAddress("K_minus_OWNPV_Y"                       , &K_minus_OWNPV_Y                         );
   tree->SetBranchAddress("K_minus_OWNPV_Z"                       , &K_minus_OWNPV_Z                         );
@@ -896,8 +896,8 @@ void Bc2Dmunu::Variables_Analysis::setInputBranches(TTree *tree) {
 //  tree->SetBranchAddress("Pi_plus_0.60_nc_IT"                    , &Pi_plus_0_60_nc_IT                      );
 //  tree->SetBranchAddress("Pi_plus_0.60_nc_maxPt_PT"              , &Pi_plus_0_60_nc_maxPt_PT                );
 //  tree->SetBranchAddress("Pi_plus_0.60_IT"                       , &Pi_plus_0_60_IT                         );
-  tree->SetBranchAddress("Pi_plus_AllIP"                         ,  Pi_plus_AllIP                           );
-  tree->SetBranchAddress("Pi_plus_AllIPchi2"                     ,  Pi_plus_AllIPchi2                       );
+//  tree->SetBranchAddress("Pi_plus_AllIP"                         ,  Pi_plus_AllIP                           );
+//  tree->SetBranchAddress("Pi_plus_AllIPchi2"                     ,  Pi_plus_AllIPchi2                       );
   tree->SetBranchAddress("Pi_plus_OWNPV_X"                       , &Pi_plus_OWNPV_X                         );
   tree->SetBranchAddress("Pi_plus_OWNPV_Y"                       , &Pi_plus_OWNPV_Y                         );
   tree->SetBranchAddress("Pi_plus_OWNPV_Z"                       , &Pi_plus_OWNPV_Z                         );
@@ -1164,8 +1164,8 @@ void Bc2Dmunu::Variables_Analysis::setInputBranches(TTree *tree) {
 //  tree->SetBranchAddress("Mu_plus_0.60_nc_IT"                    , &Mu_plus_0_60_nc_IT                      );
 //  tree->SetBranchAddress("Mu_plus_0.60_nc_maxPt_PT"              , &Mu_plus_0_60_nc_maxPt_PT                );
 //  tree->SetBranchAddress("Mu_plus_0.60_IT"                       , &Mu_plus_0_60_IT                         );
-  tree->SetBranchAddress("Mu_plus_AllIP"                         ,  Mu_plus_AllIP                           );
-  tree->SetBranchAddress("Mu_plus_AllIPchi2"                     ,  Mu_plus_AllIPchi2                       );
+//  tree->SetBranchAddress("Mu_plus_AllIP"                         ,  Mu_plus_AllIP                           );
+//  tree->SetBranchAddress("Mu_plus_AllIPchi2"                     ,  Mu_plus_AllIPchi2                       );
   tree->SetBranchAddress("Mu_plus_OWNPV_X"                       , &Mu_plus_OWNPV_X                         );
   tree->SetBranchAddress("Mu_plus_OWNPV_Y"                       , &Mu_plus_OWNPV_Y                         );
   tree->SetBranchAddress("Mu_plus_OWNPV_Z"                       , &Mu_plus_OWNPV_Z                         );
@@ -2065,8 +2065,8 @@ void Bc2Dmunu::Variables_Analysis::setOutputBranches(TTree *tree) {
 //  tree->Branch("K_minus_0_60_nc_IT"                    , &K_minus_0_60_nc_IT                      , "K_minus_0_60_nc_IT/D"                  );
 //  tree->Branch("K_minus_0_60_nc_maxPt_PT"              , &K_minus_0_60_nc_maxPt_PT                , "K_minus_0_60_nc_maxPt_PT/D"            );
 //  tree->Branch("K_minus_0_60_IT"                       , &K_minus_0_60_IT                         , "K_minus_0_60_IT/D"                     );
-  tree->Branch("K_minus_AllIP"                         , &K_minus_AllIP                           , "K_minus_AllIP[nPV]/F"                  );
-  tree->Branch("K_minus_AllIPchi2"                     , &K_minus_AllIPchi2                       , "K_minus_AllIPchi2[nPV]/F"              );
+ // tree->Branch("K_minus_AllIP"                         , &K_minus_AllIP                           , "K_minus_AllIP[nPV]/F"                  );
+//  tree->Branch("K_minus_AllIPchi2"                     , &K_minus_AllIPchi2                       , "K_minus_AllIPchi2[nPV]/F"              );
   tree->Branch("K_minus_OWNPV_X"                       , &K_minus_OWNPV_X                         , "K_minus_OWNPV_X/D"                     );
   tree->Branch("K_minus_OWNPV_Y"                       , &K_minus_OWNPV_Y                         , "K_minus_OWNPV_Y/D"                     );
   tree->Branch("K_minus_OWNPV_Z"                       , &K_minus_OWNPV_Z                         , "K_minus_OWNPV_Z/D"                     );
@@ -2333,8 +2333,8 @@ void Bc2Dmunu::Variables_Analysis::setOutputBranches(TTree *tree) {
 //  tree->Branch("Pi_plus_0_60_nc_IT"                    , &Pi_plus_0_60_nc_IT                      , "Pi_plus_0_60_nc_IT/D"                  );
 //  tree->Branch("Pi_plus_0_60_nc_maxPt_PT"              , &Pi_plus_0_60_nc_maxPt_PT                , "Pi_plus_0_60_nc_maxPt_PT/D"            );
 //  tree->Branch("Pi_plus_0_60_IT"                       , &Pi_plus_0_60_IT                         , "Pi_plus_0_60_IT/D"                     );
-  tree->Branch("Pi_plus_AllIP"                         , &Pi_plus_AllIP                           , "Pi_plus_AllIP[nPV]/F"                  );
-  tree->Branch("Pi_plus_AllIPchi2"                     , &Pi_plus_AllIPchi2                       , "Pi_plus_AllIPchi2[nPV]/F"              );
+//  tree->Branch("Pi_plus_AllIP"                         , &Pi_plus_AllIP                           , "Pi_plus_AllIP[nPV]/F"                  );
+ // tree->Branch("Pi_plus_AllIPchi2"                     , &Pi_plus_AllIPchi2                       , "Pi_plus_AllIPchi2[nPV]/F"              );
   tree->Branch("Pi_plus_OWNPV_X"                       , &Pi_plus_OWNPV_X                         , "Pi_plus_OWNPV_X/D"                     );
   tree->Branch("Pi_plus_OWNPV_Y"                       , &Pi_plus_OWNPV_Y                         , "Pi_plus_OWNPV_Y/D"                     );
   tree->Branch("Pi_plus_OWNPV_Z"                       , &Pi_plus_OWNPV_Z                         , "Pi_plus_OWNPV_Z/D"                     );
@@ -2601,8 +2601,8 @@ void Bc2Dmunu::Variables_Analysis::setOutputBranches(TTree *tree) {
 //  tree->Branch("Mu_plus_0_60_nc_IT"                    , &Mu_plus_0_60_nc_IT                      , "Mu_plus_0_60_nc_IT/D"                  );
 //  tree->Branch("Mu_plus_0_60_nc_maxPt_PT"              , &Mu_plus_0_60_nc_maxPt_PT                , "Mu_plus_0_60_nc_maxPt_PT/D"            );
 //  tree->Branch("Mu_plus_0_60_IT"                       , &Mu_plus_0_60_IT                         , "Mu_plus_0_60_IT/D"                     );
-  tree->Branch("Mu_plus_AllIP"                         , &Mu_plus_AllIP                           , "Mu_plus_AllIP[nPV]/F"                  );
-  tree->Branch("Mu_plus_AllIPchi2"                     , &Mu_plus_AllIPchi2                       , "Mu_plus_AllIPchi2[nPV]/F"              );
+ // tree->Branch("Mu_plus_AllIP"                         , &Mu_plus_AllIP                           , "Mu_plus_AllIP[nPV]/F"                  );
+//  tree->Branch("Mu_plus_AllIPchi2"                     , &Mu_plus_AllIPchi2                       , "Mu_plus_AllIPchi2[nPV]/F"              );
   tree->Branch("Mu_plus_OWNPV_X"                       , &Mu_plus_OWNPV_X                         , "Mu_plus_OWNPV_X/D"                     );
   tree->Branch("Mu_plus_OWNPV_Y"                       , &Mu_plus_OWNPV_Y                         , "Mu_plus_OWNPV_Y/D"                     );
   tree->Branch("Mu_plus_OWNPV_Z"                       , &Mu_plus_OWNPV_Z                         , "Mu_plus_OWNPV_Z/D"                     );

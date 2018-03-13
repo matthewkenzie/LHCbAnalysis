@@ -23,12 +23,15 @@ void Bc2Dmunu::Plotter::defineHistograms(){
 
   addHist("B_plus_M"    , "m(B^{+}) [MeV]", 100, 2000,8000, "R");
   addHist("B_plus_MCORR", "m_{corr}(B^{+}) [MeV]", 100,2000,8000, "R");
+  addHist("B_plus_MCORRERR", "#sigma(m_{corr})(B^{+}) [MeV]", 100, 0, 3000, "R");
+  addHist("B_plus_MCORRERR_perMCORR", "#sigma(m_{corr})/m_{corr}(B^{+}) ", 100, 0, 1, "R");
   addHist("B_plus_LTIME",   "#tau(B^{+}) [ns]", 100,0,0.01,"R");
   addHist("D0_M"       , "m(D^{0}) [MeV]", 100, 1800, 1950, "R");
   addHist("D0_LOGIPCHI2", "Log Min IP #chi^{2} (D^{0})", 100,-5,15,"L");
 
   addHist("B_plus_LOGIPCHI2", "Log Min IP #chi^{2} (B^{+})", 100,-5,15,"L");
   addHist("B_plus_DIRA_OWNPV",   "DIRA (B^{+})", 100, 0.999,1.0,"L");
+  addHist("B_plus_DIRA_ACOSOWNPV",   "ArcCos DIRA (B^{+})", 100, 0.,0.1,"R");
 
   addHist("B_plus_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (B^{+})", 100, -10, 2, "L");
   addHist("D0_LOGENDVERTEX_CHI2", "Log vtx #chi^{2} (D^{0})", 100, -10, 2, "L");
@@ -52,8 +55,22 @@ void Bc2Dmunu::Plotter::defineHistograms(){
   addHist("Mu_plus_MIPCHI2PV", "MIN IP #chi^{2} (#mu^{+})"  , 100, 0, 200, "R");
 
   addHist("D0_PT",   "p_{T}(D^{0}) [MeV/c]", 100, 0, 10000, "R");
+  addHist("Log_D0_PT",   "Log(p_{T})(D^{0}) [MeV/c]", 100, 0, 20, "R");
 
-  addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
+//  addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
+
+//added here beyond default 
+
+//  addHist("B_plus_OWNPV_CHI2", "OwnPV #chi^{2} (B^{+})", 100,-5,100,"L");
+//  addHist("B_plus_LOGOWNPV_CHI2", "Log Own PV #chi^{2} (B^{+})", 100,-5,15,"L");
+//  addHist("B_plus_PT",   "p_{T}(B^{+}) [MeV/c]", 100, 0, 30000, "R");
+  addHist("B_plus_ISOLATION_BDT", "BDT(B^{+})", 100, -2.5, 1, "R");
+  addHist("B_plus_ISOLATION_BDT2", "BDT(B^{+})", 100, -2.5, 1, "R");
+  addHist("B_plus_ISOLATION_BDT3", "BDT(B^{+})", 100, -2.5, 1, "R");
+//  addHist("D0_OWNPV_CHI2", "OwnPV #chi^{2} (D^{0})", 100,-5,100,"L");
+//  addHist("D0_LOGOWNPV_CHI2", "Log Own PV #chi^{2} (D^{0})", 100,-5,15,"L");
+//  addHist("D0_DIRA_OWNPV",   "DIRA (D^{0})", 100, 0.999,1.0,"L");
+
 }
 
 void Bc2Dmunu::Plotter::defineDrawingConfig(){
@@ -68,19 +85,19 @@ void Bc2Dmunu::Plotter::defineDrawingConfig(){
   TColor *greenFill = gROOT->GetColor(kGreen-3);
   greenFill->SetAlpha(0.4);
 
-  //addDrawOpt("mc_Bu",   "MC B^{+}#rightarrow D^{0}#mu#nu", -82);
-  //setDrawOptDefaultFill(blueFill->GetNumber());
+  addDrawOpt("mc_Bu",   "MC B^{+}#rightarrow D^{0}#mu#nu", -29);
+  setDrawOptDefaultFill(blueFill->GetNumber());
 
-  //addDrawOpt("mc_Bc",   "MC B^{+}_{c}#rightarrow D^{0}#mu#nu", -80);
-  //setDrawOptDefaultFill(redFill->GetNumber());
+  addDrawOpt("mc_Bc",   "MC B^{+}_{c}#rightarrow D^{0}#mu#nu", -20);
+  setDrawOptDefaultFill(redFill->GetNumber());
 
   //addDrawOpt("mc_Bc_Dst", "MC B^{+}_{c}#rightarrow D^{*}#mu#nu", -81);
   //setDrawOptDefaultFill(greenFill->GetNumber());
 
-  addDrawOpt("data",   "Data", 70);
+  addDrawOpt("data",   "Data", 80);
   setDrawOptDefaultPoint(kBlack);
 
-  //addResidOpt(make_pair(3,0));
+  //addResidOpt(make_pair(1,0));
   //addResidOpt(make_pair(4,0));
   //setResidType(1);
   // -------------------------------------------- //
@@ -92,12 +109,16 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   // fill hists now
   fillHist("B_plus_M"     , v->B_plus_M      );
   fillHist("B_plus_MCORR" , v->B_plus_MCORR  );
+  fillHist("B_plus_MCORRERR" , v->B_plus_MCORRERR  );
+  fillHist("B_plus_MCORRERR_perMCORR" , v->B_plus_MCORRERR/v->B_plus_MCORR  );
   fillHist("B_plus_LTIME"   , v->B_plus_LTIME    );
   fillHist("D0_M"        , v->D0_M         );
   fillHist("D0_PT"       , v->D0_PT        );
+  fillHist("Log_D0_PT"       , TMath::Log(v->D0_PT)        );
   fillHist("D0_LOGIPCHI2", TMath::Log(v->D0_IPCHI2_OWNPV) );
   fillHist("B_plus_LOGIPCHI2", TMath::Log(v->B_plus_IPCHI2_OWNPV) );
   fillHist("B_plus_DIRA_OWNPV", v->B_plus_DIRA_OWNPV );
+  fillHist("B_plus_DIRA_ACOSOWNPV", TMath::ACos(v->B_plus_DIRA_OWNPV) );
   fillHist("B_plus_LOGENDVERTEX_CHI2", TMath::Log( v->B_plus_ENDVERTEX_CHI2 ) );
   fillHist("D0_LOGENDVERTEX_CHI2", TMath::Log( v->D0_ENDVERTEX_CHI2 ) );
   fillHist("B_plus_ENDVERTEX_CHI2",  v->B_plus_ENDVERTEX_CHI2 ) ;
@@ -116,6 +137,10 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   fillHist("K_minus_MIPCHI2PV", v->K_minus_MIPCHI2PV);
   fillHist("Pi_plus_MIPCHI2PV", v->Pi_plus_MIPCHI2PV);
   fillHist("Mu_plus_MIPCHI2PV", v->Mu_plus_MIPCHI2PV);
+  fillHist("B_plus_ISOLATION_BDT" , v->B_plus_ISOLATION_BDT  );
+  fillHist("B_plus_ISOLATION_BDT2" , v->B_plus_ISOLATION_BDT2 );
+  fillHist("B_plus_ISOLATION_BDT3" , v->B_plus_ISOLATION_BDT3  );
 
   return true;
 }
+
