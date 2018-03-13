@@ -29,6 +29,7 @@ class CreateBatchJob {
 
     void writeDatFile(std::vector<TString> indep_fnames, std::vector<TString> indep_tnames, int job=-1);
     void writeSubFile(Long64_t fEntry=-1, Long64_t lEntry=-1, int job=-1, int subj=-1);
+    void writeCondorFile(int job=-1, int subj=-1);
 
     std::vector<TString> indep_filenames;
     std::vector<TString> indep_treenames;

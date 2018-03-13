@@ -245,6 +245,23 @@ void RunEngine::checkSetup() {
   if ( infilenames.size() != intreenames.size() ) error("RunEngine:: infilenames and intreenames have a different size");
   if ( analysers.size() == 0 )    error("RunEngine:: analysers size is 0");
 
+  // check if the files and trees actually exist
+  print("RunEngine","Checking input files...");
+  for ( int f=0; f<infilenames.size(); f++ ) {
+    // open file
+    TFile *infile = TFile::Open(infilenames[f]);
+    if ( ! infile ) error( "File not found found: "+infilenames[f] );
+
+    // load tree
+    TTree *intree = (TTree*)infile->Get(intreenames[f]);
+    if ( ! intree ) error("Tree: "+intreenames[f]+" not found in file: "+infilenames[f] );
+
+    delete intree;
+    delete infile;
+
+    print("", infilenames[f]+" : OK");
+  }
+
   boost::filesystem::path od( arg.outFile );
   boost::filesystem::path dir =  od.parent_path();
   if ( ! boost::filesystem::exists( dir ) ) {

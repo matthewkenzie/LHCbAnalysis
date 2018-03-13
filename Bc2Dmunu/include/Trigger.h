@@ -2,7 +2,7 @@
 #define Bc2Dmunu_Trigger_h
 
 #include "Analyser.h"
-#include "Variables_Analysis.h"
+#include "Variables_Skimming.h"
 
 namespace Bc2Dmunu {
 
@@ -10,12 +10,12 @@ namespace Bc2Dmunu {
 
     public:
 
-      Trigger(TString _name, Variables_Analysis *_v);
+      Trigger(TString _name, Variables_Skimming *_v);
       ~Trigger();
 
       bool AnalyseEvent();
 
-      Variables_Analysis *v;
+      Variables_Skimming *v;
 
   };
 

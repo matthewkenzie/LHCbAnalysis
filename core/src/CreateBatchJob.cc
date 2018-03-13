@@ -63,6 +63,7 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
   boost::filesystem::path prog( rOpt.prog_name );
 
   string prog_name = prog.stem().string();
+  string analysis_name = boost::filesystem::current_path().filename().string();
 
   of << Form("touch %s/%s/%s.run",cwd.c_str(),rOpt.batchdir.c_str(),basename.c_str()) << endl;
   of << Form("rm -f %s/%s/%s.done",cwd.c_str(),rOpt.batchdir.c_str(),basename.c_str()) << endl;
@@ -75,7 +76,7 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
   of << Form("cp %s/bin/%s .",cwd.c_str(),prog_name.c_str()) << endl;
   of << Form("mkdir -p lib") << endl;
   of << Form("cp %s/../build/libLHCbAnalysisComponents.so lib/",cwd.c_str()) << endl;
-  of << Form("cp %s/../build/%s/lib%sLib.so lib/",cwd.c_str(),prog_name.c_str(),prog_name.c_str()) << endl;
+  of << Form("cp %s/../build/%s/lib%sComponents.so lib/",cwd.c_str(),analysis_name.c_str(),analysis_name.c_str()) << endl;
   of << Form("cp %s/%s/%s .",cwd.c_str(), rOpt.batchdir.c_str(), datfname.c_str()) << endl;
 
   string exec_line;
@@ -98,6 +99,48 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
   writtenSubScripts.push_back(subfname);
 
   print("CreateBatchJob::write()","Written subfile: "+subfname);
+}
+
+void CreateBatchJob::writeCondorFile(int job, int subj ){
+
+  string basename = fOpt.name.Data();
+  if ( job > -1 )  basename += string(Form("_j%d",job));
+  if ( subj > -1 ) basename += string(Form("_sj%d",subj));
+  string jobfname = basename + ".job";
+
+  ofstream of((rOpt.batchdir+"/"+jobfname).c_str());
+
+  string cwd  = boost::filesystem::current_path().string();
+  string subfname = cwd + "/" + rOpt.batchdir + "/" + basename + ".sh";
+  string outfname = cwd + "/" + rOpt.batchdir + "/" + basename + ".out";
+  string errfname = cwd + "/" + rOpt.batchdir + "/" + basename + ".err";
+  string logfname = cwd + "/" + rOpt.batchdir + "/" + basename + ".log";
+
+  of << "# Condor environment" << endl;
+  of << "Universe                = vanilla" << endl;
+  of << "getenv                  = true" << endl;
+  of << "copy_to_spool           = false" << endl;
+  of << "should_transfer_files   = NO" << endl;
+  of << "environment = CONDOR_ID=$(Cluster).$(Process)" << endl;
+
+  of << "# Requirements" << endl;
+  of << "Requirements = ( Arch == \"X86_64\" && OSTYPE == \"SLC6\" && ( ( POOL == \"GENERAL\" && ( Name == strcat(\"slot1@\",Machine) || Name == strcat(\"slot3@\",Machine) ) ) || POOL == \"GEN_FARM\" ) )" << endl;
+  of << "Rank                    = kflops" << endl;
+  of << "request_memory          = 1000" << endl;
+
+  of << "# Condor Output" << endl;
+  of << Form("output = %s",outfname.c_str()) << endl;
+  of << Form("error  = %s",errfname.c_str()) << endl;
+  of << Form("Log    = %s",logfname.c_str()) << endl;
+
+  of << "# Submit" << endl;
+  of << Form("Executable  = %s",subfname.c_str()) << endl;
+  of << "Arguments  = " << endl;
+  of << "Queue " << endl;
+
+  of.close();
+
+  print("CreateBatchJob::write()","Written condor file: "+jobfname);
 }
 
 void CreateBatchJob::writeJobFiles() {
@@ -138,6 +181,7 @@ void CreateBatchJob::writeJobFiles() {
         Long64_t high = (j+1)*(rOpt.jobSplitting) > nEntries ? nEntries : (j+1)*(rOpt.jobSplitting);
         print("",string(Form("  Job/Subjob %-3d %-3d : [ %-7lld , %-7lld ]", f, j, low, high)));
         writeSubFile( low, high, f, j);
+        if ( rOpt.queue == "CONDOR" || rOpt.queue == "CONDORDRY" ) writeCondorFile(f,j);
 
       }
     }
@@ -146,6 +190,7 @@ void CreateBatchJob::writeJobFiles() {
   else {
     writeDatFile(fOpt.filenames, fOpt.treenames);
     writeSubFile();
+    if ( rOpt.queue == "CONDOR" || rOpt.queue == "CONDORDRY" ) writeCondorFile();
   }
 }
 
@@ -153,7 +198,12 @@ void CreateBatchJob::submitJob() {
 
   for ( unsigned int i=0; i<writtenSubScripts.size(); i++) {
 
+    if ( rOpt.queue != "" && rOpt.queue != "CONDORDRY" ) {
       print("CreateBatchJob::submitJob()",string(Form("Will submit: %s to queue: %s",writtenSubScripts[i].c_str(),rOpt.queue.c_str())));
+    }
+    if ( rOpt.runLocal ) {
+      print("CreateBatchJob::submitJob()",string(Form("Will run: %s locally",writtenSubScripts[i].c_str())));
+    }
 
 
     string cwd  = boost::filesystem::current_path().string();
@@ -161,12 +211,19 @@ void CreateBatchJob::submitJob() {
     string path = cwd + "/" + rOpt.batchdir + "/" + ename;
 
     string submit_line;
+    // run job locally
     if ( rOpt.runLocal ) {
       submit_line = string(Form( "%s.sh > %s.log", path.c_str(),path.c_str()));
       system( submit_line.c_str() );
     }
-    if ( rOpt.queue != "" && !rOpt.runLocal ) {
+    // run job on CERN lxbatch system
+    if ( rOpt.queue != "" && rOpt.queue != "CONDOR" && rOpt.queue != "CONDORDRY" && !rOpt.runLocal ) {
       submit_line = string(Form( "bsub -q %s -o %s.log %s.sh", rOpt.queue.c_str(),path.c_str(), path.c_str()));
+      system( submit_line.c_str() );
+    }
+    // run job on Cambridge CONDOR system
+    if ( rOpt.queue == "CONDOR" && !rOpt.runLocal ) {
+      submit_line = string(Form( "condor_submit %s.job", path.c_str()));
       system( submit_line.c_str() );
     }
   }

@@ -54,19 +54,21 @@ void Bc2Dmunu::Plotter::defineHistograms(){
   addHist("Pi_plus_MIPCHI2PV", "MIN IP #chi^{2} (#pi^{+})"  , 100, 0, 150, "R");
   addHist("Mu_plus_MIPCHI2PV", "MIN IP #chi^{2} (#mu^{+})"  , 100, 0, 200, "R");
 
+  addHist("Mu_plus_PT", "p_{T}(#mu^{+})", 100, 0, 100000);
+
   addHist("D0_PT",   "p_{T}(D^{0}) [MeV/c]", 100, 0, 10000, "R");
   addHist("Log_D0_PT",   "Log(p_{T})(D^{0}) [MeV/c]", 100, 0, 20, "R");
 
 //  addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
 
-//added here beyond default 
+//added here beyond default
 
 //  addHist("B_plus_OWNPV_CHI2", "OwnPV #chi^{2} (B^{+})", 100,-5,100,"L");
 //  addHist("B_plus_LOGOWNPV_CHI2", "Log Own PV #chi^{2} (B^{+})", 100,-5,15,"L");
 //  addHist("B_plus_PT",   "p_{T}(B^{+}) [MeV/c]", 100, 0, 30000, "R");
-  addHist("B_plus_ISOLATION_BDT", "BDT(B^{+})", 100, -2.5, 1, "R");
-  addHist("B_plus_ISOLATION_BDT2", "BDT(B^{+})", 100, -2.5, 1, "R");
-  addHist("B_plus_ISOLATION_BDT3", "BDT(B^{+})", 100, -2.5, 1, "R");
+  //addHist("B_plus_ISOLATION_BDT", "BDT(B^{+})", 100, -2.5, 1, "R");
+  //addHist("B_plus_ISOLATION_BDT2", "BDT(B^{+})", 100, -2.5, 1, "R");
+  //addHist("B_plus_ISOLATION_BDT3", "BDT(B^{+})", 100, -2.5, 1, "R");
 //  addHist("D0_OWNPV_CHI2", "OwnPV #chi^{2} (D^{0})", 100,-5,100,"L");
 //  addHist("D0_LOGOWNPV_CHI2", "Log Own PV #chi^{2} (D^{0})", 100,-5,15,"L");
 //  addHist("D0_DIRA_OWNPV",   "DIRA (D^{0})", 100, 0.999,1.0,"L");
@@ -137,9 +139,10 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   fillHist("K_minus_MIPCHI2PV", v->K_minus_MIPCHI2PV);
   fillHist("Pi_plus_MIPCHI2PV", v->Pi_plus_MIPCHI2PV);
   fillHist("Mu_plus_MIPCHI2PV", v->Mu_plus_MIPCHI2PV);
-  fillHist("B_plus_ISOLATION_BDT" , v->B_plus_ISOLATION_BDT  );
-  fillHist("B_plus_ISOLATION_BDT2" , v->B_plus_ISOLATION_BDT2 );
-  fillHist("B_plus_ISOLATION_BDT3" , v->B_plus_ISOLATION_BDT3  );
+  fillHist("Mu_plus_PT"       , v->Mu_plus_PT );
+  //fillHist("B_plus_ISOLATION_BDT" , v->B_plus_ISOLATION_BDT  );
+  //fillHist("B_plus_ISOLATION_BDT2" , v->B_plus_ISOLATION_BDT2 );
+  //fillHist("B_plus_ISOLATION_BDT3" , v->B_plus_ISOLATION_BDT3  );
 
   return true;
 }

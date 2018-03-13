@@ -25,7 +25,7 @@ OptParser::OptParser():
     ("batchjobs,j",   bool_switch(&batchjobs)->default_value(false),                    "Create batch jobs")
     ("batchdir,D",    value<string>(&batchdir)->default_value("batch"),                 "Batch jobs directory")
     ("splitjobs,s",   value<Long64_t>(&jobSplitting)->default_value(-1),                "Split jobs into subjobs with this number of events")
-    ("queue,q",       value<string>(&queue)->default_value(""),                         "Batch queue to submit to")
+    ("queue,q",       value<string>(&queue)->default_value(""),                         "Batch queue to submit to. At CERN e.g \"1nh\" or \"8nh\". At CAM e.g. \"CONDOR\" or \"CONDORDRY\" (the latter will create all scripts but not submit)")
     ("runLocal",      bool_switch(&runLocal)->default_value(false),                     "Run batch jobs locally")
     ;
 }

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Bc2Dmunu::Trigger::Trigger(TString _name, Variables_Analysis *_v):
+Bc2Dmunu::Trigger::Trigger(TString _name, Variables_Skimming *_v):
 	Analyser(_name),
   v(_v)
 {}
@@ -24,15 +24,15 @@ bool Bc2Dmunu::Trigger::AnalyseEvent(){
   // RUN 1
   if ( v->year == "2011" || v->year == "2012" ) {
       // HLT1
-      if ( !v->Mu_plus_Hlt1TrackMuonDecision_TOS       && 
+      if ( !v->Mu_plus_Hlt1TrackMuonDecision_TOS       &&
            !v->Mu_plus_Hlt1TrackAllL0Decision_TOS         ) return false;
       // HLT2
       if ( ! v->B_plus_Hlt2TopoMu2BodyBBDTDecision_TOS &&
            ! v->B_plus_Hlt2TopoMu3BodyBBDTDecision_TOS &&
-           ! v->B_plus_Hlt2TopoMu4BodyBBDTDecision_TOS && 
+           ! v->B_plus_Hlt2TopoMu4BodyBBDTDecision_TOS &&
            ! v->B_plus_Hlt2Topo2BodyBBDTDecision_TOS   &&
            ! v->B_plus_Hlt2Topo3BodyBBDTDecision_TOS   &&
-           ! v->B_plus_Hlt2Topo4BodyBBDTDecision_TOS   && 
+           ! v->B_plus_Hlt2Topo4BodyBBDTDecision_TOS   &&
            ! v->B_plus_Hlt2SingleMuonDecision_TOS         ) return false;
   }
   // RUN 2
