@@ -44,12 +44,13 @@ void Bc2Dmunu::BasicFitter::addCuts(){
 void Bc2Dmunu::BasicFitter::addDatasets(){
 
   // Data
-  addDataset("Data",                "Data",                80 );
+  addDataset("Data12",                "Data12",                80 );
+  addDataset("Data11",                "Data11",                70 );
 
   // MC
-  addDataset("Bc2Dmunu",           "Bc2Dmunu",           -80);
-  addDataset("Bc2Dstmunu",         "Bc2Dstmunu",         -81);
-  addDataset("Bu2Dmunu",           "Bu2Dmunu",           -82);
+  addDataset("Bc2Dmunu12",           "Bc2Dmunu12",           -20);
+  addDataset("Bu2Dmunu12",         "Bu2Dmunu12",         -29);
+  addDataset("Bu2Dmunu11",           "Bu2Dmunu11",           -19);
 }
 
 void Bc2Dmunu::BasicFitter::constructPdfs(){

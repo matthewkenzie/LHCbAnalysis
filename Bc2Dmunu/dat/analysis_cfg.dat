@@ -12,8 +12,20 @@
 ####################################################################################################
 
 # Data
-itype=70   sqrts=7  year=2011  name=Data2011     fname=/r01//lhcb/delaney/lfns/D0/213/resultTuple.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=70   sqrts=7  year=2011  name=Data2011     fname=/r01//lhcb/delaney/lfns/D0/214/resultTuple.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=80   sqrts=8  year=2012  name=Data     fname=/r01/lhcb/delaney/lfns/CompletedJobs/231/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=80   sqrts=8  year=2012  name=Data     fname=/r01/lhcb/delaney/lfns/CompletedJobs/256/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=80   sqrts=7  year=2011  name=Data     fname=/r01/lhcb/delaney/lfns/CompletedJobs/213/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=80   sqrts=7  year=2011  name=Data     fname=/r01/lhcb/delaney/lfns/CompletedJobs/214/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+
 
 # MC
+# SIG
+itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/76/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
+itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/77/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
 
+# MC
+# BKG
+itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/78/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
+itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/79/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
+itype=-29 sqrts=7  year=2011  name=MCBu2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/81/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
+itype=-29 sqrts=7  year=2011  name=MCBu2DMuNu  fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/80/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree 
