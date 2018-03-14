@@ -12,46 +12,22 @@
 ####################################################################################################
 
 # Data
-itype=11   sqrts=7   year=2011  name=Data2011         fname=/r01/lhcb/delaney/lfns/CompletedJobs/213/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=11   sqrts=7   year=2011  name=Data2011         fname=/r01/lhcb/delaney/lfns/CompletedJobs/214/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-itype=12   sqrts=8   year=2012  name=Data2012         fname=/r01/lhcb/delaney/lfns/CompletedJobs/231/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=12   sqrts=8   year=2012  name=Data2012         fname=/r01/lhcb/delaney/lfns/CompletedJobs/256/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-itype=15   sqrts=13  year=2015  name=Data2015         fname=/r01/lhcb/delaney/lfns/CompletedJobs/236/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=15   sqrts=13  year=2015  name=Data2015         fname=/r01/lhcb/delaney/lfns/CompletedJobs/237/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-itype=16   sqrts=13  year=2016  name=Data2016         fname=/r01/lhcb/delaney/lfns/CompletedJobs/234/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=16   sqrts=13  year=2016  name=Data2016         fname=/r01/lhcb/delaney/lfns/CompletedJobs/235/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-itype=17   sqrts=13  year=2017  name=Data2017         fname=/r01/lhcb/delaney/lfns/CompletedJobs/232/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-itype=17   sqrts=13  year=2017  name=Data2017         fname=/r01/lhcb/delaney/lfns/CompletedJobs/233/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+itype=11   sqrts=7   year=2011  name=Data2011         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2011.root  tname=AnalysisTree
+itype=12   sqrts=8   year=2012  name=Data2012         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2012.root  tname=AnalysisTree
+itype=15   sqrts=13  year=2015  name=Data2015         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2015.root  tname=AnalysisTree
+itype=16   sqrts=13  year=2016  name=Data2016         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2016.root  tname=AnalysisTree
+itype=17   sqrts=13  year=2017  name=Data2017         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2017.root  tname=AnalysisTree
 
 # Norm Data
-#itype=111   sqrts=7  year=2011  name=DataNorm2011     fname=/r01/lhcb/delaney/lfns/CompletedJobs/241/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-#itype=111   sqrts=7  year=2011  name=DataNorm2011     fname=/r01/lhcb/delaney/lfns/CompletedJobs/242/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-#itype=112   sqrts=8  year=2012  name=DataNorm2012     fname=/r01/lhcb/delaney/lfns/CompletedJobs/251/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-#itype=112   sqrts=8  year=2012  name=DataNorm2012     fname=/r01/lhcb/delaney/lfns/CompletedJobs/252/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-#itype=115   sqrts=13 year=2015  name=DataNorm2015     fname=/r01/lhcb/delaney/lfns/CompletedJobs/253/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-#itype=115   sqrts=13 year=2015  name=DataNorm2015     fname=/r01/lhcb/delaney/lfns/CompletedJobs/254/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-#itype=116   sqrts=13 year=2016  name=DataNorm2016     fname=/r01/lhcb/delaney/lfns/CompletedJobs/249/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-#itype=116   sqrts=13 year=2016  name=DataNorm2016     fname=/r01/lhcb/delaney/lfns/CompletedJobs/255/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-
-#itype=117   sqrts=13 year=2017  name=DataNorm2017     fname=/r01/lhcb/delaney/lfns/CompletedJobs/247/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
-#itype=117   sqrts=13 year=2017  name=DataNorm2017     fname=/r01/lhcb/delaney/lfns/CompletedJobs/248/B2hMuNu.root  tname=TupleB2D0Mu_D02KPi/DecayTree
+#itype=111   sqrts=7  year=2011  name=DataNorm2011     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2011.root  tname=AnalysisTree
+#itype=112   sqrts=8  year=2012  name=DataNorm2012     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2012.root  tname=AnalysisTree
+#itype=115   sqrts=13 year=2015  name=DataNorm2015     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2015.root  tname=AnalysisTree
+#itype=116   sqrts=13 year=2016  name=DataNorm2016     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2016.root  tname=AnalysisTree
+#itype=117   sqrts=13 year=2017  name=DataNorm2017     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2017.root  tname=AnalysisTree
 
 
 # MC
 # SIG
-itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/76/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
-itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/77/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
-
-# MC
+itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu         fname=/r01/lhcb/mkenzie/Bc2Dmunu/MCBc2DMuNu.root tname=AnalysisTree
 # BKG
-itype=-29 sqrts=7  year=2011  name=MCBu2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/81/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
-itype=-29 sqrts=7  year=2011  name=MCBu2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/80/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
-itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/78/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
-itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu         fname=/r01/lhcb/delaney/gangadir/workspace/delaney/LocalXML/79/B2DMuNu.root tname=MCTuple_B2D0MuNuX_D02KPi/DecayTree
+itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu         fname=/r01/lhcb/mkenzie/Bc2Dmunu/MCBu2DMuNu.root tname=AnalysisTree

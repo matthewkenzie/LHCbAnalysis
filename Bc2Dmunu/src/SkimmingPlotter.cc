@@ -1,10 +1,10 @@
-#include "Plotter.h"
+#include "SkimmingPlotter.h"
 #include "TMath.h"
 
 using namespace std;
 using namespace TMath;
 
-Bc2Dmunu::Plotter::Plotter(TString _name, const Variables_Analysis *_v):
+Bc2Dmunu::SkimmingPlotter::SkimmingPlotter(TString _name, const Variables_Analysis *_v):
   PlotterBase(_name,_v),
   v(_v),
   split(false)
@@ -14,9 +14,9 @@ Bc2Dmunu::Plotter::Plotter(TString _name, const Variables_Analysis *_v):
   outfilename = Form("root/%sOut.root",_name.Data());
 }
 
-Bc2Dmunu::Plotter::~Plotter(){}
+Bc2Dmunu::SkimmingPlotter::~SkimmingPlotter(){}
 
-void Bc2Dmunu::Plotter::defineHistograms(){
+void Bc2Dmunu::SkimmingPlotter::defineHistograms(){
 
   // add these histograms
   //
@@ -25,6 +25,7 @@ void Bc2Dmunu::Plotter::defineHistograms(){
   addHist("B_plus_MCORR", "m_{corr}(B^{+}) [MeV]", 100,2000,8000, "R");
   addHist("B_plus_MCORRERR", "#sigma(m_{corr})(B^{+}) [MeV]", 100, 0, 3000, "R");
   addHist("B_plus_MCORRERR_perMCORR", "#sigma(m_{corr})/m_{corr}(B^{+}) ", 100, 0, 1, "R");
+  addHist("B_plus_PT",  "p_{T}(B^{+}) [MeV]", 100, 0, 50000, "R");
   addHist("B_plus_LTIME",   "#tau(B^{+}) [ns]", 100,0,0.01,"R");
   addHist("D0_M"       , "m(D^{0}) [MeV]", 100, 1800, 1950, "R");
   addHist("D0_LOGIPCHI2", "Log Min IP #chi^{2} (D^{0})", 100,-5,15,"L");
@@ -50,16 +51,18 @@ void Bc2Dmunu::Plotter::defineHistograms(){
   addHist("K_minus_ProbNNghost" , "ProbNNghost (K^{-})",    100, 0, 1, "R");
   addHist("Pi_plus_ProbNNghost" , "ProbNNghost (#pi^{+})",  100, 0, 1, "L");
 
-  addHist("K_minus_MIPCHI2PV", "MIN IP #chi^{2} (K^{-})"    , 100, 0, 150, "R");
-  addHist("Pi_plus_MIPCHI2PV", "MIN IP #chi^{2} (#pi^{+})"  , 100, 0, 150, "R");
-  addHist("Mu_plus_MIPCHI2PV", "MIN IP #chi^{2} (#mu^{+})"  , 100, 0, 200, "R");
+  addHist("K_minus_MIPCHI2PV", "MIN IP #chi^{2} (K^{-})"    , 100, 0, 200, "R");
+  addHist("Pi_plus_MIPCHI2PV", "MIN IP #chi^{2} (#pi^{+})"  , 100, 0, 200, "R");
+  addHist("Mu_plus_MIPCHI2PV", "MIN IP #chi^{2} (#mu^{+})"  , 100, 0, 400, "R");
 
-  addHist("Mu_plus_PT", "p_{T}(#mu^{+})", 100, 0, 100000);
+  addHist("K_minus_LOGIPCHI2PV", "Log MIN IP #chi^{2} (K^{-})"    , 100, -5, 15, "R");
+  addHist("Pi_plus_LOGIPCHI2PV", "Log MIN IP #chi^{2} (#pi^{+})"  , 100, -5, 15, "R");
+  addHist("Mu_plus_LOGIPCHI2PV", "Log MIN IP #chi^{2} (#mu^{+})"  , 100, -5, 15, "R");
+
+  addHist("Mu_plus_PT", "p_{T}(#mu^{+})", 100, 0, 20000, "R");
 
   addHist("D0_PT",   "p_{T}(D^{0}) [MeV/c]", 100, 0, 10000, "R");
   addHist("Log_D0_PT",   "Log(p_{T})(D^{0}) [MeV/c]", 100, 0, 20, "R");
-
-//  addHist("nCandidate", "N_{C}", 20, 0, 20, "R");
 
 //added here beyond default
 
@@ -75,7 +78,7 @@ void Bc2Dmunu::Plotter::defineHistograms(){
 
 }
 
-void Bc2Dmunu::Plotter::defineDrawingConfig(){
+void Bc2Dmunu::SkimmingPlotter::defineDrawingConfig(){
 
   // add these drawing options
   // -------------------------------------------- //
@@ -96,23 +99,24 @@ void Bc2Dmunu::Plotter::defineDrawingConfig(){
   //addDrawOpt("mc_Bc_Dst", "MC B^{+}_{c}#rightarrow D^{*}#mu#nu", -81);
   //setDrawOptDefaultFill(greenFill->GetNumber());
 
-  addDrawOpt("data",   "Data", 80);
+  addDrawOpt("data",   "Data", 11, 12);
   setDrawOptDefaultPoint(kBlack);
 
-  //addResidOpt(make_pair(1,0));
-  //addResidOpt(make_pair(4,0));
+  //addResidOpt(make_pair(2,0));
+  //addResidOpt(make_pair(2,1));
   //setResidType(1);
   // -------------------------------------------- //
 
 }
 
-bool Bc2Dmunu::Plotter::fillHistograms(){
+bool Bc2Dmunu::SkimmingPlotter::fillHistograms(){
 
   // fill hists now
   fillHist("B_plus_M"     , v->B_plus_M      );
   fillHist("B_plus_MCORR" , v->B_plus_MCORR  );
   fillHist("B_plus_MCORRERR" , v->B_plus_MCORRERR  );
   fillHist("B_plus_MCORRERR_perMCORR" , v->B_plus_MCORRERR/v->B_plus_MCORR  );
+  fillHist("B_plus_PT" , v->B_plus_PT );
   fillHist("B_plus_LTIME"   , v->B_plus_LTIME    );
   fillHist("D0_M"        , v->D0_M         );
   fillHist("D0_PT"       , v->D0_PT        );
@@ -139,10 +143,10 @@ bool Bc2Dmunu::Plotter::fillHistograms(){
   fillHist("K_minus_MIPCHI2PV", v->K_minus_MIPCHI2PV);
   fillHist("Pi_plus_MIPCHI2PV", v->Pi_plus_MIPCHI2PV);
   fillHist("Mu_plus_MIPCHI2PV", v->Mu_plus_MIPCHI2PV);
+  fillHist("K_minus_LOGIPCHI2PV", TMath::Log(v->K_minus_MIPCHI2PV));
+  fillHist("Pi_plus_LOGIPCHI2PV", TMath::Log(v->Pi_plus_MIPCHI2PV));
+  fillHist("Mu_plus_LOGIPCHI2PV", TMath::Log(v->Mu_plus_MIPCHI2PV));
   fillHist("Mu_plus_PT"       , v->Mu_plus_PT );
-  //fillHist("B_plus_ISOLATION_BDT" , v->B_plus_ISOLATION_BDT  );
-  //fillHist("B_plus_ISOLATION_BDT2" , v->B_plus_ISOLATION_BDT2 );
-  //fillHist("B_plus_ISOLATION_BDT3" , v->B_plus_ISOLATION_BDT3  );
 
   return true;
 }

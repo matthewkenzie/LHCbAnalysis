@@ -7,17 +7,17 @@
   Int_t red    = 2;
   Int_t green  = 3;
   Int_t blue   = 4;
-  Int_t yellow = 5; 
+  Int_t yellow = 5;
   Int_t magenta= 6;
   Int_t cyan   = 7;
   Int_t purple = 9;
-  
+
 
 ////////////////////////////////////////////////////////////////////
 // PURPOSE:
 //
-// This macro defines a standard style for (black-and-white) 
-// "publication quality" LHCb ROOT plots. 
+// This macro defines a standard style for (black-and-white)
+// "publication quality" LHCb ROOT plots.
 //
 // USAGE:
 //
@@ -31,14 +31,14 @@
 // COMMENTS:
 //
 // Font:
-// 
+//
 // The font is chosen to be 132, this is Times New Roman (like the text of
 //  your document) with precision 2.
 //
 // "Landscape histograms":
 //
 // The style here is designed for more or less square plots.
-// For longer histograms, or canvas with many pads, adjustements are needed. 
+// For longer histograms, or canvas with many pads, adjustements are needed.
 // For instance, for a canvas with 1x5 histograms:
 //  TCanvas* c1 = new TCanvas("c1", "L0 muons", 600, 800);
 //  c1->Divide(1,5);
@@ -54,17 +54,17 @@
 // Maintained by Editorial board member (currently Niels)
 ///////////////////////////////////////////////////////////////////
 
-  // Use times new roman, precision 2 
+  // Use times new roman, precision 2
   Int_t lhcbFont        = 132;  // Old LHCb style: 62;
   // Line thickness
   Double_t lhcbWidth    = 2.00; // Old LHCb style: 3.00;
   // Text size
-  Double_t lhcbTSize    = 0.06; 
-  
+  Double_t lhcbTSize    = 0.06;
+
   // use plain black on white colors
-  gROOT->SetStyle("Plain"); 
+  gROOT->SetStyle("Plain");
   TStyle *lhcbStyle= new TStyle("lhcbStyle","LHCb plots style");
-  
+
   //lhcbStyle->SetErrorX(0); //  don't suppress the error bar along X
 
   lhcbStyle->SetFillColor(1);
@@ -91,7 +91,7 @@
   lhcbStyle->SetPadRightMargin(0.05); // increase for colz plots
   lhcbStyle->SetPadBottomMargin(0.16);
   lhcbStyle->SetPadLeftMargin(0.14);
-  
+
   // use large fonts
   lhcbStyle->SetTextFont(lhcbFont);
   lhcbStyle->SetTextSize(lhcbTSize);
@@ -124,7 +124,7 @@
   lhcbStyle->SetLabelOffset(0.010,"Y");
 
   // by default, do not display histogram decorations:
-  lhcbStyle->SetOptStat(0);  
+  lhcbStyle->SetOptStat(0);
   //lhcbStyle->SetOptStat("emr");  // show only nent -e , mean - m , rms -r
   // full opts at http://root.cern.ch/root/html/TStyle.html#TStyle:SetOptStat
   lhcbStyle->SetStatFormat("6.3g"); // specified as c printf options
@@ -140,10 +140,10 @@
   lhcbStyle->SetTitleBorderSize(0);
   lhcbStyle->SetTitleFont(lhcbFont,"title");
   lhcbStyle->SetTitleX(0.0);
-  lhcbStyle->SetTitleY(1.0); 
+  lhcbStyle->SetTitleY(1.0);
   lhcbStyle->SetTitleW(1.0);
   lhcbStyle->SetTitleH(0.05);
-  
+
   // look of the statistics box:
   lhcbStyle->SetStatBorderSize(0);
   lhcbStyle->SetStatFont(lhcbFont);
@@ -160,7 +160,7 @@
   // histogram divisions: only 5 in x to avoid label overlaps
   lhcbStyle->SetNdivisions(505,"x");
   lhcbStyle->SetNdivisions(510,"y");
-  
+
   gROOT->SetStyle("lhcbStyle");
   gROOT->ForceStyle();
 
@@ -187,10 +187,10 @@
   lhcbLatex->SetTextSize(lhcbTSize);
   lhcbLatex->SetTextAlign(12);
 
-  // std::cout << "-------------------------" << std::endl;  
+  // std::cout << "-------------------------" << std::endl;
   // std::cout << "Set LHCb Style - Feb 2012" << std::endl;
-  // std::cout << "-------------------------" << std::endl;  
-  
+  // std::cout << "-------------------------" << std::endl;
+
 }
 
 

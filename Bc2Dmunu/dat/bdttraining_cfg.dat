@@ -12,5 +12,7 @@
 ####################################################################################################
 
 # MC
-itype=-80  sqrts=8  year=2012  name=Bc2DmuMC    fname=nTuples/Bc2Dmu_MC.root         tname=Jpsi_Tuple/DecayTree
-itype=-82  sqrts=8  year=2012  name=Bu2DmuMC    fname=nTuples/Bu2D0mu_MC.root        tname=Jpsi_Tuple/DecayTree
+# SIG
+itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu         fname=/r01/lhcb/mkenzie/Bc2Dmunu/MCBc2DMuNu.root tname=AnalysisTree
+# BKG
+itype=-29 sqrts=8  year=2012  name=MCBu2DMuNu         fname=/r01/lhcb/mkenzie/Bc2Dmunu/MCBu2DMuNu.root tname=AnalysisTree

@@ -2,7 +2,6 @@
 
 #include "RunEngine.h"
 #include "Variables_Analysis.h"
-#include "Plotter.h"
 #include "BuRejectionBDT.h"
 
 using namespace std;
@@ -17,15 +16,13 @@ int main(int argc, char **argv) {
   Bc2Dmunu::Variables_Analysis *v = new Bc2Dmunu::Variables_Analysis() ;
 
   // make the analysers
-  Bc2Dmunu::Plotter   *plotter   = new Bc2Dmunu::Plotter   ( "Plotter", v );
-  Bc2Dmunu::BuRejectionBDT *bdt  = new Bc2Dmunu::BuRejectionBDT( "BDT", v );
+  Bc2Dmunu::BuRejectionBDT    *bdt       = new Bc2Dmunu::BuRejectionBDT( "BuRejectionBDT", v );
   bdt->setEvalMode();
 
   // pass variables to runner
   runner.setVariables( v );
 
   // pass analysers to runner
-  runner.addAnalyser( plotter );
   runner.addAnalyser( bdt );
 
   // run
@@ -33,7 +30,6 @@ int main(int argc, char **argv) {
 
   // clean up
   delete v;
-  delete plotter;
   delete bdt;
 
   return 0;

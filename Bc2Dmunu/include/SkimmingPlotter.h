@@ -1,14 +1,14 @@
 ////////////////////////////////////
 //                                 //
-// Plotter.h               //
+// SkimmingPlotter.h               //
 // Author: Matthew Kenzie          //
 // Auto-generated                  //
 // Will run the analysis chain     //
 //                                 //
 /////////////////////////////////////
 
-#ifndef Bc2Dmunu_Plotter_h
-#define Bc2Dmunu_Plotter_h
+#ifndef Bc2Dmunu_SkimmingPlotter_h
+#define Bc2Dmunu_SkimmingPlotter_h
 
 #include <iostream>
 #include <vector>
@@ -23,12 +23,12 @@
 
 namespace Bc2Dmunu {
 
-  class Plotter : public PlotterBase {
+  class SkimmingPlotter : public PlotterBase {
 
     public:
 
-      Plotter(TString _name, const Variables_Analysis *_v);
-      ~Plotter();
+      SkimmingPlotter(TString _name, const Variables_Analysis *_v);
+      ~SkimmingPlotter();
 
       void defineHistograms();
       void defineDrawingConfig();
