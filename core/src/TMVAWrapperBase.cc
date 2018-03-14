@@ -163,7 +163,7 @@ void TMVAWrapperBase::initMVAFactories() {
       // only do booking here if in eval mode
       if ( rMode == kEval ) {
         // weights files
-        TString weightsFile = Form("BDTDataLoader/weights/%sFactory_%s_BDT_%d.weights.xml",name.Data(),cat->Data(),b);
+        TString weightsFile = Form("%sDataLoader/weights/%sFactory_%s_BDT_%d.weights.xml",name.Data(),name.Data(),cat->Data(),b);
         TString methodName  = Form("BDT%dmethod",b);
         readerContainer[*cat][b]->BookMVA( methodName, weightsFile );
       }
@@ -435,7 +435,7 @@ void TMVAWrapperBase::createTrainingHistograms() {
       }
       // do bdtoutput
       // want to read bdt output for BDTs that have just been trained
-      TString weightsFile = Form("BDTDataLoader/weights/%sFactory_%s_BDT_%d.weights.xml",name.Data(),cat->Data(),b);
+      TString weightsFile = Form("%sDataLoader/weights/%sFactory_%s_BDT_%d.weights.xml",name.Data(),name.Data(),cat->Data(),b);
       TString methodName  = Form("BDT%dmethod",b);
       readerContainer[*cat][b]->BookMVA( methodName, weightsFile );
       for (int i=0; i<4; i++) {
