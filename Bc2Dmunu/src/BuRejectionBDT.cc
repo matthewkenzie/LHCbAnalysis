@@ -71,6 +71,7 @@ bool Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() {
 
   // setup values
   //
+  if ( v->B_plus_LTIME<0 ) return false;
 
   setVal("B_plus_LOGPT"            , TMath::Log( v->B_plus_PT )           );
   setVal("B_plus_LOGIPCHI2"        , TMath::Log( v->B_plus_IPCHI2_OWNPV ) );
