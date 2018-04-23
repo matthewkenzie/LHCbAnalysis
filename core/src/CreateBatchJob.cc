@@ -119,12 +119,13 @@ void CreateBatchJob::writeCondorFile(int job, int subj ){
   of << "# Condor environment" << endl;
   of << "Universe                = vanilla" << endl;
   of << "getenv                  = true" << endl;
-  of << "copy_to_spool           = false" << endl;
-  of << "should_transfer_files   = NO" << endl;
+  of << "copy_to_spool           = true" << endl;
+  of << "should_transfer_files   = YES" << endl;
+  of << "when_to_transfer_output = ON_EXIT_OR_EVICT" << endl;
   of << "environment = CONDOR_ID=$(Cluster).$(Process)" << endl;
 
   of << "# Requirements" << endl;
-  of << "Requirements = ( Arch == \"X86_64\" && OSTYPE == \"SLC6\" && ( ( POOL == \"GENERAL\" && ( Name == strcat(\"slot1@\",Machine) || Name == strcat(\"slot3@\",Machine) ) ) || POOL == \"GEN_FARM\" ) )" << endl;
+  of << "Requirements = ( Arch == \"X86_64\" && OSTYPE == \"SLC6\" && ( POOL == \"GENERAL\" || POOL == \"GEN_FARM\" ) )" << endl;
   of << "Rank                    = kflops" << endl;
   of << "request_memory          = 1000" << endl;
 
