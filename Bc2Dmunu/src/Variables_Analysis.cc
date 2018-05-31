@@ -426,6 +426,7 @@ void Bc2Dmunu::Variables_Analysis::setOutputBranches(TTree *tree) {
 
   // other variables we want to write out
   tree->Branch("bu_rejection_bdtoutput"                , &bu_rejection_bdtoutput                  );
+  tree->Branch("comb_rejection_bdtoutput"              , &comb_rejection_bdtoutput                );
 
   // variables already in the tree that we want to still write out
   tree->Branch("nPV"                                   , &nPV                                     , "nPV/I"                                 );

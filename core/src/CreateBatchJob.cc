@@ -78,6 +78,7 @@ void CreateBatchJob::writeSubFile(Long64_t fEntry, Long64_t lEntry, int job , in
   of << Form("cp %s/../build/libLHCbAnalysisComponents.so lib/",cwd.c_str()) << endl;
   of << Form("cp %s/../build/%s/lib%sComponents.so lib/",cwd.c_str(),analysis_name.c_str(),analysis_name.c_str()) << endl;
   of << Form("cp %s/%s/%s .",cwd.c_str(), rOpt.batchdir.c_str(), datfname.c_str()) << endl;
+  of << Form("cp -R %s/*DataLoader .",cwd.c_str()) << endl;
 
   string exec_line;
   exec_line += Form("./%s -c %s -o %s.root -b", prog_name.c_str(), datfname.c_str(), basename.c_str());

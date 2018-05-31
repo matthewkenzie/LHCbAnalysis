@@ -1,0 +1,8 @@
+# Data
+#itype=11   sqrts=7   year=2011  name=Data2011         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2011.root  tname=AnalysisTree
+itype=12   sqrts=8   year=2012  name=Data2012         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2012.root  tname=AnalysisTree
+
+# MC
+# SIG
+itype=-20 sqrts=8  year=2012  name=MCBc2DMuNu         fname=/r01/lhcb/mkenzie/Bc2Dmunu/MCBc2DMuNu.root tname=AnalysisTree
+

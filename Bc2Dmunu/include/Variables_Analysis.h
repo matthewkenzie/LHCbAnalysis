@@ -22,6 +22,7 @@ namespace Bc2Dmunu {
       // Any variables we want to be written out later go here
       // e.g. double bdtout;
       double              bu_rejection_bdtoutput                   ;
+      double              comb_rejection_bdtoutput                 ;
 
       // Variables in the input skimmed ntuples
       Int_t                nPV                                     ;

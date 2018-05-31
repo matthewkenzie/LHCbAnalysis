@@ -12,14 +12,14 @@
 ####################################################################################################
 
 # Data
-itype=70   sqrts=7   year=2011 name=Data2011  fname=/r01/lhcb/mkenzie/BcProduction/Data2011_MD.root             tname=Bc2BsPi_Tuple/DecayTree
-itype=70   sqrts=7   year=2011 name=Data2011  fname=/r01/lhcb/mkenzie/BcProduction/Data2011_MU.root             tname=Bc2BsPi_Tuple/DecayTree
+#itype=70   sqrts=7   year=2011 name=Data2011  fname=/r01/lhcb/mkenzie/BcProduction/Data2011_MD.root             tname=Bc2BsPi_Tuple/DecayTree
+#itype=70   sqrts=7   year=2011 name=Data2011  fname=/r01/lhcb/mkenzie/BcProduction/Data2011_MU.root             tname=Bc2BsPi_Tuple/DecayTree
 
 itype=80   sqrts=8   year=2012 name=Data2012  fname=/r01/lhcb/mkenzie/BcProduction/Data2012_MD.root             tname=Bc2BsPi_Tuple/DecayTree
-#itype=80   sqrts=8   year=2012 name=Data2012  fname=/r01/lhcb/mkenzie/BcProduction/Data2012_MU.root             tname=Bc2BsPi_Tuple/DecayTree
+itype=80   sqrts=8   year=2012 name=Data2012  fname=/r01/lhcb/mkenzie/BcProduction/Data2012_MU.root             tname=Bc2BsPi_Tuple/DecayTree
 
-itype=90   sqrts=13  year=2015 name=Data2015  fname=/r01/lhcb/mkenzie/BcProduction/Data2015_MD.root             tname=Bc2BsPi_Tuple/DecayTree
-itype=90   sqrts=13  year=2015 name=Data2015  fname=/r01/lhcb/mkenzie/BcProduction/Data2015_MU.root             tname=Bc2BsPi_Tuple/DecayTree
+#itype=90   sqrts=13  year=2015 name=Data2015  fname=/r01/lhcb/mkenzie/BcProduction/Data2015_MD.root             tname=Bc2BsPi_Tuple/DecayTree
+#itype=90   sqrts=13  year=2015 name=Data2015  fname=/r01/lhcb/mkenzie/BcProduction/Data2015_MU.root             tname=Bc2BsPi_Tuple/DecayTree
 
-itype=100  sqrts=13  year=2016 name=Data2016  fname=/r01/lhcb/mkenzie/BcProduction/Data2016_MD.root             tname=Bc2BsPi_Tuple/DecayTree
+#itype=100  sqrts=13  year=2016 name=Data2016  fname=/r01/lhcb/mkenzie/BcProduction/Data2016_MD.root             tname=Bc2BsPi_Tuple/DecayTree
 #itype=100  sqrts=13  year=2016 name=Data2016  fname=/r01/lhcb/mkenzie/BcProduction/Data2016_MU.root             tname=Bc2BsPi_Tuple/DecayTree

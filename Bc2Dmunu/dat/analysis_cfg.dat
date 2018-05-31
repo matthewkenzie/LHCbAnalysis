@@ -14,9 +14,9 @@
 # Data
 itype=11   sqrts=7   year=2011  name=Data2011         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2011.root  tname=AnalysisTree
 itype=12   sqrts=8   year=2012  name=Data2012         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2012.root  tname=AnalysisTree
-itype=15   sqrts=13  year=2015  name=Data2015         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2015.root  tname=AnalysisTree
-itype=16   sqrts=13  year=2016  name=Data2016         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2016.root  tname=AnalysisTree
-itype=17   sqrts=13  year=2017  name=Data2017         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2017.root  tname=AnalysisTree
+#itype=15   sqrts=13  year=2015  name=Data2015         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2015.root  tname=AnalysisTree
+#itype=16   sqrts=13  year=2016  name=Data2016         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2016.root  tname=AnalysisTree
+#itype=17   sqrts=13  year=2017  name=Data2017         fname=/r01/lhcb/mkenzie/Bc2Dmunu/Data2017.root  tname=AnalysisTree
 
 # Norm Data
 #itype=111   sqrts=7  year=2011  name=DataNorm2011     fname=/r01/lhcb/mkenzie/Bc2Dmunu/DataNorm2011.root  tname=AnalysisTree

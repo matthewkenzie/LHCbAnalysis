@@ -55,8 +55,7 @@ void Bc2Dmunu::BuRejectionBDT::setInputVariables() {
   addVar("B_plus_LOGPT");
   addVar("B_plus_LOGIPCHI2");
   addVar("B_plus_ACOS_DIRA_OWNPV");
-  addVar("B_plus_LTIME");
-  addVar("B_plus_MCORRERROMCORR");
+  addVar("B_plus_LOGFDCHI2");
   addVar("D0_LOGPT");
   addVar("D0_LOGIPCHI2");
   addVar("Mu_plus_LOGPT");
@@ -76,8 +75,7 @@ bool Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() {
   setVal("B_plus_LOGPT"            , TMath::Log( v->B_plus_PT )           );
   setVal("B_plus_LOGIPCHI2"        , TMath::Log( v->B_plus_IPCHI2_OWNPV ) );
   setVal("B_plus_ACOS_DIRA_OWNPV"  , TMath::ACos( v->B_plus_DIRA_OWNPV )  );
-  setVal("B_plus_LTIME"            , v->B_plus_LTIME                      );
-  setVal("B_plus_MCORRERROMCORR"   , v->B_plus_MCORRERR / v->B_plus_MCORR );
+  setVal("B_plus_LOGFDCHI2"        , TMath::Log( v->B_plus_FDCHI2_OWNPV ) );
   setVal("D0_LOGPT"                , TMath::Log( v->D0_PT )               );
   setVal("D0_LOGIPCHI2"            , TMath::Log( v->D0_IPCHI2_OWNPV )     );
   setVal("Mu_plus_LOGPT"           , TMath::Log( v->Mu_plus_PT )          );
@@ -98,7 +96,7 @@ bool Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() {
 
   }
   else if ( rMode == kEval ) {
-    v->bu_rejection_bdtoutput = evaluateMVAValue("Run1");
+    v->comb_rejection_bdtoutput = evaluateMVAValue("Run1");
   }
   else {
     cerr << "ERROR -- Bc2Dmunu::BuRejectionBDT::setEventValuesAndEvaluate() -- invalid run mode" << endl;
